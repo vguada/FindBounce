@@ -1,0 +1,830 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     37489,        822]
+NotebookOptionsPosition[     36782,        792]
+NotebookOutlinePosition[     37143,        808]
+CellTagsIndexPosition[     37100,        805]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Functions", "Subsection",
+ ExpressionUUID -> "779b2cf1-537e-4927-9b6b-fe6938bf0dc3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"getTestResults", "//", "ClearAll"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"getTestResults", "[", "tr_TestReportObject", "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", "\t", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"fields", ",", "results", ",", "abbreviations"}], "}"}], ",", 
+     "\n", "\t", "\n", "\t", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "Add", " ", "other", " ", "querries", " ", "to", " ", "this", " ", 
+       RowBox[{"list", "."}]}], " ", "*)"}], "\n", "\t", 
+     RowBox[{
+      RowBox[{"fields", "=", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<TestIndex\>\"", ",", "\"\<Outcome\>\"", ",", 
+         "\"\<AbsoluteTimeUsed\>\"", ",", "\"\<MemoryUsed\>\"", ",", 
+         "\"\<TestID\>\""}], "}"}]}], ";", "\[IndentingNewLine]", "\t", 
+      RowBox[{"abbreviations", "=", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<TestIndex\>\"", "\[Rule]", "\"\<Idx\>\""}], ",", 
+         RowBox[{
+         "\"\<AbsoluteTimeUsed\>\"", "\[Rule]", "\"\<Time [s]\>\""}]}], 
+        "}"}]}], ";", "\n", "\t", "\n", "\t", 
+      RowBox[{"results", "=", 
+       RowBox[{"ReplaceRepeated", "[", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"Outer", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"#1", "[", "#2", "]"}], "&"}], ",", 
+           RowBox[{"Values", "[", 
+            RowBox[{"tr", "[", "\"\<TestResults\>\"", "]"}], "]"}], ",", 
+           "fields"}], "]"}], ",", "\n", "\t\t", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"x_Quantity", "\[RuleDelayed]", 
+            RowBox[{"QuantityMagnitude", "[", "x", "]"}]}], ",", 
+           RowBox[{"x_Real", "\[RuleDelayed]", 
+            RowBox[{"Round", "[", 
+             RowBox[{"x", ",", "0.001"}], "]"}]}]}], "}"}]}], "\n", "\t", 
+        "]"}]}], ";", "\n", "\t", "\n", "\t", 
+      RowBox[{"Join", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"fields", "/.", "abbreviations"}], "}"}], ",", "results"}], 
+       "]"}]}]}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"printTestResults", "//", "ClearAll"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"printTestResults", "[", "tr_TestReportObject", "]"}], ":=", 
+   RowBox[{"Module", "[", "\n", "\t", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"list", ",", "indx", ",", "time", ",", "noTests"}], "}"}], ",", 
+     "\n", "\t", "\n", "\t", 
+     RowBox[{
+      RowBox[{"list", "=", 
+       RowBox[{"getTestResults", "[", "tr", "]"}]}], ";", "\n", "\t", 
+      RowBox[{"indx", "=", 
+       RowBox[{"MapIndexed", "[", "\n", "\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"If", "[", "\n", "\t\t\t", 
+           RowBox[{
+            RowBox[{"MemberQ", "[", 
+             RowBox[{"#1", ",", 
+              RowBox[{
+              "\"\<Failure\>\"", "|", "\"\<MessagesFailure\>\"", "|", 
+               "\"\<Error\>\""}]}], "]"}], ",", "\n", "\t\t\t", 
+            RowBox[{"First", "[", "#2", "]"}], ",", "\n", "\t\t\t", 
+            "Nothing"}], "\n", "\t\t", "]"}], "&"}], ",", "\n", "\t\t", 
+         "list"}], "\n", "\t", "]"}]}], ";", "\n", "\t", 
+      RowBox[{"time", "=", 
+       RowBox[{"Round", "[", 
+        RowBox[{
+         RowBox[{"QuantityMagnitude", "[", 
+          RowBox[{"tr", "[", "\"\<TimeElapsed\>\"", "]"}], "]"}], ",", 
+         "0.01"}], "]"}]}], ";", "\n", "\t", 
+      RowBox[{"noTests", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"tr", "[", "\"\<TestResults\>\"", "]"}], "]"}]}], ";", "\n", 
+      "\t", "\n", "\t", 
+      RowBox[{"Print", "[", 
+       RowBox[{
+       "noTests", ",", "\"\< tests run in \>\"", ",", "time", ",", 
+        "\"\< seconds.\>\""}], "]"}], ";", "\n", "\t", "\n", "\t", 
+      RowBox[{"If", "[", "\n", "\t\t", 
+       RowBox[{
+        RowBox[{"TrueQ", "@", 
+         RowBox[{"tr", "[", "\"\<AllTestsSucceeded\>\"", "]"}]}], ",", "\n", 
+        "\t\t", 
+        RowBox[{"Print", "[", "\"\<All tests succeeded!\>\"", "]"}], ",", 
+        "\n", "\t\t", 
+        RowBox[{
+         RowBox[{"Print", "[", 
+          RowBox[{
+           RowBox[{"tr", "[", "\"\<TestsFailedCount\>\"", "]"}], ",", 
+           "\"\< tests failed!\>\""}], "]"}], ";"}]}], "\n", "\t", "]"}], ";",
+       "\n", "\t", "\[IndentingNewLine]", "\t", 
+      RowBox[{"Print", "@", 
+       RowBox[{"Grid", "[", 
+        RowBox[{"list", ",", "\n", "\t\t", 
+         RowBox[{"Alignment", "\[Rule]", "Left"}], ",", "\n", "\t\t", 
+         RowBox[{"Dividers", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"None", ",", 
+            RowBox[{"{", 
+             RowBox[{"2", "\[Rule]", "True"}], "}"}]}], "}"}]}], ",", "\n", 
+         "\t\t", 
+         RowBox[{"Background", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"None", ",", 
+            RowBox[{"Thread", "[", 
+             RowBox[{"indx", "\[Rule]", "Pink"}], "]"}]}], "}"}]}]}], "\n", 
+        "\t", "]"}]}], ";", "\n", "\t", "tr"}]}], "\[IndentingNewLine]", 
+    "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.762696087049417*^9, 3.7626960930326033`*^9}}]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Run tests", "Subsection",
+ ExpressionUUID -> "edf6a835-705a-40fc-8336-a18d15aeed56"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"FileNameTake", "[", 
+       RowBox[{
+        RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", 
+          RowBox[{"-", "2"}]}], "}"}]}], "]"}], ",", "\"\<FindBounces\>\""}], 
+     "}"}], "]"}], "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Get", "[", "\"\<FindBounces`\>\"", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ClearSystemCache", "[", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"$testReport", "=", 
+  RowBox[{"TestReport", "@", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+      "\"\<TestsFindBounces.wl\>\""}], "}"}], "]"}]}]}], "\n", 
+ RowBox[{
+  RowBox[{"printTestResults", "[", "$testReport", "]"}], ";"}]}], "Code",
+ InitializationCell->False,
+ CellChangeTimes->{{3.762694534424148*^9, 3.7626945365201473`*^9}, 
+   3.762695558602515*^9, {3.762696244657385*^9, 3.762696245504651*^9}},
+ ExpressionUUID -> "7f575fa4-4912-41ac-85ef-d7cd3cf3fa68"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   TagBox["TestReportObject",
+    "SummaryHead"], "[", 
+   DynamicModuleBox[{Typeset`open$$ = False}, 
+    PanelBox[
+     PaneSelectorBox[{False->GridBox[{
+        {
+         PaneBox[
+          ButtonBox[
+           
+           DynamicBox[FEPrivate`FrontEndResource[
+            "FEBitmaps", "SquarePlusIconMedium"],
+            ImageSizeCache->{12., {0., 12.}}],
+           Appearance->None,
+           ButtonFunction:>(Typeset`open$$ = True),
+           Evaluator->Automatic,
+           Method->"Preemptive"],
+          Alignment->{Center, Center},
+          
+          ImageSize->
+           Dynamic[{
+            Automatic, 3.5 CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+             Magnification]}]], 
+         GraphicsBox[InsetBox[
+           PaneBox[
+            
+            DynamicBox[FEPrivate`FrontEndResource[
+             "MUnitExpressions", "SuccessIcon"],
+             ImageSizeCache->{16., {4., 8.}}],
+            Alignment->Center,
+            
+            ImageSize->
+             Dynamic[{
+              Automatic, 3.5 CurrentValue["FontCapHeight"]/
+               AbsoluteCurrentValue[Magnification]}]]],
+          AspectRatio->1,
+          Axes->False,
+          Background->GrayLevel[0.93],
+          Frame->True,
+          FrameStyle->Directive[
+            Thickness[Tiny], 
+            GrayLevel[0.55]],
+          FrameTicks->None,
+          ImageSize->{Automatic, 
+            Dynamic[
+            3.5 CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+             Magnification]]},
+          PlotRange->{{0, 1}, {0, 1}}], GridBox[{
+           {
+            RowBox[{
+             TagBox["\<\"Title: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["\<\"Test Report: TestsFindBounces.wl\"\>",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Success rate: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox[
+              TemplateBox[{"100","\"%\""},
+               "RowDefault"],
+              "SummaryItem"]}], 
+            RowBox[{
+             TagBox["\<\"Tests run: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["14",
+              "SummaryItem"]}]}
+          },
+          AutoDelete->False,
+          
+          BaseStyle->{
+           ShowStringCharacters -> False, NumberMarks -> False, 
+            PrintPrecision -> 3, ShowSyntaxStyles -> False},
+          GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Automatic}}},
+          
+          GridBoxItemSize->{
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
+          GridBoxSpacings->{"Columns" -> {{2}}, "Rows" -> {{Automatic}}}]}
+       },
+       AutoDelete->False,
+       BaselinePosition->{1, 1},
+       GridBoxAlignment->{"Rows" -> {{Top}}},
+       GridBoxItemSize->{
+        "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}], True->
+      GridBox[{
+        {
+         PaneBox[
+          ButtonBox[
+           
+           DynamicBox[FEPrivate`FrontEndResource[
+            "FEBitmaps", "SquareMinusIconMedium"]],
+           Appearance->None,
+           ButtonFunction:>(Typeset`open$$ = False),
+           Evaluator->Automatic,
+           Method->"Preemptive"],
+          Alignment->{Center, Center},
+          
+          ImageSize->
+           Dynamic[{
+            Automatic, 3.5 CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+             Magnification]}]], 
+         GraphicsBox[InsetBox[
+           PaneBox[
+            
+            DynamicBox[FEPrivate`FrontEndResource[
+             "MUnitExpressions", "SuccessIcon"]],
+            Alignment->Center,
+            
+            ImageSize->
+             Dynamic[{
+              Automatic, 3.5 CurrentValue["FontCapHeight"]/
+               AbsoluteCurrentValue[Magnification]}]]],
+          AspectRatio->1,
+          Axes->False,
+          Background->GrayLevel[0.93],
+          Frame->True,
+          FrameStyle->Directive[
+            Thickness[Tiny], 
+            GrayLevel[0.55]],
+          FrameTicks->None,
+          ImageSize->{Automatic, 
+            Dynamic[
+            3.5 CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+             Magnification]]},
+          PlotRange->{{0, 1}, {0, 1}}], GridBox[{
+           {
+            RowBox[{
+             TagBox["\<\"Title: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["\<\"Test Report: TestsFindBounces.wl\"\>",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Success rate: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox[
+              TemplateBox[{"100","\"%\""},
+               "RowDefault"],
+              "SummaryItem"]}], 
+            RowBox[{
+             TagBox["\<\"Tests run: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["14",
+              "SummaryItem"]}]},
+           {
+            RowBox[{
+             TagBox["\<\"Succeeded: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["14",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Failed: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["0",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Failed with wrong results: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["0",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Failed with messages: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["0",
+              "SummaryItem"]}], "\[SpanFromLeft]"},
+           {
+            RowBox[{
+             TagBox["\<\"Failed with errors: \"\>",
+              "SummaryItemAnnotation"], "\[InvisibleSpace]", 
+             TagBox["0",
+              "SummaryItem"]}], "\[SpanFromLeft]"}
+          },
+          AutoDelete->False,
+          
+          BaseStyle->{
+           ShowStringCharacters -> False, NumberMarks -> False, 
+            PrintPrecision -> 3, ShowSyntaxStyles -> False},
+          GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Automatic}}},
+          
+          GridBoxItemSize->{
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
+          GridBoxSpacings->{"Columns" -> {{2}}, "Rows" -> {{Automatic}}}]}
+       },
+       AutoDelete->False,
+       BaselinePosition->{1, 1},
+       GridBoxAlignment->{"Rows" -> {{Top}}},
+       GridBoxItemSize->{
+        "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]}, Dynamic[
+      Typeset`open$$],
+      ImageSize->Automatic],
+     BaselinePosition->Baseline],
+    DynamicModuleValues:>{}], "]"}],
+  TestReportObject[
+   Association[
+   "Title" -> "Test Report: TestsFindBounces.wl", "TimeElapsed" -> 
+    Quantity[0.22, "Seconds"], "TestsSucceededCount" -> 14, 
+    "TestsFailedCount" -> 0, "TestsFailedWrongResultsCount" -> 0, 
+    "TestsFailedWithMessagesCount" -> 0, "TestsFailedWithErrorsCount" -> 0, 
+    "Aborted" -> False, "TestResults" -> Association[1 -> TestResultObject[
+        Association[
+        "TestIndex" -> 1, "TestID" -> "Segmentation", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           Round[
+            
+            FindBounces`Segmentation[{1, 2, 6}, FindBounces`numberFieldValues -> 
+             4], 0.01]], "ExpectedOutput" -> HoldForm[{1., 2.67, 4.33, 6.}], 
+         "ActualOutput" -> HoldForm[{1., 2.67, 4.33, 6.}], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.031129`4.643680167295184, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.03114199999999978, "Seconds"], "MemoryUsed" -> 
+         Quantity[3011064, "Bytes"]]], 2 -> TestResultObject[
+        Association[
+        "TestIndex" -> 2, "TestID" -> "findSegment", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           FindBounces`findSegment[
+           Private`a, Private`\[Phi]L, Private`d, Private`Ns]], 
+         "ExpectedOutput" -> HoldForm[1], "ActualOutput" -> HoldForm[1], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000338`2.6794316981096467, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.00033599999999989194`, "Seconds"], "MemoryUsed" -> 
+         Quantity[1776, "Bytes"]]], 3 -> TestResultObject[
+        Association[
+        "TestIndex" -> 3, "TestID" -> "newAnsatz", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           Round[
+            FindBounces`newAnsatz[
+             Part[Private`\[Phi]s, -1], Private`Ns, Private`N\[CurlyPhi]], 
+            0.01]], "ExpectedOutput" -> 
+         HoldForm[{
+           9., {{20., 0.}, {15.85, 0.62}, {13.23, 1.85}, {10.86, 
+            3.2800000000000002`}, {8.65, 4.84}, {6.61, 6.47}, {4.72, 8.09}, {
+            3.0100000000000002`, 9.68}, {1.46, 11.21}, {0., 12.91}}, {0., 
+            4.19, 7.09, 9.86, 12.56, 15.18, 17.67, 20., 22.18, 
+            24.42}, {{-0.99, 0.15}, {-0.91, 0.42}, {-0.86, 
+            0.52}, {-0.8200000000000001, 0.58}, {-0.78, 0.62}, {-0.76, 
+            0.65}, {-0.73, 0.68}, {-0.71, 0.7000000000000001}, {-0.65, 
+            0.76}}, {4.19, 2.9, 2.77, 2.7, 2.61, 2.49, 2.34, 2.18, 2.24}}], 
+         "ActualOutput" -> 
+         HoldForm[{
+           9., {{20., 0.}, {15.85, 0.62}, {13.23, 1.85}, {10.86, 
+            3.2800000000000002`}, {8.65, 4.84}, {6.61, 6.47}, {4.72, 8.09}, {
+            3.0100000000000002`, 9.68}, {1.46, 11.21}, {0., 12.91}}, {0., 
+            4.19, 7.09, 9.86, 12.56, 15.18, 17.67, 20., 22.18, 
+            24.42}, {{-0.99, 0.15}, {-0.91, 0.42}, {-0.86, 
+            0.52}, {-0.8200000000000001, 0.58}, {-0.78, 0.62}, {-0.76, 
+            0.65}, {-0.73, 0.68}, {-0.71, 0.7000000000000001}, {-0.65, 
+            0.76}}, {4.19, 2.9, 2.77, 2.7, 2.61, 2.49, 2.34, 2.18, 2.24}}], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000409`2.762238305839336, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0004060000000001285, "Seconds"], "MemoryUsed" -> 
+         Quantity[3200, "Bytes"]]], 4 -> TestResultObject[
+        Association[
+        "TestIndex" -> 4, "TestID" -> "Rvb", "Outcome" -> "Success", "Input" -> 
+         HoldForm[
+           Round[
+            Re[
+             FindBounces`Rvb[
+             Private`Rw, Private`\[Phi]L, Private`a, Private`d, Private`Ns, 
+              Private`forBack, Private`pos]], 0.01]], "ExpectedOutput" -> 
+         HoldForm[{{0.58, 0.72, 0.76, 0.78, 0.81, 0.8300000000000001, 0.85, 
+           0.87, 0.91, 1.01}, {-48.230000000000004`, -134.01, -141.07, -84.16,
+            14.17, 118.87, 192.96, 205.28, 123.42, 24.42}, {8.25, 30.45, 
+           32.480000000000004`, 14.97, -17.05, -52.94, -79.68, -84.39, -50.57,
+            0.}}], "ActualOutput" -> 
+         HoldForm[{{0.58, 0.72, 0.76, 0.78, 0.81, 0.8300000000000001, 0.85, 
+           0.87, 0.91, 1.01}, {-48.230000000000004`, -134.01, -141.07, -84.16,
+            14.17, 118.87, 192.96, 205.28, 123.42, 24.42}, {8.25, 30.45, 
+           32.480000000000004`, 14.97, -17.05, -52.94, -79.68, -84.39, -50.57,
+            0.}}], "ExpectedMessages" -> {}, "ActualMessages" -> {}, 
+         "AbsoluteTimeUsed" -> 
+         Quantity[0.000327`2.6650627504922757, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0003260000000000485, "Seconds"], "MemoryUsed" -> 
+         Quantity[2648, "Bytes"]]], 5 -> TestResultObject[
+        Association[
+        "TestIndex" -> 5, "TestID" -> "findRw", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           Round[
+            Part[
+             FindBounces`findRw[
+             Private`d, Private`VL, Private`\[Phi]L, Private`a, Private`Ns, 
+              Private`methodRw, Private`maxIteR, Private`accuracyB, 
+              Private`ansatzRw, Private`aRw], -1], 0.0001]], "ExpectedOutput" -> 
+         HoldForm[0.909], "ActualOutput" -> HoldForm[0.909], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.004849`3.8361671819475163, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0048479999999999634`, "Seconds"], "MemoryUsed" -> 
+         Quantity[38080, "Bytes"]]], 6 -> TestResultObject[
+        Association[
+        "TestIndex" -> 6, "TestID" -> "find\[ScriptCapitalI]", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`find\[ScriptCapitalI][
+            Private`v2, Private`\[Phi]L2, Private`a2, Private`b2, Private`Ns, 
+             Private`pos, Private`R2, Private`ddVL2, Private`d], 0.01]], 
+         "ExpectedOutput" -> HoldForm[CompressedData["
+1:eJxTTMoPSmVmYGBggmIuBgTweFglsm5j9wHNmP5DX+91HWh9HbhD7sYkh0Jb
+ruuLt09zAJIFtlNaDiwpAAqULDkAUu7ePftA0A651tf+cx3S04Agc60DmF/f
+e8AOpMG/+4DoOveHVSyTHUDGagDNOfxVI6Z/ResBkPTeV0vAtK3anANvgNa1
+qs4D25fMtsGBAQ2AzekpdTAGgfQyiLvOVELcq/HDHizuMRNiz/clDmBx9hkQ
+dzPNOHD2zJkzPkuWHgDbv6zRAez+vZUOYHM9ag6A9cXIO4DdET0bbH/DsmUO
+s2YCgc4sB5D+M/dmHQDbE7PuAMxdAMpcji4=
+           "]], "ActualOutput" -> 
+         HoldForm[CompressedData["
+1:eJxTTMoPSmVmYGBggmIuBgTweFglsm5j9wHNmP5DX+91HWh9HbhD7sYkh0Jb
+ruuLt09zAJIFtlNaDiwpAAqULDkAUu7ePftA0A651tf+cx3S04Agc60DmF/f
+e8AOpMG/+4DoOveHVSyTHUDGagDNOfxVI6Z/ResBkPTeV0vAtK3anANvgNa1
+qs4D25fMtsGBAQ2AzekpdTAGgfQyiLvOVELcq/HDHizuMRNiz/clDmBx9hkQ
+dzPNOHD2zJkzPkuWHgDbv6zRAez+vZUOYHM9ag6A9cXIO4DdET0bbH/DsmUO
+s2YCgc4sB5D+M/dmHQDbE7PuAMxdAMpcji4=
+           "]], "ExpectedMessages" -> {},
+          "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000455`2.808526394489104, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.00045399999999995444`, "Seconds"], "MemoryUsed" -> 
+         Quantity[2896, "Bytes"]]], 7 -> TestResultObject[
+        Association[
+        "TestIndex" -> 7, "TestID" -> "r\[Beta]\[Nu]", "Outcome" -> "Success",
+          "Input" -> HoldForm[
+           Part[
+            Round[
+             FindBounces`r\[Beta]\[Nu][
+             Private`r12, Private`a2, Private`b2, Private`d, Private`Ns, 
+              Private`\[Alpha]2, Private`R2, Private`\[ScriptCapitalI]2, 
+              Private`d\[ScriptCapitalI]2, Private`pos2], 0.01], All, 
+            Span[2, -1]]], "ExpectedOutput" -> 
+         HoldForm[{{-0.09, -0.02, -0.02, -0.02, -0.02, -0.02, -0.02, -0.02, \
+-0.02, 0.02}, {47.44, 72.21000000000001, -97.99000000000001, 13.39, 482.48, 
+           847.94, 529.01, -578.59, -1487.6200000000001`, 0.}, {
+           829.5500000000001, 744.19, -1056.48, -1494.88, -66.36, 1428.09, 
+           1064.38, -1164.09, -2257.2400000000002`, 0.}}], "ActualOutput" -> 
+         HoldForm[{{-0.09, -0.02, -0.02, -0.02, -0.02, -0.02, -0.02, -0.02, \
+-0.02, 0.02}, {47.44, 72.21000000000001, -97.99000000000001, 13.39, 482.48, 
+           847.94, 529.01, -578.59, -1487.6200000000001`, 0.}, {
+           829.5500000000001, 744.19, -1056.48, -1494.88, -66.36, 1428.09, 
+           1064.38, -1164.09, -2257.2400000000002`, 0.}}], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000436`2.790001487100578, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.00043400000000004546`, "Seconds"], "MemoryUsed" -> 
+         Quantity[2112, "Bytes"]]], 8 -> TestResultObject[
+        Association[
+        "TestIndex" -> 8, "TestID" -> "findrw", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           Round[
+            ReplaceAll[Private`rw, 
+             FindRoot[
+              FindBounces`findrw[
+              Private`rw, Private`a2, Private`b2, Private`d, Private`Ns, 
+               Private`\[Alpha]2, Private`R2, Private`\[ScriptCapitalI]2, 
+               Private`d\[ScriptCapitalI]2, Private`pos2], {Private`rw, -1}]],
+             0.01]], "ExpectedOutput" -> HoldForm[-0.09], "ActualOutput" -> 
+         HoldForm[-0.09], "ExpectedMessages" -> {}, "ActualMessages" -> {}, 
+         "AbsoluteTimeUsed" -> 
+         Quantity[0.002414`3.533252263593324, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.002410999999999941, "Seconds"], "MemoryUsed" -> 
+         Quantity[20904, "Bytes"]]], 9 -> TestResultObject[
+        Association[
+        "TestIndex" -> 9, "TestID" -> "\[Phi]vabRs", "Outcome" -> "Success", 
+         "Input" -> HoldForm[
+           Round[
+            FindBounces`\[Phi]vabRs[
+            Private`dV, Private`d2V, Private`\[Phi], Private`eL, Private`l, 
+             Private`\[Phi]L, Private`v, Private`a, Private`b, Private`Ns, 
+             Private`R, Private`N\[CurlyPhi], Private`pos, Private`d, 
+             Private`ite\[Zeta], Private`accuracyPath], 0.01]], 
+         "ExpectedOutput" -> HoldForm[{CompressedData["
+1:eJxTTMoPSmVmYGBgAmIuKA0BJg4wljEIbNZ3uL64wJbr+mP7bxox/YdKtRxm
+zQSBv/Y75FpfB+5QdbDjAqtwOHsGCHwUHYCqvmrECDsU2oIkpBweVomsc38o
+CaWFHIBElYiegoMomMEBVa8Mpb/bvwkEmpytBndHEMiii5oO6O7bCbLfQh9q
+zjN7CK3lAHHOf3uI/apQe7kcNMEWKDqArekXhton5QC277Uk1FxhB3mQt+QU
+HJaAvL2YwwHsTwtliP/O/LCH+BfTfQBq2XeJ
+            "], {{{67.7, -7.11}, {
+            141., -58.02}, {140.06, -74.75}, {87.52, -51.160000000000004`}, {
+            7.4, 5.84}, {-71.96000000000001, 74.15}, {-124.02, 
+            127.06}, {-128.44, 140.24}, {-64.55, 87.98}}, {{
+            57.980000000000004`, -26.990000000000002`}, {122.97, -87.84}, {
+            107.95, -115.07000000000001`}, {
+            53.67, -89.15}, {-19.95, -27.01}, {-89.91, 46.57}, {-134.13, 
+            105.22}, {-134.46, 125.62}, {-66.75, 
+            74.61}}}, {{{-69.71000000000001, 10.38}, {-138.84, 
+            65.05}, {-136.51, 82.45}, {-92.34, 65.57000000000001}, {-29.57, 
+            23.45}, {29.26, -25.21}, {66.05, -61.04}, {69.52, -69.05}, {
+            31.59, -36.74}}, {{-59.25, 33.77}, {-122.02, 
+            92.54}, {-108.96000000000001`, 116.24000000000001`}, {-64.86, 
+            95.19}, {-8.33, 47.47}, {42.7, -6.19}, {
+            73.32000000000001, -46.81}, {73.54, -60.15}, {
+            32.56, -29.28}}}, {{{-8.16, 1.22}, {-27.580000000000002`, 
+            12.92}, {-27.8, 16.79}, {-12.200000000000001`, 8.67}, {
+            13.36, -10.59}, {40.11, -34.550000000000004`}, {58.52, -54.08}, {
+            59.870000000000005`, -59.47}, {
+            32.97, -38.34}}, {{-6.0600000000000005`, 5.28}, {-22.88, 
+            21.03}, {-18.57, 28.85}, {-1.86, 20.88}, {22.11, 0.65}, {
+            46.09, -24.580000000000002`}, {62.050000000000004`, -45.75}, {
+            62.18, -53.550000000000004`}, {
+            34.2, -32.480000000000004`}}}, CompressedData["
+1:eJxTTMoPSmVmYGBgAmIuKN1/6KtGTP8jexjNdX1xgS3XczgdtEOu9XXgCzj9
+Dajq0FcE/SYQJPESTk8Am/MKThuDwWs4DTb2OoKWB5q6Q+4tnNYEGavxAU7b
+gR3yyH6d+8MqkXXPB537ACe1otc=
+            "]}], "ActualOutput" -> 
+         HoldForm[{CompressedData["
+1:eJxTTMoPSmVmYGBgAmIuKA0BJg4wljEIbNZ3uL64wJbr+mP7bxox/YdKtRxm
+zQSBv/Y75FpfB+5QdbDjAqtwOHsGCHwUHYCqvmrECDsU2oIkpBweVomsc38o
+CaWFHIBElYiegoMomMEBVa8Mpb/bvwkEmpytBndHEMiii5oO6O7bCbLfQh9q
+zjN7CK3lAHHOf3uI/apQe7kcNMEWKDqArekXhton5QC277Uk1FxhB3mQt+QU
+HJaAvL2YwwHsTwtliP/O/LCH+BfTfQBq2XeJ
+            "], {{{67.7, -7.11}, {
+            141., -58.02}, {140.06, -74.75}, {87.52, -51.160000000000004`}, {
+            7.4, 5.84}, {-71.96000000000001, 74.15}, {-124.02, 
+            127.06}, {-128.44, 140.24}, {-64.55, 87.98}}, {{
+            57.980000000000004`, -26.990000000000002`}, {122.97, -87.84}, {
+            107.95, -115.07000000000001`}, {
+            53.67, -89.15}, {-19.95, -27.01}, {-89.91, 46.57}, {-134.13, 
+            105.22}, {-134.46, 125.62}, {-66.75, 
+            74.61}}}, {{{-69.71000000000001, 10.38}, {-138.84, 
+            65.05}, {-136.51, 82.45}, {-92.34, 65.57000000000001}, {-29.57, 
+            23.45}, {29.26, -25.21}, {66.05, -61.04}, {69.52, -69.05}, {
+            31.59, -36.74}}, {{-59.25, 33.77}, {-122.02, 
+            92.54}, {-108.96000000000001`, 116.24000000000001`}, {-64.86, 
+            95.19}, {-8.33, 47.47}, {42.7, -6.19}, {
+            73.32000000000001, -46.81}, {73.54, -60.15}, {
+            32.56, -29.28}}}, {{{-8.16, 1.22}, {-27.580000000000002`, 
+            12.92}, {-27.8, 16.79}, {-12.200000000000001`, 8.67}, {
+            13.36, -10.59}, {40.11, -34.550000000000004`}, {58.52, -54.08}, {
+            59.870000000000005`, -59.47}, {
+            32.97, -38.34}}, {{-6.0600000000000005`, 5.28}, {-22.88, 
+            21.03}, {-18.57, 28.85}, {-1.86, 20.88}, {22.11, 0.65}, {
+            46.09, -24.580000000000002`}, {62.050000000000004`, -45.75}, {
+            62.18, -53.550000000000004`}, {
+            34.2, -32.480000000000004`}}}, CompressedData["
+1:eJxTTMoPSmVmYGBgAmIuKN1/6KtGTP8jexjNdX1xgS3XczgdtEOu9XXgCzj9
+Dajq0FcE/SYQJPESTk8Am/MKThuDwWs4DTb2OoKWB5q6Q+4tnNYEGavxAU7b
+gR3yyH6d+8MqkXXPB537ACe1otc=
+            "]}], "ExpectedMessages" -> {}, 
+         "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.003775`3.727431953797201, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0037730000000000263`, "Seconds"], "MemoryUsed" -> 
+         Quantity[10264, "Bytes"]]], 10 -> TestResultObject[
+        Association[
+        "TestIndex" -> 10, "TestID" -> "PathDeformation", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`PathDeformation[
+            Private`dV, Private`d2V, Private`Ns, Private`N\[CurlyPhi], 
+             Private`pos, Private`d, 
+             Part[Private`Rs, 1], 
+             Part[Private`\[Phi]s, 1], 
+             Part[Private`vs, 1], 
+             Part[Private`as, 1], 
+             Part[Private`bs, 1], Private`accuracyPath], 0.01]], 
+         "ExpectedOutput" -> 
+         HoldForm[{{{0., 0.}, {-0.19, -0.09}, {-0.07, -0.1}, {0.05, -0.13}, {
+            0.13, -0.16}, {0.19, -0.19}, {0.21, -0.2}, {0.19, -0.2}, {
+            0.16, -0.16}, {0., 
+            0.}}, {{-10.06, -16.16}, {-20.12, -28.32}, {-29.62, \
+-43.300000000000004`}, {-26.5, -44.81}, {-18.03, -40.980000000000004`}, \
+{-10.88, -33.9}, {-7.87, -23.77}, {-7.96, -12.1}, {-5.41, -9.52}}, {{11.11, 
+            18.62}, {19.51, 25.94}, {26.310000000000002`, 36.1}, {22.21, 
+            34.9}, {14.36, 30.14}, {8.120000000000001, 23.72}, {5.29, 15.9}, {
+            4.8, 7.71}, {2.5500000000000003`, 5.5}}, {{2.14, 3.34}, {5.08, 
+            7.66}, {8.3, 12.9}, {7.930000000000001, 14.280000000000001`}, {
+            5.74, 13.8}, {3.7800000000000002`, 11.96}, {3.0700000000000003`, 
+            8.73}, {3.44, 4.59}, {2.87, 3.98}}, {-0.02, 0.12}, {0., 0.}}], 
+         "ActualOutput" -> 
+         HoldForm[{{{0., 0.}, {-0.19, -0.09}, {-0.07, -0.1}, {0.05, -0.13}, {
+            0.13, -0.16}, {0.19, -0.19}, {0.21, -0.2}, {0.19, -0.2}, {
+            0.16, -0.16}, {0., 
+            0.}}, {{-10.06, -16.16}, {-20.12, -28.32}, {-29.62, \
+-43.300000000000004`}, {-26.5, -44.81}, {-18.03, -40.980000000000004`}, \
+{-10.88, -33.9}, {-7.87, -23.77}, {-7.96, -12.1}, {-5.41, -9.52}}, {{11.11, 
+            18.62}, {19.51, 25.94}, {26.310000000000002`, 36.1}, {22.21, 
+            34.9}, {14.36, 30.14}, {8.120000000000001, 23.72}, {5.29, 15.9}, {
+            4.8, 7.71}, {2.5500000000000003`, 5.5}}, {{2.14, 3.34}, {5.08, 
+            7.66}, {8.3, 12.9}, {7.930000000000001, 14.280000000000001`}, {
+            5.74, 13.8}, {3.7800000000000002`, 11.96}, {3.0700000000000003`, 
+            8.73}, {3.44, 4.59}, {2.87, 3.98}}, {-0.02, 0.12}, {0., 0.}}], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.003307`3.669949192745695, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0033049999999998914`, "Seconds"], "MemoryUsed" -> 
+         Quantity[4576, "Bytes"]]], 11 -> TestResultObject[
+        Association[
+        "TestIndex" -> 11, "TestID" -> "\[ScriptCapitalT]", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`\[ScriptCapitalT][
+            Private`v, Private`a, Private`b, Private`R, Private`d, 
+             Private`Ns], 0.01]], "ExpectedOutput" -> HoldForm[10689.87], 
+         "ActualOutput" -> HoldForm[10689.87], "ExpectedMessages" -> {}, 
+         "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.00024`2.5307262395435974, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0002369999999998207, "Seconds"], "MemoryUsed" -> 
+         Quantity[368, "Bytes"]]], 12 -> TestResultObject[
+        Association[
+        "TestIndex" -> 12, "TestID" -> "\[ScriptCapitalV]", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`\[ScriptCapitalV][
+            Private`v, Private`a, Private`b, Private`R, Private`d, Private`VL,
+              Private`\[Phi]L, Private`Ns], 0.01]], "ExpectedOutput" -> 
+         HoldForm[-5344.9400000000005`], "ActualOutput" -> 
+         HoldForm[-5344.9400000000005`], "ExpectedMessages" -> {}, 
+         "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000391`2.7426917552278587, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0003850000000000797, "Seconds"], "MemoryUsed" -> 
+         Quantity[384, "Bytes"]]], 13 -> TestResultObject[
+        Association[
+        "TestIndex" -> 13, "TestID" -> "\[ScriptCapitalT]\[Xi]", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`\[ScriptCapitalT]\[Xi][
+            Private`d, Private`a2, Private`R2, Private`b2, Private`v2, 
+             Private`\[Alpha]2, Private`\[Beta]2, Private`\[Nu]2, 
+             Private`ddVL2, Private`VL2, Private`\[Phi]L2, Private`Ns, 
+             Private`pos2, Private`r2], 0.01]], "ExpectedOutput" -> 
+         HoldForm[-771.32], "ActualOutput" -> HoldForm[-771.32], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.00073`3.013837857952448, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0007269999999999222, "Seconds"], "MemoryUsed" -> 
+         Quantity[5896, "Bytes"]]], 14 -> TestResultObject[
+        Association[
+        "TestIndex" -> 14, "TestID" -> "\[ScriptCapitalV]\[Xi]", "Outcome" -> 
+         "Success", "Input" -> HoldForm[
+           Round[
+            FindBounces`\[ScriptCapitalV]\[Xi][
+            Private`d, Private`a2, Private`R2, Private`b2, Private`v2, 
+             Private`\[Alpha]2, Private`\[Beta]2, Private`\[Nu]2, 
+             Private`ddVL2, Private`VL2, Private`\[Phi]L2, Private`Ns, 
+             Private`pos2, Private`r2], 0.01]], "ExpectedOutput" -> 
+         HoldForm[385.66], "ActualOutput" -> HoldForm[385.66], 
+         "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
+         Quantity[0.000761`3.0318996546025625, "Seconds"], "CPUTimeUsed" -> 
+         Quantity[0.0007589999999999542, "Seconds"], "MemoryUsed" -> 
+         Quantity[5912, "Bytes"]]]], 
+    "TestsSucceededIndices" -> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+     14}, "TestsFailedIndices" -> {}, "TestsFailedWrongResultsIndices" -> {}, 
+    "TestsFailedWithMessagesIndices" -> {}, 
+    "TestsFailedWithErrorsIndices" -> {}]],
+  Editable->False,
+  SelectWithContents->True,
+  Selectable->False]], "Output",
+ CellChangeTimes->{
+  3.7626945390667057`*^9, {3.76269463593519*^9, 3.7626946614635763`*^9}, 
+   3.7626947236683893`*^9, 3.762695137281871*^9, 3.762696112781382*^9, 
+   3.7626961467916727`*^9, 3.762696252661336*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+  "14", "\[InvisibleSpace]", "\<\" tests run in \"\>", "\[InvisibleSpace]", 
+   "0.22`", "\[InvisibleSpace]", "\<\" seconds.\"\>"}],
+  SequenceForm[14, " tests run in ", 0.22, " seconds."],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.762694539064221*^9, {3.762694635932444*^9, 3.762694661975995*^9}, 
+   3.762694724182325*^9, 3.762695137289947*^9, 3.762696112778513*^9, 
+   3.762696147292693*^9, 3.762696253180895*^9}],
+
+Cell[BoxData["\<\"All tests succeeded!\"\>"], "Print",
+ CellChangeTimes->{
+  3.762694539064221*^9, {3.762694635932444*^9, 3.762694661975995*^9}, 
+   3.762694724182325*^9, 3.762695137289947*^9, 3.762696112778513*^9, 
+   3.762696147292693*^9, 3.7626962531841507`*^9}],
+
+Cell[BoxData[
+ TagBox[GridBox[{
+    {"\<\"Idx\"\>", "\<\"Outcome\"\>", "\<\"Time [s]\"\>", \
+"\<\"MemoryUsed\"\>", "\<\"TestID\"\>"},
+    {"1", "\<\"Success\"\>", "0.031`", "3011064", "\<\"Segmentation\"\>"},
+    {"2", "\<\"Success\"\>", "0.`", "1776", "\<\"findSegment\"\>"},
+    {"3", "\<\"Success\"\>", "0.`", "3200", "\<\"newAnsatz\"\>"},
+    {"4", "\<\"Success\"\>", "0.`", "2648", "\<\"Rvb\"\>"},
+    {"5", "\<\"Success\"\>", "0.005`", "38080", "\<\"findRw\"\>"},
+    {"6", "\<\"Success\"\>", "0.`", "2896", "\<\"find\[ScriptCapitalI]\"\>"},
+    {"7", "\<\"Success\"\>", "0.`", "2112", "\<\"r\[Beta]\[Nu]\"\>"},
+    {"8", "\<\"Success\"\>", "0.002`", "20904", "\<\"findrw\"\>"},
+    {"9", "\<\"Success\"\>", "0.004`", "10264", "\<\"\[Phi]vabRs\"\>"},
+    {"10", "\<\"Success\"\>", "0.003`", "4576", "\<\"PathDeformation\"\>"},
+    {"11", "\<\"Success\"\>", "0.`", "368", "\<\"\[ScriptCapitalT]\"\>"},
+    {"12", "\<\"Success\"\>", "0.`", "384", "\<\"\[ScriptCapitalV]\"\>"},
+    {"13", "\<\"Success\"\>", "0.001`", 
+     "5896", "\<\"\[ScriptCapitalT]\[Xi]\"\>"},
+    {"14", "\<\"Success\"\>", "0.001`", 
+     "5912", "\<\"\[ScriptCapitalV]\[Xi]\"\>"}
+   },
+   AutoDelete->False,
+   GridBoxAlignment->{"Columns" -> {{Left}}},
+   GridBoxBackground->{"Columns" -> {{None}}},
+   GridBoxDividers->{"Columns" -> {{None}}, "RowsIndexed" -> {2 -> True}},
+   GridBoxItemSize->{"Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
+  "Grid"]], "Print",
+ CellChangeTimes->{
+  3.762694539064221*^9, {3.762694635932444*^9, 3.762694661975995*^9}, 
+   3.762694724182325*^9, 3.762695137289947*^9, 3.762696112778513*^9, 
+   3.762696147292693*^9, 3.762696253189475*^9}]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, 287}, {Automatic, 187}},
+FrontEndVersion->"11.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+21, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 90, 1, 44, "Subsection"],
+Cell[673, 25, 5074, 124, 1020, "Input"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[5784, 154, 90, 1, 36, "Subsection"],
+Cell[CellGroupData[{
+Cell[5899, 159, 1127, 29, 113, "Code",
+ InitializationCell->False],
+Cell[7029, 190, 27285, 545, 60, "Output"],
+Cell[CellGroupData[{
+Cell[34339, 739, 473, 10, 24, "Print"],
+Cell[34815, 751, 265, 4, 24, "Print"],
+Cell[35083, 757, 1659, 30, 262, "Print"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
