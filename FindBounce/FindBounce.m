@@ -6,7 +6,7 @@
 
 (*False Vacuum Decay with Polygonal Bounce*)
 
-(* :Title: FindBounces *)
+(* :Title: FindBounce *)
 (* :Context: Tunneling, First order first transitions, bubble nucleation*)
 (* :Author: Victor Guada *)
 (* :Summary: Compues decay of the false vacuum in models with multiple scalar*)
@@ -15,18 +15,18 @@
 (* This program is free software...*)
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*BeginPackage*)
 
 
-BeginPackage["FindBounces`"];
+BeginPackage["FindBounce`"];
 
 
 (* ::Section::Closed:: *)
 (*Available Functions*)
 
 
-FindBounces::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}], min1, min2 ]
+FindBounce::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}], min1, min2 ]
 	computes false vacuum decay in potential with multiple scalar fields.";
 Segmentation;
 findSegment;
@@ -48,7 +48,7 @@ PathDeformation;
 (*Options*)
 
 
-Options[FindBounces] = {ansatzRadii -> None,
+Options[FindBounce] = {ansatzRadii -> None,
 				ansatzPath -> None,
 				ansatzV1 -> None,
 				accuracyBounce -> 6,
@@ -74,7 +74,7 @@ Options[Segmentation] = {numberFieldValues -> 30,
 
 
 dimension::usage = "dimension: the dimension of the spacetime; defaul imput is 4.";
-fieldValues::usage = "fieldValues: number of field values in FindBounces (defaul value 200).";
+fieldValues::usage = "fieldValues: number of field values in FindBounce (defaul value 200).";
 ansatzRadii::usage = "ansatzRadii: gives a estimation by hand.";
 maxIterationsR::usage = "maxIterations: number of iterations in findRw.";
 maxIterationsPathDeformation::usage = "maxIterationsPathDeformatio: number of iterations in path deformation (defaul value 2).";
@@ -86,11 +86,11 @@ accuracyBounce::usage = "accuracyBounce: accuracy in findRw";
 numberFieldValues::usage = "numberFieldValues: number of field values(defaul imput is 200).";
 methodS::usage = "methodS: specify what method should be used {HS,biHS,HSPlus}, where H:Homogeneous, S:Segementation, bi: Double HS splitted in the Saddle Point and Plus: additional field values close to the extrema";
 (*========== Comments ==========*)
-FindBounces::Error = "Wrong input, PB has aborted.";
-FindBounces::ErrorExtrema = "Wrong position of the minima, PB has aborted.";
-FindBounces::ErrorPathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
-FindBounces::ErrorIte = "Wrong number of interation, PB has aborted.";
-FindBounces::ansatzPath = "Wrong ansatzPath, PB has aborted.";
+FindBounce::Error = "Wrong input, PB has aborted.";
+FindBounce::ErrorExtrema = "Wrong position of the minima, PB has aborted.";
+FindBounce::ErrorPathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
+FindBounce::ErrorIte = "Wrong number of interation, PB has aborted.";
+FindBounce::ansatzPath = "Wrong ansatzPath, PB has aborted.";
 Segmentation::Error = "Warning: wrong number of field values.";
 ansatzN3::Degeneracy = "There is not tunneling decay since the vacua are degenerated.";
 ansatzN3::Error = "Wrong input, PB has aborted.";
@@ -588,11 +588,11 @@ Return[2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalS]] ];
 \[ScriptCapitalS]s[Rs_,vs_,as_,bs_,d_,N\[CurlyPhi]_,pos_,Ns_?NumericQ,\[Phi]s_,VL_,DV_,D2V_]:= \[ScriptCapitalT]s[Rs,as,bs,d,N\[CurlyPhi],pos,Ns]+\[ScriptCapitalV]s[Rs,vs,as,bs,d,N\[CurlyPhi],pos,Ns,\[Phi]s,VL,DV,D2V];
 
 
-(* ::Section:: *)
-(*FindBounces*)
+(* ::Section::Closed:: *)
+(*FindBounce*)
 
 
-FindBounces[V_,extrema1_,extrema3_,OptionsPattern[]]:=
+FindBounce[V_,extrema1_,extrema3_,OptionsPattern[]]:=
 Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1,k,Nfv,abc,timeRw,aRw,accuracyB,accuracyPath,
 	N\[CurlyPhi],VL,d\[Phi]L,extrema2,itePath,casesIte,\[Phi]t,ite\[Zeta],maxIteR,ps,R,forBack,methodRw,methodSeg,improvePB,
 	dVL,ddVL,\[Alpha],c,rI,\[Beta],\[Nu],r,pos,rw,r1,\[ScriptCapitalI],d\[ScriptCapitalI],\[ScriptM],rs,l,eL,dV,d2V,\[Phi]l,\[Phi]s,vs,as,bs,Rs,Vs,Ts,V\[Xi],T\[Xi],V1,T1,aV1,DV,D2V,\[Phi]N3},
@@ -602,7 +602,7 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	aV1 = OptionValue[ansatzV1];
 	accuracyB = OptionValue[accuracyBounce];
 	accuracyPath = OptionValue[accuracyPathDeformation];	
-	d = IntegerPart[OptionValue[dimension]]; If[d<3 || d>4, Message[FindBounces::Error];Abort[];];  
+	d = IntegerPart[OptionValue[dimension]]; If[d<3 || d>4, Message[FindBounce::Error];Abort[];];  
 	forBack = OptionValue[forwardBackward];
 	Nfv = OptionValue[fieldValues];
 	maxIteR = OptionValue[maxIterationsR];
@@ -614,7 +614,7 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	N\[CurlyPhi] = Length[extrema1];If[N\[CurlyPhi]==0,N\[CurlyPhi]=1;]; (*Number of Fields*)
 	extrema2= If[OptionValue[initialFieldValue] === Null, 
 				(extrema1+extrema3)/2,OptionValue[initialFieldValue] ];
-	If[itePath<0,Message[FindBounces::ErrorIte];Abort[]; ];
+	If[itePath<0,Message[FindBounce::ErrorIte];Abort[]; ];
 	If[N\[CurlyPhi]<=1,itePath=0;];
 (*=========== Derivative of the Potential ===*)
 	If[OptionValue[derivativeV]===True,
@@ -633,18 +633,18 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	If[aPath =!= None, 
 		If[Length[aPath[[1]]]==N\[CurlyPhi]||N\[CurlyPhi]==1&&Length[aPath[[1]]]==0,
 			{Ns,\[Phi],\[Phi]L,eL,l}=newAnsatz[aPath,Length[aPath]-1,N\[CurlyPhi]],
-			Message[FindBounces::ansatzPath];Abort[];]  ];
+			Message[FindBounce::ansatzPath];Abort[];]  ];
 	If[N\[CurlyPhi]>1,\[Phi]s= Table[\[Phi],{i,ite\[Zeta]+1}]];
 	\[Phi]t=0; k = 0; (*Initial Conditions*)
 	While[k <= itePath,
 (*========= Single_Field_Polygonal_bounce ==*)
 		VL = If[aV1===None,Table[ V[\[Phi][[s]]],{s,1,Ns+1}],aV1];
 		If[VL[[1]]>VL[[2]]||VL[[-1]]>VL[[-2]],
-			If[k === 0,Message[FindBounces::ErrorExtrema];Abort[];, Message[FindBounces::ErrorPathDeformation];Abort[];  ]];
+			If[k === 0,Message[FindBounce::ErrorExtrema];Abort[];, Message[FindBounce::ErrorPathDeformation];Abort[];  ]];
 		a  = Table[ (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) 1/8. ,{s,1,Ns} ];
 		pos = findSegment[a,\[Phi]L,d,Ns];
 		{timeRw,Rw} = findRw[d,VL,\[Phi]L,a,Ns,methodRw,maxIteR,accuracyB,ansatzRw,aRw]//Re;
-		If[Rw<10^(-5.),Message[FindBounces::Error];Abort[]];
+		If[Rw<10^(-5.),Message[FindBounce::Error];Abort[]];
 		{R,v,b} = Rvb[Rw,\[Phi]L,a,d,Ns,"backward",None]//Re;
 (*========= Single_Field_Improvement========*) 
 		If[improvePB&&k ==itePath &&N\[CurlyPhi]>1,
