@@ -26,7 +26,7 @@ BeginPackage["FindBounce`"];
 (*Available Functions*)
 
 
-FindBounce::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}], min1, min2 ]
+FindBounce::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}],{phi1, phi2,\[Ellipsis]}, {min1, min2} ]
 	computes false vacuum decay in potential with multiple scalar fields.";
 Segmentation;
 findSegment;
@@ -48,49 +48,49 @@ PathDeformation;
 (*Options*)
 
 
-Options[FindBounce] = {ansatzRadii -> None,
-				ansatzPath -> None,
-				ansatzV1 -> None,
-				accuracyBounce -> 6,
-				accuracyPathDeformation -> 10,
+Options[FindBounce] = {"AnsatzRadii" -> None,
+				"AnsatzPath" -> None,
+				"AnsatzV1" -> None,
+				"AccuracyBounce" -> 6,
+				"AccuracyPathDeformation" -> 10,
 				derivativeV-> True,
 				derivative2V-> True,
-				dimension -> 4,
-				forwardBackward -> "backward",
-				fieldValues -> 30,
-				improvementPB ->True,
-				initialFieldValue  -> Null,
-				maxIterationsR -> 100,
-				maxIterationsPathDeformation -> 3,
-				methodBounce -> "DerrickFindRoot",
-				methodSegmentation -> "HS",
-				maxIterationZeta ->1};
-Options[Segmentation] = {numberFieldValues -> 30,
-				methodS -> "HS"};
+				"Dimension" -> 4,
+				"ForwardBackward" -> "backward",
+				"NumberSegments" -> 29,
+				"ImprovementPolygonalBounce" ->True,
+				"InitialFieldValue"  -> Null,
+				"MaxIterationsR" -> 100,
+				"MaxIterationsPathDeformation" -> 3,
+				"MethodBounce" -> "DerrickFindRoot",
+				"MethodSegmentation" -> "HS",
+				"MaxIterationZeta" ->1};
+Options[Segmentation] = {"NumberFieldValues" -> 30,
+				"Method" -> "HS"};
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Messages*)
 
 
-dimension::usage = "dimension: the dimension of the spacetime; defaul imput is 4.";
-fieldValues::usage = "fieldValues: number of field values in FindBounce (defaul value 200).";
-ansatzRadii::usage = "ansatzRadii: gives a estimation by hand.";
-maxIterationsR::usage = "maxIterations: number of iterations in findRw.";
-maxIterationsPathDeformation::usage = "maxIterationsPathDeformatio: number of iterations in path deformation (defaul value 2).";
+(*"Dimension"::usage = "Dimension: the dimension of the spacetime; defaul imput is 4.";
+"NumberSegments"::usage = "NumberSegements: numer of segments, defult value is 29";
+"AnsatzRadii"::usage = "AnsatzRadii: gives a estimation by hand.";
+"MaxIterationsR"::usage = "MaxIterationsR: maximum number of iterations to get R";
+"MaxIterationsPathDeformation"::usage = "MaxIterationsPathDeformation: number of iterations in path deformation (defaul value 2).";
 maxIterationExpansion::usage = "maxIterationExpansion: max number of iteration in the expansion.";
-forwardBackward::usage = "forwardBackward: set Polygonal Bounce either forward or backward.";
-initialFieldValue::usage = "initialFieldValue: initial field Value to start the trayectory in N=3.";
-accuracyBounce::usage = "accuracyBounce: accuracy in findRw";
+"ForwardBackward"::usage = "ForwardBackward: set Polygonal Bounce either forward or backward.";
+"InitialFieldValue"::usage = "InitialFieldValue: initial field Value to start the trayectory in N=3.";
+"AccuracyBounce"::usage = "AccuracyBounce: accuracy in findRw";
 (*========= Segmentation ==========*)	
-numberFieldValues::usage = "numberFieldValues: number of field values(defaul imput is 200).";
-methodS::usage = "methodS: specify what method should be used {HS,biHS,HSPlus}, where H:Homogeneous, S:Segementation, bi: Double HS splitted in the Saddle Point and Plus: additional field values close to the extrema";
+"NumberFieldValues"::usage = "NumberFieldValues: number of field values(defaul imput is 200).";
+"Method"::usage = "Method: specify what method should be used {HS,biHS,HSPlus}, where H:Homogeneous, S:Segementation, bi: Double HS splitted in the Saddle Point and Plus: additional field values close to the extrema";*)
 (*========== Comments ==========*)
 FindBounce::Error = "Wrong input, PB has aborted.";
 FindBounce::ErrorExtrema = "Wrong position of the minima, PB has aborted.";
 FindBounce::ErrorPathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
 FindBounce::ErrorIte = "Wrong number of interation, PB has aborted.";
-FindBounce::ansatzPath = "Wrong ansatzPath, PB has aborted.";
+FindBounce::AnsatzPath = "Wrong AnsatzPath, PB has aborted.";
 Segmentation::Error = "Warning: wrong number of field values.";
 ansatzN3::Degeneracy = "There is not tunneling decay since the vacua are degenerated.";
 ansatzN3::Error = "Wrong input, PB has aborted.";
@@ -117,16 +117,16 @@ Begin["`Private`"];
 Segmentation[\[Phi]N3_,OptionsPattern[]]:=
 Block[{Nfv,\[Phi]3,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[CapitalPhi],np,n1,n2,infP,pos1,pos2,
 	\[Psi],\[Beta],p1,p2,p3,p4,p,case1,case2,case3,case4}, 
-\[Phi]3 = N[\[Phi]N3]; Nfv = OptionValue[numberFieldValues]; 
+\[Phi]3 = N[\[Phi]N3]; Nfv = OptionValue["NumberFieldValues"]; 
 	If[ Nfv < 2 , Message[Segmentation::Error] ]; 
 	If[ Nfv <= 3, Return[\[Phi]3], 
 (*========= Homogeneous_Segmentation ===========================*)
-	If[OptionValue[methodS] === "HS" , 
+	If[OptionValue["Method"] === "HS" , 
 \[Delta]\[Phi]= Abs[ (\[Phi]3[[3]] - \[Phi]3[[1]]) ]/(Nfv-1);
 \[CapitalPhi] = Table[ i , { i, \[Phi]3[[1]], \[Phi]3[[3]], \[Delta]\[Phi]} ];
 	Return[ \[CapitalPhi] ] ];
 (*========= Bi-Homogeneous_Segmentation ==========================*)
-	If[OptionValue[methodS] === "biHS", 
+	If[OptionValue["Method"] === "biHS", 
 \[Delta]\[Phi] = Abs[ (\[Phi]3[[3]] - \[Phi]3[[1]]) ]/(Nfv-1);
 n1 = Quotient[Abs[ (\[Phi]3[[2]] - \[Phi]3[[1]]) ], \[Delta]\[Phi] ];
 n2 = IntegerPart[ (Nfv-1) - n1 ];
@@ -136,7 +136,7 @@ n2 = IntegerPart[ (Nfv-1) - n1 ];
 			Table[ i , { i, \[Phi]3[[2]], \[Phi]3[[3]] ,\[Delta]\[Phi]2  } ]    ];
 	Return[ \[CapitalPhi] ] ];
 (*======= Homogeneous_Segmentation_plus_Additional_Segmentation_in_Between ============*)
-	If[OptionValue[methodS] === "HSPlus",
+	If[OptionValue["Method"] === "HSPlus",
 np = Quotient[Nfv,20];
 Nfv = Nfv-1. - 4.(np+1);
 \[Delta]\[Phi] = Abs[ (\[Phi]3[[3]] - \[Phi]3[[1]]) ]/(Nfv);
@@ -189,7 +189,7 @@ Do[\[Phi]L3[\[Alpha]] =Sum[L3[i],{i,1,\[Alpha]-1}],{\[Alpha],1,3}];
 Do[d\[Phi]L3[\[Alpha]]=(\[Phi]3[\[Alpha]+1] - \[Phi]3[\[Alpha]])/L3[\[Alpha]],{\[Alpha],1,2}];	
 Do[a3[\[Alpha]] = (VL3[\[Alpha]+1]-VL3[\[Alpha]])/(\[Phi]L3[\[Alpha]+1]-\[Phi]L3[\[Alpha]]) 1/8. ,{\[Alpha],1,2}]  ;   
 (*========== Segmentation_\[Phi][0] ==============*)
-\[Phi]L = Segmentation[Table[\[Phi]L3[\[Alpha]],{\[Alpha],1,3}], numberFieldValues -> Nfv ,methodS -> methodSeg];
+\[Phi]L = Segmentation[Table[\[Phi]L3[\[Alpha]],{\[Alpha],1,3}], "NumberFieldValues" -> Nfv ,"Method" -> methodSeg];
 \[Phi]   = Table[ If[ \[Phi]L[[\[Alpha]]] < \[Phi]L3[2], d\[Phi]L3[1](\[Phi]L[[\[Alpha]]]-L3[1])+ \[Phi]3[2],
 		d\[Phi]L3[2](\[Phi]L[[\[Alpha]]]-(L3[1] + L3[2]))+\[Phi]3[3]], {\[Alpha],1,Length[\[Phi]L]} ]//Chop;
 l   = \[Phi]L[[2;;-1]]-\[Phi]L[[1;;-2]];
@@ -372,7 +372,7 @@ Return[bc]];
 (*>Multi-Field Polygonal Bounce*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*PathDeformation*)
 
 
@@ -431,7 +431,7 @@ Block[{\[Nu],\[Beta],vs,bs,Rs,rI,as,\[Zeta]t,r0,\[Zeta]ts,\[Phi]s,\[Zeta]eqs,\[N
 Return[ Chop[{\[Zeta]ts,\[Nu]\[Beta][[1]],as,\[Nu]\[Beta][[2]],R[[p]] rI,R[[Ns+1]] rF}] ];   ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*\[Phi]vabRs*)
 
 
@@ -597,23 +597,23 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	N\[CurlyPhi],VL,d\[Phi]L,extrema2,itePath,casesIte,\[Phi]t,ite\[Zeta],maxIteR,ps,R,forBack,methodRw,methodSeg,improvePB,
 	dVL,ddVL,\[Alpha],c,rI,\[Beta],\[Nu],r,pos,rw,r1,\[ScriptCapitalI],d\[ScriptCapitalI],\[ScriptM],rs,l,eL,dV,d2V,\[Phi]l,\[Phi]s,vs,as,bs,Rs,Vs,Ts,V\[Xi],T\[Xi],V1,T1,aV1,DV,D2V,\[Phi]N3},
 (*=OPTION========== OptionValues ===========*)
-	aRw = OptionValue[ansatzRadii];
-	aPath = OptionValue[ansatzPath];
-	aV1 = OptionValue[ansatzV1];
-	accuracyB = OptionValue[accuracyBounce];
-	accuracyPath = OptionValue[accuracyPathDeformation];	
-	d = IntegerPart[OptionValue[dimension]]; If[d<3 || d>4, Message[FindBounce::Error];Abort[];];  
-	forBack = OptionValue[forwardBackward];
-	Nfv = OptionValue[fieldValues];
-	maxIteR = OptionValue[maxIterationsR];
-	ite\[Zeta]= OptionValue[maxIterationZeta];
-	itePath =OptionValue[maxIterationsPathDeformation];
-	methodRw = OptionValue[methodBounce];
-	methodSeg =OptionValue[methodSegmentation];
-	improvePB = OptionValue[improvementPB];
+	aRw = OptionValue["AnsatzRadii"];
+	aPath = OptionValue["AnsatzPath"];
+	aV1 = OptionValue["AnsatzV1"];
+	accuracyB = OptionValue["AccuracyBounce"];
+	accuracyPath = OptionValue["AccuracyPathDeformation"];	
+	d = IntegerPart[OptionValue["Dimension"]]; If[d<3 || d>4, Message[FindBounce::Error];Abort[];];  
+	forBack = OptionValue["ForwardBackward"];
+	Nfv = OptionValue["NumberSegments"]+1; (*field values = "number of segement" + 1*)
+	maxIteR = OptionValue["MaxIterationsR"];
+	ite\[Zeta]= OptionValue["MaxIterationZeta"];
+	itePath =OptionValue["MaxIterationsPathDeformation"];
+	methodRw = OptionValue["MethodBounce"];
+	methodSeg =OptionValue["MethodSegmentation"];
+	improvePB = OptionValue["ImprovementPolygonalBounce"];
 	N\[CurlyPhi] = Length[extrema1];If[N\[CurlyPhi]==0,N\[CurlyPhi]=1;]; (*Number of Fields*)
-	extrema2= If[OptionValue[initialFieldValue] === Null, 
-				(extrema1+extrema3)/2,OptionValue[initialFieldValue] ];
+	extrema2= If[OptionValue["InitialFieldValue"] === Null, 
+				(extrema1+extrema3)/2,OptionValue["InitialFieldValue"] ];
 	If[itePath<0,Message[FindBounce::ErrorIte];Abort[]; ];
 	If[N\[CurlyPhi]<=1,itePath=0;];
 (*=========== Derivative of the Potential ===*)
@@ -633,7 +633,7 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	If[aPath =!= None, 
 		If[Length[aPath[[1]]]==N\[CurlyPhi]||N\[CurlyPhi]==1&&Length[aPath[[1]]]==0,
 			{Ns,\[Phi],\[Phi]L,eL,l}=newAnsatz[aPath,Length[aPath]-1,N\[CurlyPhi]],
-			Message[FindBounce::ansatzPath];Abort[];]  ];
+			Message[FindBounce::AnsatzPath];Abort[];]  ];
 	If[N\[CurlyPhi]>1,\[Phi]s= Table[\[Phi],{i,ite\[Zeta]+1}]];
 	\[Phi]t=0; k = 0; (*Initial Conditions*)
 	While[k <= itePath,
