@@ -1,3 +1,3 @@
 (* ::Package:: *)
 
-Get["FindBounce`"];
+Get["FindBounce`FindBounce`"];
