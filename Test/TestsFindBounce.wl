@@ -14,7 +14,7 @@
 
 
 If[
-	Not@MemberQ[$Packages,"FindBounces`"],
+	Not@MemberQ[$Packages,"FindBounce`"],
 	Print["Error: Package is not loaded, try again"];Abort[];
 ];
 BeginTestSection["Tests"];
@@ -45,7 +45,7 @@ Vs,T\[Xi],V\[Xi],T1,V1,Rw,methodRw,maxIteR,accuracyB,ansatzRw,accuracyPath,ite\[
 (*VerificationTest*)
 
 
-VerificationTest[Round[Segmentation[{1,2,6},numberFieldValues->4],0.01],{1.,2.67,4.33,6.},
+VerificationTest[Round[Segmentation[{1,2,6},"NumberFieldValues"->4],0.01],{1.,2.67,4.33,6.},
 	TestID->"Segmentation"
 ];
 VerificationTest[findSegment[a,\[Phi]L,d,Ns],pos,
