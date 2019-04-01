@@ -1,0 +1,10 @@
+# MacOS files
+.DS_Store
+*/.DS_Store
+
+# Ignore stuff related to building the paclet
+build
+
+# Folder created by IntelliJ IDEA editor
+.idea
+*.iml
