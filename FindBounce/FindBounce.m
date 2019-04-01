@@ -1,21 +1,34 @@
 (* ::Package:: *)
 
 (* ::Chapter::Closed:: *)
-(*Header Comments*)
+(*Header*)
 
-
-(*False Vacuum Decay with Polygonal Bounce*)
 
 (* :Title: FindBounce *)
-(* :Context: Tunneling, First order first transitions, bubble nucleation*)
+(* :Context: FindBounce` *)
 (* :Author: Victor Guada *)
-(* :Summary: Compues decay of the false vacuum in models with multiple scalar*)
-(* :Copyright: Victor Guada, Miha Nemev\[SHacek]ek and Alessio Maiezza, 2019 *)
-
-(* This program is free software...*)
+(* :Summary: Computes decay of the false vacuum in models with multiple scalar. *)
+(* :Keywords: tunneling, first order first transitions, bubble nucleation *)
 
 
-(* ::Chapter:: *)
+(*  Copyright (C) 2019  Victor Guada, Miha Nemev\[SHacek]ek and Alessio Maiezza
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*)
+
+
+(* ::Chapter::Closed:: *)
 (*BeginPackage*)
 
 
@@ -26,8 +39,7 @@ BeginPackage["FindBounce`"];
 (*Available Functions*)
 
 
-FindBounce::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}],{phi1, phi2,\[Ellipsis]}, {min1, min2} ]
-	computes false vacuum decay in potential with multiple scalar fields.";
+FindBounce;
 Segmentation;
 findSegment;
 newAnsatz;
@@ -45,31 +57,6 @@ PathDeformation;
 
 
 (* ::Section::Closed:: *)
-(*Options*)
-
-
-Options[FindBounce] = {"AnsatzRadii" -> None,
-				"AnsatzPath" -> None,
-				"AnsatzV1" -> None,
-				"AccuracyBounce" -> 6,
-				"AccuracyPathDeformation" -> 10,
-				derivativeV-> True,
-				derivative2V-> True,
-				"Dimension" -> 4,
-				"ForwardBackward" -> "backward",
-				"NumberSegments" -> 29,
-				"ImprovementPolygonalBounce" ->True,
-				"InitialFieldValue"  -> Null,
-				"MaxIterationsR" -> 100,
-				"MaxIterationsPathDeformation" -> 3,
-				"MethodBounce" -> "DerrickFindRoot",
-				"MethodSegmentation" -> "HS",
-				"MaxIterationZeta" ->1};
-Options[Segmentation] = {"NumberFieldValues" -> 30,
-				"Method" -> "HS"};
-
-
-(* ::Section:: *)
 (*Messages*)
 
 
@@ -86,12 +73,7 @@ maxIterationExpansion::usage = "maxIterationExpansion: max number of iteration i
 "NumberFieldValues"::usage = "NumberFieldValues: number of field values(defaul imput is 200).";
 "Method"::usage = "Method: specify what method should be used {HS,biHS,HSPlus}, where H:Homogeneous, S:Segementation, bi: Double HS splitted in the Saddle Point and Plus: additional field values close to the extrema";*)
 (*========== Comments ==========*)
-FindBounce::Error = "Wrong input, PB has aborted.";
-FindBounce::ErrorExtrema = "Wrong position of the minima, PB has aborted.";
-FindBounce::ErrorPathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
-FindBounce::ErrorIte = "Wrong number of interation, PB has aborted.";
-FindBounce::AnsatzPath = "Wrong AnsatzPath, PB has aborted.";
-Segmentation::Error = "Warning: wrong number of field values.";
+
 ansatzN3::Degeneracy = "There is not tunneling decay since the vacua are degenerated.";
 ansatzN3::Error = "Wrong input, PB has aborted.";
 ansatzN3::ErrorPotential = "Wrong input Potential, PB has aborted.";
@@ -106,13 +88,17 @@ findRw::ErrorTolerance = "Failed to converge to the requested accuracy";
 Begin["`Private`"];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Code*)
 
 
 (* ::Section::Closed:: *)
 (*Segmentation*)
 
+
+Segmentation::Error = "Warning: wrong number of field values.";
+
+Segmentation//Options={"NumberFieldValues" -> 30,"Method" -> "HS"};
 
 Segmentation[\[Phi]N3_,OptionsPattern[]]:=
 Block[{Nfv,\[Phi]3,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[CapitalPhi],np,n1,n2,infP,pos1,pos2,
@@ -372,7 +358,7 @@ Return[bc]];
 (*>Multi-Field Polygonal Bounce*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*PathDeformation*)
 
 
@@ -431,7 +417,7 @@ Block[{\[Nu],\[Beta],vs,bs,Rs,rI,as,\[Zeta]t,r0,\[Zeta]ts,\[Phi]s,\[Zeta]eqs,\[N
 Return[ Chop[{\[Zeta]ts,\[Nu]\[Beta][[1]],as,\[Nu]\[Beta][[2]],R[[p]] rI,R[[Ns+1]] rF}] ];   ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Phi]vabRs*)
 
 
@@ -591,6 +577,34 @@ Return[2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalS]] ];
 (* ::Section::Closed:: *)
 (*FindBounce*)
 
+
+FindBounce::usage="FindBounce[fun,{phi1,phi2,...},{min1, min2}] 
+	computes false vacuum decay in potential with multiple scalar fields.";
+FindBounce::Error = "Wrong input, PB has aborted.";
+FindBounce::ErrorExtrema = "Wrong position of the minima, PB has aborted.";
+FindBounce::ErrorPathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
+FindBounce::ErrorIte = "Wrong number of interation, PB has aborted.";
+FindBounce::AnsatzPath = "Wrong AnsatzPath, PB has aborted.";
+	
+FindBounce//Options={
+	"AnsatzRadii" -> None,
+	"AnsatzPath" -> None,
+	"AnsatzV1" -> None,
+	"AccuracyBounce" -> 6,
+	"AccuracyPathDeformation" -> 10,
+	derivativeV-> True,
+	derivative2V-> True,
+	"Dimension" -> 4,
+	"ForwardBackward" -> "backward",
+	"NumberSegments" -> 29,
+	"ImprovementPolygonalBounce" ->True,
+	"InitialFieldValue"  -> Null,
+	"MaxIterationsR" -> 100,
+	"MaxIterationsPathDeformation" -> 3,
+	"MethodBounce" -> "DerrickFindRoot",
+	"MethodSegmentation" -> "HS",
+	"MaxIterationZeta" ->1
+};
 
 FindBounce[V_,extrema1_,extrema3_,OptionsPattern[]]:=
 Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1,k,Nfv,abc,timeRw,aRw,accuracyB,accuracyPath,
