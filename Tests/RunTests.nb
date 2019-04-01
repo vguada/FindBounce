@@ -128,7 +128,7 @@ Cell[BoxData[{
              RowBox[{"indx", "\[Rule]", "Pink"}], "]"}]}], "}"}]}]}], "\n", 
         "\t", "]"}]}], ";", "\n", "\t", "tr"}]}], "\[IndentingNewLine]", 
     "]"}]}], ";"}]}], "Input",
- CellLabel->"In[18]:=",ExpressionUUID->"bb404378-8179-4991-b2c8-6171932f08f9"]
+ CellLabel->"In[42]:=",ExpressionUUID->"bb404378-8179-4991-b2c8-6171932f08f9"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -151,11 +151,11 @@ Cell[BoxData[
       RowBox[{"ParentDirectory", "@", 
        RowBox[{"NotebookDirectory", "[", "]"}]}], ",", "\"\<FindBounce\>\""}],
       "}"}], "\[IndentingNewLine]", "]"}]}]}]], "Input",
- CellLabel->"In[22]:=",ExpressionUUID->"38b16ab7-a3ca-4b7e-a6d0-651ba1b36219"],
+ CellLabel->"In[46]:=",ExpressionUUID->"38b16ab7-a3ca-4b7e-a6d0-651ba1b36219"],
 
 Cell[BoxData[
  RowBox[{"Get", "[", "\"\<FindBounce`\>\"", "]"}]], "Input",
- CellLabel->"In[23]:=",ExpressionUUID->"1e814b39-d8ec-4ac1-af5c-d535e574a269"],
+ CellLabel->"In[47]:=",ExpressionUUID->"1e814b39-d8ec-4ac1-af5c-d535e574a269"],
 
 Cell[BoxData[{
  RowBox[{"$testReport", "=", 
@@ -163,12 +163,12 @@ Cell[BoxData[{
    RowBox[{"FileNameJoin", "[", 
     RowBox[{"{", 
      RowBox[{
-      RowBox[{"NotebookDirectory", "[", "]"}], ",", 
-      "\"\<TestsFindBounce.wl\>\""}], "}"}], "]"}]}]}], "\n", 
+      RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<Tests.wl\>\""}], 
+     "}"}], "]"}]}]}], "\n", 
  RowBox[{
   RowBox[{"printTestResults", "[", "$testReport", "]"}], ";"}]}], "Code",
  InitializationCell->False,
- CellLabel->"In[24]:=",ExpressionUUID->"7f575fa4-4912-41ac-85ef-d7cd3cf3fa68"]
+ CellLabel->"In[48]:=",ExpressionUUID->"7f575fa4-4912-41ac-85ef-d7cd3cf3fa68"]
 }, Open  ]]
 },
 WindowSize->{958, 966},
@@ -177,3 +177,4 @@ PrivateNotebookOptions->{"FileOutlineCache"->False},
 FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (March 6, 2018)",
 StyleDefinitions->"Default.nb"
 ]
+
