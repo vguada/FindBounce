@@ -606,11 +606,11 @@ FindBounce//Options={
 	"MaxIterationZeta" ->1
 };
 
-FindBounce[V_,extrema1_,extrema3_,OptionsPattern[]]:=
-Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1,k,Nfv,abc,timeRw,aRw,accuracyB,accuracyPath,
+FindBounce[V_,extrema1_,extrema3_,OptionsPattern[]]:=Block[
+	{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1,k,Nfv,abc,timeRw,aRw,accuracyB,accuracyPath,
 	N\[CurlyPhi],VL,d\[Phi]L,extrema2,itePath,casesIte,\[Phi]t,ite\[Zeta],maxIteR,ps,R,forBack,methodRw,methodSeg,improvePB,
 	dVL,ddVL,\[Alpha],c,rI,\[Beta],\[Nu],r,pos,rw,r1,\[ScriptCapitalI],d\[ScriptCapitalI],\[ScriptM],rs,l,eL,dV,d2V,\[Phi]l,\[Phi]s,vs,as,bs,Rs,Vs,Ts,V\[Xi],T\[Xi],V1,T1,aV1,DV,D2V,\[Phi]N3},
-(*=OPTION========== OptionValues ===========*)
+	
 	aRw = OptionValue["AnsatzRadii"];
 	aPath = OptionValue["AnsatzPath"];
 	aV1 = OptionValue["AnsatzV1"];
@@ -626,71 +626,136 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,estimatePos,b,v,\[Phi],Ns,\[Psi],\[Psi]s,d,c1
 	methodSeg =OptionValue["MethodSegmentation"];
 	improvePB = OptionValue["ImprovementPolygonalBounce"];
 	N\[CurlyPhi] = Length[extrema1];If[N\[CurlyPhi]==0,N\[CurlyPhi]=1;]; (*Number of Fields*)
-	extrema2= If[OptionValue["InitialFieldValue"] === Null, 
-				(extrema1+extrema3)/2,OptionValue["InitialFieldValue"] ];
-	If[itePath<0,Message[FindBounce::ErrorIte];Abort[]; ];
+	extrema2= If[
+		OptionValue["InitialFieldValue"] === Null,
+		(extrema1+extrema3)/2,OptionValue["InitialFieldValue"]
+	];
+	If[
+		itePath<0,
+		Message[FindBounce::ErrorIte];Abort[];
+	];
 	If[N\[CurlyPhi]<=1,itePath=0;];
-(*=========== Derivative of the Potential ===*)
-	If[OptionValue[derivativeV]===True,
-		If[ N\[CurlyPhi] >1,
-			\[Psi]s = Table[\[Psi][i], {i, 1, N\[CurlyPhi]}]; dV[\[CurlyPhi]_]  :=dV[\[CurlyPhi]]= D[V[\[Psi]s],{\[Psi]s} ]/.\[Psi][i_]:> \[CurlyPhi][[i]];,
-			dV[\[CurlyPhi]_]  :=dV[\[CurlyPhi]]= D[V[\[Psi]],\[Psi] ]/.\[Psi]->\[CurlyPhi];   ]; ,
-		dV  = OptionValue[derivativeV];    ];
-	If[OptionValue[derivative2V]===True&&N\[CurlyPhi]>1,
+	
+	(*=========== Derivative of the Potential ===*)
+	If[
+		OptionValue[derivativeV]===True,
+		If[
+			N\[CurlyPhi] >1,
+			\[Psi]s = Table[\[Psi][i], {i, 1, N\[CurlyPhi]}];
+			dV[\[CurlyPhi]_]  :=dV[\[CurlyPhi]]= D[V[\[Psi]s],{\[Psi]s} ]/.\[Psi][i_]:> \[CurlyPhi][[i]];
+			,
+			dV[\[CurlyPhi]_]  :=dV[\[CurlyPhi]]= D[V[\[Psi]],\[Psi] ]/.\[Psi]->\[CurlyPhi];
+		];
+		,
+		dV  = OptionValue[derivativeV];
+	];
+	If[
+		OptionValue[derivative2V]===True&&N\[CurlyPhi]>1
+		,
 		\[Psi]s = Table[\[Psi][i], {i, 1, N\[CurlyPhi]}];
-		d2V[\[CurlyPhi]_]:=d2V[\[CurlyPhi]]= D[dV[\[Psi]s],{\[Psi]s} ]/.\[Psi][i_]:> \[CurlyPhi][[i]];     ,
-		d2V= OptionValue[derivative2V];  ];
-(*=BEGIN ========= Estimations ==============*)
+		d2V[\[CurlyPhi]_]:=d2V[\[CurlyPhi]]= D[dV[\[Psi]s],{\[Psi]s} ]/.\[Psi][i_]:> \[CurlyPhi][[i]];
+		,
+		d2V= OptionValue[derivative2V];
+	];
+	
+	(* ========== Estimations ============\[Equal] *)
+	
 	\[Phi]N3 = N[{extrema1,extrema2,extrema3}];
-	If[aPath===None||aRw ===None,
-		{ansatzRw,Ns,\[Phi],\[Phi]L,eL,l}=ansatzN3[V,\[Phi]N3,N\[CurlyPhi],Nfv,aV1,methodSeg];   ];
-	If[aPath =!= None, 
-		If[Length[aPath[[1]]]==N\[CurlyPhi]||N\[CurlyPhi]==1&&Length[aPath[[1]]]==0,
+	If[
+		aPath===None||aRw ===None,
+		{ansatzRw,Ns,\[Phi],\[Phi]L,eL,l}=ansatzN3[V,\[Phi]N3,N\[CurlyPhi],Nfv,aV1,methodSeg];
+	];
+	If[
+		aPath =!= None, 
+		If[
+			Length[aPath[[1]]]==N\[CurlyPhi]||N\[CurlyPhi]==1&&Length[aPath[[1]]]==0,
 			{Ns,\[Phi],\[Phi]L,eL,l}=newAnsatz[aPath,Length[aPath]-1,N\[CurlyPhi]],
-			Message[FindBounce::AnsatzPath];Abort[];]  ];
-	If[N\[CurlyPhi]>1,\[Phi]s= Table[\[Phi],{i,ite\[Zeta]+1}]];
+			Message[FindBounce::AnsatzPath];Abort[];
+		]
+	];
+	
+	If[
+		N\[CurlyPhi]>1,
+		\[Phi]s= Table[\[Phi],{i,ite\[Zeta]+1}]
+	];
+	
 	\[Phi]t=0; k = 0; (*Initial Conditions*)
+	
 	While[k <= itePath,
-(*========= Single_Field_Polygonal_bounce ==*)
-		VL = If[aV1===None,Table[ V[\[Phi][[s]]],{s,1,Ns+1}],aV1];
-		If[VL[[1]]>VL[[2]]||VL[[-1]]>VL[[-2]],
-			If[k === 0,Message[FindBounce::ErrorExtrema];Abort[];, Message[FindBounce::ErrorPathDeformation];Abort[];  ]];
+		(*========= Single_Field_Polygonal_bounce ==*)
+		VL = If[
+			aV1===None,
+			Table[ V[\[Phi][[s]]],{s,1,Ns+1}],
+			aV1
+		];
+		If[
+			VL[[1]]>VL[[2]]||VL[[-1]]>VL[[-2]],
+			If[
+				k === 0,
+				Message[FindBounce::ErrorExtrema];Abort[],
+				Message[FindBounce::ErrorPathDeformation];Abort[]
+			]
+		];
 		a  = Table[ (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) 1/8. ,{s,1,Ns} ];
 		pos = findSegment[a,\[Phi]L,d,Ns];
 		{timeRw,Rw} = findRw[d,VL,\[Phi]L,a,Ns,methodRw,maxIteR,accuracyB,ansatzRw,aRw]//Re;
-		If[Rw<10^(-5.),Message[FindBounce::Error];Abort[]];
+		
+		If[
+			Rw<10^(-5.),
+			Message[FindBounce::Error];Abort[]
+		];
 		{R,v,b} = Rvb[Rw,\[Phi]L,a,d,Ns,"backward",None]//Re;
-(*========= Single_Field_Improvement========*) 
-		If[improvePB&&k ==itePath &&N\[CurlyPhi]>1,
+		
+		(*========= Single_Field_Improvement========*)
+		If[
+			improvePB&&k ==itePath &&N\[CurlyPhi]>1,
 			dVL= Table[ dV[\[Phi][[s]]].eL[[If[s==Ns+1,Ns,s]]] ,{s,1,Ns+1}];
-			\[Alpha]  = Join[a  - dVL[[2;;-1]]/8 ,{0}]; a = AppendTo[a,0];
-			ddVL = Join[Table[  (dVL[[s+1]]-8(a[[s]] + \[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]])  ,{s,1,Ns}  ],{0}];
+			\[Alpha]  = Join[a  - dVL[[2;;-1]]/8 ,{0}];
+			a = AppendTo[a,0];
+			ddVL = Join[
+				Table[(dVL[[s+1]]-8(a[[s]] + \[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,1,Ns} ],
+				{0}
+			];
 			{\[ScriptCapitalI],d\[ScriptCapitalI]} = find\[ScriptCapitalI][v,\[Phi]L,a,b,Ns,pos,R,ddVL,d];
 			r1 = rw/.FindRoot[findrw[rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos],{rw,-1}]//Quiet;
-			{r,\[Beta],\[Nu]} = If[pos>1,Join[ConstantArray[0,{pos-2,3}],r\[Beta]\[Nu][r1,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos]//Transpose]//Transpose,r\[Beta]\[Nu][r1,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos][[All,2;;-1]]];
+			{r,\[Beta],\[Nu]} = If[
+				pos>1,
+				Join[ConstantArray[0,{pos-2,3}],r\[Beta]\[Nu][r1,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos]//Transpose]//Transpose,
+				r\[Beta]\[Nu][r1,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos][[All,2;;-1]]
+			];
 			T\[Xi] = \[ScriptCapitalT]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r] ;
 			V\[Xi] = \[ScriptCapitalV]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];,
 			(*------------*)
 			{r,\[Beta],\[Nu],\[Alpha]}=ConstantArray[0,{4,Ns+1}];
 			{\[ScriptCapitalI],d\[ScriptCapitalI]}=ConstantArray[0,{2,2,Ns+1}];
-			{T\[Xi],V\[Xi]}={0,0}; r1 = 0;];
-(*========= Action =======================*)
-		T1= \[ScriptCapitalT][v,a,b,R,d,Ns];V1= \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns]; 
+			{T\[Xi],V\[Xi]}={0,0};
+			r1 = 0;
+		];
+		
+		(*========= Action =======================*)
+		T1= \[ScriptCapitalT][v,a,b,R,d,Ns];V1= \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns];
 		If[N\[CurlyPhi]==1||k==0,Ts=T1;Vs=V1; ];
-(*========= Return_Value ==================*)
-		abc[k]={aRw,\[Phi]N3,a,R,v,b,d,\[Phi]L,VL,dVL,ddVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r,\[Beta],\[Nu],r1,Ns,pos,forBack,timeRw,\[Phi]t,\[Phi],N\[CurlyPhi],l,eL,\[Phi]s,vs,as,bs,Rs,Ts,Vs,T\[Xi],V\[Xi],T1,V1,Rw,methodRw,maxIteR,accuracyB,ansatzRw,accuracyPath,ite\[Zeta],methodSeg,Nfv,aV1} ;
+		
+		(*========= Return_Value ==================*)
+		abc[k]={aRw,\[Phi]N3,a,R,v,b,d,\[Phi]L,VL,dVL,ddVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r,\[Beta],\[Nu],r1,Ns,pos,forBack,timeRw,\[Phi]t,\[Phi],N\[CurlyPhi],l,eL,\[Phi]s,vs,as,bs,Rs,Ts,Vs,T\[Xi],V\[Xi],T1,V1,Rw,methodRw,maxIteR,accuracyB,ansatzRw,accuracyPath,ite\[Zeta],methodSeg,Nfv,aV1};
 		If[k ==itePath || N\[CurlyPhi]==1,Break[];];
-(*========= Perturbation Multi-Field ======*)
+		
+		(*========= Perturbation Multi-Field ======*)
 		\[Phi]t=AbsoluteTiming[ {\[Phi]s,vs,as,bs,Rs}=Chop@\[Phi]vabRs[dV,d2V,\[Phi],eL,l,\[Phi]L,v,a,b,Ns,R,N\[CurlyPhi],pos,d,ite\[Zeta],accuracyPath]  ][[1]];
-(*========= Action Multi-Field ============*)
-		{DV,D2V} = {Table[dV[\[Phi][[s]]],{s,1,Ns+1}],Table[d2V[\[Phi][[s]]],{s,1,Ns+1}]} ;
+		(*========= Action Multi-Field ============*)
+		
+		{DV,D2V} = {Table[dV[\[Phi][[s]]],{s,1,Ns+1}],Table[d2V[\[Phi][[s]]],{s,1,Ns+1}]};
 		Ts =\[ScriptCapitalT]s[Rs[[ite\[Zeta]+1]],as[[ite\[Zeta]+1]],bs[[ite\[Zeta]+1]],d,N\[CurlyPhi],pos,Ns];
 		Vs =\[ScriptCapitalV]s[Rs[[ite\[Zeta]+1]],vs[[ite\[Zeta]+1]],as[[ite\[Zeta]+1]],bs[[ite\[Zeta]+1]],d,N\[CurlyPhi],pos,Ns,\[Phi]s[[ite\[Zeta]+1]],VL,DV,D2V];
-(*========= Initial Value==================*)
+		
+		(*========= Initial Value==================*)
 		{Ns,\[Phi],\[Phi]L,eL,l} = newAnsatz[\[Phi]s[[ite\[Zeta]+1]],Ns,N\[CurlyPhi]];
 		ansatzRw = Rw;
-	k++];
-Return[  Table[abc[k],{k,0,itePath}]  ]           ];
+		k++
+	];
+	
+	Table[abc[k],{k,0,itePath}]
+];
 
 
 (* ::Chapter::Closed:: *)
