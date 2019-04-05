@@ -15,7 +15,7 @@
 (* This program is free software...*)
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*BeginPackage*)
 
 
@@ -29,6 +29,7 @@ BeginPackage["FindBounce`"];
 FindBounce::usage = "FindBounce[ V[{phi1, phi2,\[Ellipsis]}],{phi1, phi2,\[Ellipsis]}, {min1, min2} ]
 	computes false vacuum decay in potential with multiple scalar fields.";
 BounceAction::usage = "";
+BounceDimension::usage = "";
 PlotBounce::usage = "";
 PlotBounce2D::usage = "";
 PlotBounce2DProjection::usage = "";
@@ -59,8 +60,8 @@ Options[FindBounce] = {"AnsatzRadii" -> None,
 				"AnsatzV1" -> None,
 				"AccuracyBounce" -> 6,
 				"AccuracyPathDeformation" -> 10,
-				derivativeV-> None,
-				derivative2V-> None,
+				Gradient-> None,
+				Hessian-> None,
 				"Dimension" -> 4,
 				"ForwardBackward" -> "backward",
 				"NumberSegments" -> 29,
@@ -110,7 +111,7 @@ FindRw::ErrorTolerance = "Failed to converge to the requested accuracy";
 Begin["`Private`"];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Code*)
 
 
@@ -554,12 +555,12 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,b,v,\[Phi],Ns,d,Nfv,aRw,accuracyB,accuracyPat
 	If[itePath<0,Message[FindBounce::ErrorIte];Abort[]; ];
 	If[N\[CurlyPhi]<=1,itePath=0;];
 (*=========== Derivative of the Potential ===*)
-	If[OptionValue[derivativeV] === None,
+	If[OptionValue[Gradient] === None,
 		dV = If[Length[\[CurlyPhi]] == 1, D[V,\[CurlyPhi]], D[V,{\[CurlyPhi]}]],
-		dV = OptionValue[derivativeV]  ];
-	If[OptionValue[derivative2V] === None && N\[CurlyPhi]>1,
+		dV = OptionValue[Gradient]  ];
+	If[OptionValue[Hessian] === None && N\[CurlyPhi]>1,
 		d2V = D[V,{\[CurlyPhi]},{\[CurlyPhi]}],
-		d2V = OptionValue[derivative2V]  ];
+		d2V = OptionValue[Hessian]  ];
 (*=BEGIN ========= Estimations ==============*)
 	\[Phi]N3 = N[{min1,point,min2}];
 	If[aPath===None||aRw ===None,
@@ -607,7 +608,7 @@ Block[{a,Rw,aPath,\[Phi]L,ansatzRw,b,v,\[Phi],Ns,d,Nfv,aRw,accuracyB,accuracyPat
 Return[ {Action,PB,ImprovePB,MultiPB}]   ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Sub-Packages*)
 
 
@@ -616,6 +617,13 @@ Return[ {Action,PB,ImprovePB,MultiPB}]   ];
 
 
 BounceAction[FindBounce_List]:=FindBounce[[1]];
+
+
+(* ::Section::Closed:: *)
+(*BounceDimension*)
+
+
+BounceDimension[FindBounce_List]:=FindBounce[[2,1]];
 
 
 (* ::Section::Closed:: *)
