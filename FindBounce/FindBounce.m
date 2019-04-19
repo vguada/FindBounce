@@ -640,6 +640,20 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 (*BounceFunction: Summary Box*)
 
 
+summaryBoxGraphics[bf_BounceFunction]:=BouncePlot[
+	bf,
+	(* Small plot has to render fast. *)
+	PerformanceGoal->"Speed",
+	FrameLabel->None, 
+	FrameTicks->None,
+	(* To avoid gray background before mouse-over. *)
+	Background->White,
+	GridLines->None,
+	(* Set standard image size *)
+	ImageSize -> Dynamic[{Automatic,3.5*CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[Magnification]}]
+];
+
+
 BounceFunction::usage="BounceFunction object represents results from FindBounce function.";
 
 BounceFunction[attrs_Association]["Properties"]:= Sort@Keys[attrs];
@@ -666,25 +680,15 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 	
 	 (* column *)
 	above = {
-		BoxForm`SummaryItem[{"Action: ", obj["Action"]}],
+		BoxForm`SummaryItem[{"Domain: ", obj["Domain"]}],
 		BoxForm`SummaryItem[{"Dimension: ", obj["Dimension"]}]
 	};
-	
 	below = {
-		BoxForm`SummaryItem[{"Domain: ", obj["Domain"]}],
-		BoxForm`SummaryItem[{"InitialSegment: ", obj["InitialSegment"]}],
 		BoxForm`SummaryItem[{"NumberSegements: ", obj["NumberSegements"]}],
+		BoxForm`SummaryItem[{"InitialSegment: ", obj["InitialSegment"]}],
 		BoxForm`SummaryItem[{"Method: ", obj["Method"]}]
 	};
-
-	icon = BouncePlot[obj,
-			FrameLabel->None, 
-			FrameTicks->None,
-			Background->White,
-			GridLines->None,
-			(* set standard image size *)
-			ImageSize -> Dynamic[{Automatic,3.5*CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[Magnification]}]
-	];
+	icon = summaryBoxGraphics[obj];
 	
 	BoxForm`ArrangeSummaryBox[
 		BounceFunction, (* head *)
@@ -889,7 +893,7 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 
 BouncePlot::usage="BouncePlot[bf] plots the content of BounceFunction bf.";
 
-BouncePlot//Options=Options[ListPlot];
+BouncePlot//Options=Options[Plot];
 
 BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 
