@@ -668,10 +668,10 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 	 (* column *)
 	above = {
 		BoxForm`SummaryItem[{"Domain: ", obj["Domain"]}],
-		BoxForm`SummaryItem[{"Dimension: ", obj["Dimension"]}]
+		BoxForm`SummaryItem[{"Dimensions: ", obj["Dimensions"]}]
 	};
 	below = {
-		BoxForm`SummaryItem[{"NumberSegements: ", obj["NumberSegements"]}],
+		BoxForm`SummaryItem[{"Segments: ", obj["Segments"]}],
 		BoxForm`SummaryItem[{"InitialSegment: ", obj["InitialSegment"]}],
 		BoxForm`SummaryItem[{"Method: ", obj["Method"]}]
 	};
@@ -769,7 +769,7 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 	noFields,VL,d\[Phi]L,point,itePath,maxIteR,ps,R,forBack,methodRinitial,methodSeg,
 	improvePB,ImprovePB,uPotential,\[CapitalDelta]Vm,\[Phi]0,V\[Xi],T\[Xi],V1,T1,aV,\[Phi]N3,rule,improvementPB,
 	dVL,ddVL,\[Alpha],\[Beta],\[Nu],r,pos,rw,r1,\[ScriptCapitalI],d\[ScriptCapitalI],l,eL,dV,d2V,\[Phi]l,RM,
-	maxIterPath,gradient,hessian,iter,Action,Actio\[Xi],BounceParameter},
+	maxIterPath,gradient,hessian,iter,Action,Actio\[Xi]},
 
 	(* Basic check to see if field variables do not have any values.*)
 	If[
@@ -856,16 +856,15 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 	iter++ ];
 	
 	Action += Actio\[Xi];
-	BounceParameter = {\[Phi]L,VL,\[Phi],v,a,b,pos,R} ;
 
 	BounceFunction@Association[
 		"Action"->Action,
-		"BounceParameter"->BounceParameter,
-		"Dimension"->dim,
+		"BounceParameters"->{\[Phi]L,VL,\[Phi],v,a,b,pos,R},
+		"Dimensions"->dim,
 		"Domain"->{If[pos>1,0.,R[[pos]]],R[[-1]]},
 		"InitialSegment"->If[pos>1,pos-1,pos],
 		"ImprovedBounce"->ImprovePB,
-		"NumberSegements"->Ns,
+		"Segments"->Ns,
 		"Method"->methodRinitial,
 		"Path"->\[Phi],
 		"PolygonalBounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}]
@@ -887,9 +886,9 @@ BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= Module[
 	{bounce,R,markers,plotRange},
 	bounce=bf["PolygonalBounce"];
 	(* This helps to draw discrete radii R. *)
-	R=Last@bf["BounceParameter"];
+	R=Last@bf["BounceParameters"];
 	plotRange=Clip[
-		MinMax[R,Scaled[0.5]],
+		MinMax[R,Scaled[0.25]],
 		{0,Infinity}
 	];
 	markers=Transpose@{R,bounce/@R};
