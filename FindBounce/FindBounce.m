@@ -656,27 +656,14 @@ summaryBoxGraphics[bf_BounceFunction]:=BouncePlot[
 
 BounceFunction::usage="BounceFunction object represents results from FindBounce function.";
 
-BounceFunction[attrs_Association]["Properties"]:= Sort@Keys[attrs];
+BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
-BounceFunction[attrs_Association][key_]:=With[{
-	result=attrs[key]
-	},
-	If[
-		MatchQ[result,_Missing],
-		(* Message text is saved under symbol General. *)
-		Message[
-			BounceFunction::nomthd,
-			Style[key,ShowStringCharacters->True],
-			BounceFunction
-		];
-	];
-	result
-];
+(* A message about missing property could be issued if neccesary (three argument Lookup).  *)
+BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property];
 	
-(* Nice styling of output.
-Code is adjusted from: https://mathematica.stackexchange.com/questions/77658 *)
+(* Nice styling of output, see https://mathematica.stackexchange.com/questions/77658 *)
 BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardForm|TraditionalForm)]:=Module[
-	{above,below,icon,color,bounce,R,markers,plotRange},
+	{above,below,icon},
 	
 	 (* column *)
 	above = {
@@ -702,7 +689,6 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 		"Interpretable" -> False
 	]
 ];
-(*BounceFunction[asc_?AssociationQ][prop_] := Lookup[asc, prop]*)
 
 
 (* ::Subsection::Closed:: *)
