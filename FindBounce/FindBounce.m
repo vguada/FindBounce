@@ -65,23 +65,6 @@ PathDeformation;
 Begin["`Private`"];
 
 
-(* ::Section::Closed:: *)
-(*Messages*)
-
-
-(*"Dimension"::usage = "Dimension: the dimension of the spacetime; defaul imput is 4.";
-"NumberSegments"::usage = "NumberSegements: numer of segments, defult value is 29";
-"AnsatzRadii"::usage = "AnsatzRadii: gives a estimation by hand.";
-"MaxIterationsR"::usage = "MaxIterationsR: maximum number of iterations to get R";
-"MaxIterationsPathDeformation"::usage = "MaxIterationsPathDeformation: number of iterations in path deformation (defaul value 2).";
-"ForwardBackward"::usage = "ForwardBackward: set Polygonal Bounce either forward or backward.";
-"InitialFieldValue"::usage = "InitialFieldValue: initial field Value to start the trayectory in N=3.";
-"AccuracyBounce"::usage = "AccuracyBounce: accuracy in FindInitialRadii";
-(*========= Segmentation ==========*)	
-"NumberFieldValues"::usage = "NumberFieldValues: number of field values(defaul imput is 200).";
-"Method"::usage = "Method: specify what method should be used {HS,biHS,HSPlus}, where H:Homogeneous, S:Segementation, bi: Double HS splitted in the Saddle Point and Plus: additional field values close to the extrema";*)
-
-
 (* ::Chapter::Closed:: *)
 (*Code*)
 
