@@ -897,17 +897,13 @@ BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= Module[
 		bounce[r],
 		{r,Sequence@@plotRange},
 		opts,
-		(* Default options come here. Explicitly given options have precedence. *)
+		(* Default options come here. Keep them as short as possible, for flexibiltiy.
+		Explicitly given options (above) have precedence. *)
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
 		LabelStyle->Directive[Black,FontSize->17, FontFamily->"Times New Roman",FontSlant->Plain],
 		GridLines->Automatic,
-		GridLinesStyle->GrayLevel[.85],
-		ImageSize->Medium,
-		PlotRange->All,
-		PlotStyle->{RGBColor[1,0.5,1/8],PointSize[.017]},
-		Axes->False(*,
-		Epilog->{PointSize[Medium],RGBColor[1,0.5,1/8],Point[markers]}*)
+		PlotStyle->Orange
 	]
 ];
 
