@@ -6,12 +6,12 @@
 
 (* :Title: FindBounce *)
 (* :Context: FindBounce` *)
-(* :Author: Victor Guada *)
+(* :Author: Victor Guada, Miha Nemevsek and Matevz Pintar *)
 (* :Summary: Computes decay of the false vacuum in models with multiple scalar. *)
 (* :Keywords: tunneling, first order first transitions, bubble nucleation *)
 
 
-(*  Copyright (C) 2019  Victor Guada, Miha Nemev\[SHacek]ek and Alessio Maiezza
+(*  Copyright (C) 2019
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License aM published by
@@ -42,20 +42,9 @@ BeginPackage["FindBounce`"];
 FindBounce;
 BounceFunction;
 BouncePlot;
-Segmentation;
-FindSegment;
-NewAnsatz;
-Rvb;
-FindRw;
-Find\[ScriptCapitalI];
-r\[Beta]\[Nu];
-Findrw;
-\[Phi]vabRs;
-PathDeformation;
-\[ScriptCapitalT];
-\[ScriptCapitalV];
-\[ScriptCapitalT]\[Xi];
-\[ScriptCapitalV]\[Xi];
+SingleFieldBounce;
+SingleFieldBounceImprovement;
+MultiFieldBounce;
 
 
 (* ::Section::Closed:: *)
@@ -65,7 +54,7 @@ PathDeformation;
 Begin["`Private`"];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Code*)
 
 
@@ -632,7 +621,7 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*FindBounce*)
 
 
@@ -859,7 +848,7 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 
 	BounceFunction@Association[
 		"Action"->Action,
-		"BounceParameters"->{\[Phi]L,VL,\[Phi],v,a,b,pos,R},
+		"BounceParameters"->{v,a,b,pos,R},
 		"Dimensions"->dim,
 		"Domain"->{If[pos>1,0.,R[[pos]]],R[[-1]]},
 		"InitialSegment"->If[pos>1,pos-1,pos],
@@ -867,7 +856,9 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 		"Segments"->Ns,
 		"Method"->methodRinitial,
 		"Path"->\[Phi],
-		"PolygonalBounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}]
+		"PathLongitudinal"->\[Phi]L,
+		"PolygonalBounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
+		"Potential"->VL
 	]	
 ];
 
