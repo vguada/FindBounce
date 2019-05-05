@@ -1,5 +1,5 @@
 # FindBounce
-Computes false vacuum decay `Bounces` with multiple scalar fields in QFT.
+Computes the `Bounces` of a false vacuum decay with multiple scalar fields in QFT.
 
 [![releases](http://img.shields.io/github/release-pre/vguada/FindBounces.svg)](https://github.com/vguada/FindBounce/releases)
 
@@ -9,9 +9,9 @@ Computes false vacuum decay `Bounces` with multiple scalar fields in QFT.
 
 The following description is for people who just want to use the package functionality and
 are not interested in package development.
-To use _MeshTools_ package you need Mathematica version 10. or later.
+To use _FindBounce_ package you need Mathematica version 10. or later.
 
-_MeshTools_ package is released in the `.paclet` file format, which contains code,
+_FindBounce_ package is released in the `.paclet` file format, which contains code,
 documentation and other necessary resources.
 Download the latest `.paclet` file from the
 repository ["releases"](https://github.com/vguada/FindBounces/releases) page
@@ -45,9 +45,7 @@ Get["FindBounce`"]
 
 U[x_] := .5 x^2 - .5 x^3 + .1 x^4;
 Extrema = Block[{x}, x /. Sort@NSolve[(D[U[x], x]) == 0, x]];
-
-PB =  FindBounce[ U[x], {x}, {Extrema[[1]], Extrema[[3]]}, 
-  "Dimensions" -> 3]
+PB =  FindBounce[ U[x], {x}, {Extrema[[1]], Extrema[[3]]},"Dimensions" -> 3]
 BouncePlot[PB, PlotLabel -> Row[{"Action: ", PB["Action"]}]]
 ```
 
