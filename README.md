@@ -3,7 +3,7 @@ Computes the `Bounces` of a false vacuum decay with multiple scalar fields in QF
 
 [![releases](http://img.shields.io/github/release-pre/vguada/FindBounces.svg)](https://github.com/vguada/FindBounce/releases)
 
-![example1](Images/ExampleBounces.png)
+![example1](Images/ExamplesBounces.png)
 
 ## Installation
 
