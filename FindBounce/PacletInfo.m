@@ -7,8 +7,8 @@ Paclet[
 	Version -> "0.1.0",
 	WolframVersion -> "8.+",
 	Description -> "Computes tunneling transition with multiple scalar fields.",
-	Creator -> "Victor Guada",
-	Thumbnail->"FrontEnd/Icon.png",
+	Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar.",
+	Thumbnail->"FrontEnd/Icon.png.",
 	Extensions -> {
 		{"Kernel",
 			Root -> ".",
