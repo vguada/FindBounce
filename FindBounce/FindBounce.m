@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Header*)
 
 
@@ -8,7 +8,7 @@
 (* :Context: FindBounce` *)
 (* :Author: Victor Guada, Miha Nemevsek and Matevz Pintar *)
 (* :Summary: Computes decay of the false vacuum in models with multiple scalar. *)
-(* :Keywords: tunneling, first order first transitions, bubble nucleation *)
+(* :Keywords: tunneling, first order phase transitions, bubble nucleation *)
 
 
 (*  Copyright (C) 2019
@@ -28,14 +28,14 @@
 *)
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Begin Package*)
 
 
 BeginPackage["FindBounce`"];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Available public functions*)
 
 
@@ -47,18 +47,18 @@ SingleFieldBounceImprovement;
 MultiFieldBounce;
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin Private*)
 
 
 Begin["`Private`"];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Code*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Segmentation*)
 
 
@@ -109,7 +109,7 @@ Block[{Nfv,\[Phi]3,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[Capit
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*FindSegment*)
 
 
@@ -122,7 +122,7 @@ FindSegment[a_,\[Phi]L_,d_,Ns_]:=Module[{pos=1,R,estimateRmin,estimateRmax,ps},
 	pos   ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*AnsatzN3*)
 
 
@@ -172,7 +172,7 @@ Rinitial = 1/2.(\[Phi]L3[3]-\[Phi]L3[1])/(Sqrt[a3[1] (\[Phi]L3[2]-\[Phi]L3[1])]-
 {Rinitial,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l}      ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*NewAnsatz*)
 
 
@@ -183,11 +183,11 @@ eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 {Length[\[Phi]L]-1,\[Phi]L,eL,l} ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*SingleFieldBounce*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Unbounded From Below Potential (In progress..)*)
 
 
@@ -207,7 +207,7 @@ eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 		  VR = VL[[ps]] + \[CapitalDelta]Vm - \[CapitalDelta]Vm/(\[Phi][[ps-1]])^4 (\[Phi] + \[Phi][[ps-1]] - \[Phi][[ps]])^4;   	*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*RInitial*)
 
 
@@ -222,7 +222,7 @@ RInitial[4,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,forBack_String]:=
 RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,forBack_String]:= Rinitial;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*BounceParameterRvb*)
 
 
@@ -261,7 +261,7 @@ Block[{R,b,v,\[Alpha],v1,b1,x,y,z,rvb},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FindInitialRadii*)
 
 
@@ -311,7 +311,7 @@ FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_, method_,maxIteR_,accuracyB_,ansatzRinit
 	]; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*\[ScriptCapitalT],\[ScriptCapitalV],\[ScriptCapitalS],\[CapitalLambda]*)
 
 
@@ -330,7 +330,7 @@ FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_, method_,maxIteR_,accuracyB_,ansatzRinit
 \[ScriptCapitalS][v_,a_,b_,R_,d_,Ns_,VL_,\[Phi]L_]:= \[ScriptCapitalS][v,a,b,R,d,Ns,VL,\[Phi]L] = \[ScriptCapitalT][v,a,b,R,d,Ns] + \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SingleFieldBounce*)
 
 
@@ -360,11 +360,11 @@ SingleFieldBounce[V_,aV_,Ns_,\[Phi]_,noFields_,\[Phi]L_,dim_,methodRinitial_,max
 	];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*SingleFieldBounceImprovement*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Find\[ScriptCapitalI]*)
 
 
@@ -386,7 +386,7 @@ Find\[ScriptCapitalI][v_,\[Phi]L_,a_,b_,Ns_,pos_,R_,ddVL_,d_]:= Find\[ScriptCapi
 	{\[ScriptCapitalI],d\[ScriptCapitalI]}   ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*BounceParameterr\[Beta]\[Nu]*)
 
 
@@ -414,7 +414,7 @@ Block[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 	r\[Beta]\[Nu]M ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FindInitialRadiiImprovement*)
 
 
@@ -426,11 +426,11 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*\[ScriptCapitalT]\[Xi], \[ScriptCapitalV]\[Xi], \[ScriptCapitalS]\[Xi]*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*\[ScriptCapitalT]\[Xi]*)
 
 
@@ -454,7 +454,7 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalT] ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*\[ScriptCapitalV]\[Xi]*)
 
 
@@ -474,7 +474,7 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	Return[2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalV]] ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*\[ScriptCapitalS]\[Xi]*)
 
 
@@ -500,7 +500,7 @@ Block[{\[ScriptCapitalS],VN,v0,\[Phi]L0,a0,b0,VL0,\[Alpha]0,\[Nu]0,\[Beta]0,ddVL
 	2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalS] ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SingleFieldBounceImprovement*)
 
 
@@ -536,7 +536,7 @@ SingleFieldBounceImprovement[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,po
 	{V\[Xi]+T\[Xi],ddVL,\[Nu],\[Alpha],\[Beta],r}];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*ParameterInFieldSpace*)
 
 
@@ -548,7 +548,7 @@ ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,
 	{v,a,b}];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*MultiFieldBounce*)
 
 
@@ -648,11 +648,11 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*FindBounce*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*BounceFunction: Summary Box*)
 
 
@@ -708,7 +708,7 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Process results: piecewiseBounce*)
 
 
@@ -736,7 +736,7 @@ piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,Ns_,noFields_}]:=Module[{
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FindBounce*)
 
 
@@ -887,7 +887,7 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Visualization: BouncePlot*)
 
 
@@ -923,7 +923,7 @@ BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= Module[
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*End Package*)
 
 
