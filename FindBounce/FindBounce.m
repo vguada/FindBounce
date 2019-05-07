@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Header*)
 
 
@@ -28,14 +28,14 @@
 *)
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Begin Package*)
 
 
 BeginPackage["FindBounce`"];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Available public functions*)
 
 
@@ -47,7 +47,7 @@ SingleFieldBounceImprovement;
 MultiFieldBounce;
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin Private*)
 
 
@@ -58,7 +58,7 @@ Begin["`Private`"];
 (*Code*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Segmentation*)
 
 
@@ -109,20 +109,20 @@ Block[{Nfv,\[Phi]3,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[Capit
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*FindSegment*)
 
 
 FindSegment[a_,\[Phi]L_,d_,Ns_]:=Module[{pos=1,R,estimateRmin,estimateRmax,ps},
-	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,"forward",pos][[1]]//Chop;
+	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos][[1]]//Chop;
 	While[Im[R[[-1]]]== 0. &&pos< Ns,
 		pos++;
-		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,"forward",pos][[1]]//Chop; 
+		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos][[1]]//Chop; 
 	];
 	pos   ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*AnsatzN3*)
 
 
@@ -172,7 +172,7 @@ Rinitial = 1/2.(\[Phi]L3[3]-\[Phi]L3[1])/(Sqrt[a3[1] (\[Phi]L3[2]-\[Phi]L3[1])]-
 {Rinitial,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l}      ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*NewAnsatz*)
 
 
@@ -191,38 +191,22 @@ eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 (*Unbounded From Below Potential (In progress..)*)
 
 
-	(*========= Unbounded from below Potential ==*)
-	(*UnboundedPB[]:= Module[{},{\[Phi]0,\[CapitalDelta]Vm}]*)
-(*	If[uPotential,
-		If[pos>1, ps = pos+1, ps = pos + 2];
-		\[CapitalDelta]Vm = (-VL[[ps-1]]+VL[[ps]])(-1+((2 \[Phi][[ps-1]]-\[Phi][[ps]])/\[Phi][[ps-1]] )^4)^(-1);
-		(*---------false minima on the right-----------------------*)
-		\[Phi]0 = (\[Phi][[ps-1]]^4+Sqrt[\[Phi][[ps-1]]^4 (\[Phi][[ps-1]]^4-2 R[[ps]]^2 \[CapitalDelta]Vm (\[Phi][[ps-1]]-
-			\[Phi][[ps]])^2)]+R[[ps]]^2 \[CapitalDelta]Vm \[Phi][[ps-1]] (-\[Phi][[ps-1]]+\[Phi][[ps]]))/(R[[ps]]^2* 
-			\[CapitalDelta]Vm (\[Phi][[ps-1]]-\[Phi][[ps]]));*)
-		(*---------false minima on the left-----------------------*)
-	(*	\[Phi]0 = (\[Phi][[ps-1]]^4-R[[ps]]^2 \[CapitalDelta]Vm \[Phi][[ps-1]] (\[Phi][[ps-1]]+\[Phi][[ps]])+Sqrt[\[Phi][[ps-1]]^4 (\[Phi][[ps-1]]^4-2 R[[ps]]^2 \[CapitalDelta]Vm (\[Phi][[ps-1]]+\[Phi][[ps]])^2)])/(R[[ps]]^2 \[CapitalDelta]Vm (\[Phi][[ps-1]]+\[Phi][[ps]]));  
-	];*)
-	(*	\[Phi]R = -\[Phi][[ps-1]] + \[Phi][[ps]] + 2(\[Phi]0 + \[Phi][[ps-1]])(2+(\[CapitalDelta]Vm (\[Phi]0 + \[Phi][[ps-1]])^2)/\[Phi][[ps-1]]^4\[Rho]^2)^(-1);
-		  VR = VL[[ps]] + \[CapitalDelta]Vm - \[CapitalDelta]Vm/(\[Phi][[ps-1]])^4 (\[Phi] + \[Phi][[ps-1]] - \[Phi][[ps]])^4;   	*)
-
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*RInitial*)
 
 
 (*This function return the second or second last Radii, i.e R[[pos+1]] or R[[-2]] if D = 4*)
-RInitial[4,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,forBack_String]:=
-	If[forBack=="forward",
+RInitial[4,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,backward_]:=
+	If[backward,
+		Sqrt[Rinitial^2 +  Sqrt[(\[Phi]L[[-2]]- \[Phi]L[[-1]])Rinitial^2 /a[[-2]]]],
+		(*else---------*)
 		Sqrt[Rinitial^2 + (a[[pos]]Rinitial^2 - Sqrt[a[[pos]]^2 Rinitial^4+4(a[[pos+1]] - 
-		a[[pos]])(\[Phi]L[[pos+1]] - \[Phi]L[[pos]])Rinitial^2   ]  )/(2(a[[pos+1]] -a[[pos]])) ], 
-		(*----------else------------------*)				  
-		Sqrt[Rinitial^2 +  Sqrt[(\[Phi]L[[-2]]- \[Phi]L[[-1]])Rinitial^2 /a[[-2]]]    ]        
+		a[[pos]])(\[Phi]L[[pos+1]] - \[Phi]L[[pos]])Rinitial^2   ]  )/(2(a[[pos+1]] -a[[pos]])) ] 				        
 	 ];
-RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,forBack_String]:= Rinitial;
+RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,None]:= Rinitial;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*BounceParameterRvb*)
 
 
@@ -232,22 +216,24 @@ Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
 Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},  \[Xi]= ( Sqrt[ 36 a b^2 -  c1^3 ] - 6 b a^(1/2)  )^(1/3) /a^(1/2); 1/2 (c1/a/\[Xi] + \[Xi]) ];
 (*=========== BounceParameterRvb ======================*) 
 (*See eqs. 15-16*)
-BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,forBack_String,pos_]:= BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,forBack,pos] =
+BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_]:= BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos] =
 Block[{R,b,v,\[Alpha],v1,b1,x,y,z,rvb},
-	If[forBack == "backward",
-		\[Alpha]=Join[a,{0.}]; R = RInitial[d,Rinitial,\[Alpha],\[Phi]L,pos,forBack]; b=0.; v=\[Phi]L[[-1]];
+	(*-------Backward--------------------*)
+	If[backward,
+		\[Alpha]=Join[a,{0.}]; R = RInitial[d,Rinitial,\[Alpha],\[Phi]L,pos,backward]; b=0.; v=\[Phi]L[[-1]];
 		rvb = Reap[
 			Sow[b,x];Sow[v,y];Sow[R,z];
-				Do[ b +=-(4./d) (\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
-					v +=( 4./(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y]; 
-					R  = Rs[d,(\[Phi]L[[-i-1]]-v) ,\[Alpha][[-i-1]],b];Sow[R,z];
-					,{i,1,Ns}] ;][[2]];
-		Return[Reverse[rvb,{1,2}]]     
-	 ];
-	If[forBack == "forward",
-		\[Alpha]=Join[{0.},a ]; R = RInitial[d,Rinitial,\[Alpha],\[Phi]L,pos,forBack];b=0.;
+			Do[ b +=-(4./d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
+				v +=( 4./(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y]; 
+				R  = Rs[d,(\[Phi]L[[-i-1]]-v) ,\[Alpha][[-i-1]],b];Sow[R,z];
+				,{i,1,Ns}
+			]; 
+		][[2]];
+		Return[Reverse[rvb,{1,2}]],     
+	(*--------Else-Forward---------------*)
+		\[Alpha]=Join[{0.},a ]; R = RInitial[d,Rinitial,\[Alpha],\[Phi]L,pos,backward];b=0.;
 		v=\[Phi]L[[pos]]; v+= -(4/d)R^2\[Alpha][[pos]];
-		rvb =Reap[
+		rvb = Reap[
 			If[pos>1,Do[Sow[0,x];Sow[v,y];Sow[b,z];,{i,1,pos-1}]];
 			Sow[R,x];
 			Do[ v+= -( 4./(d-2)) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^2 ;Sow[v,y];
@@ -255,13 +241,14 @@ Block[{R,b,v,\[Alpha],v1,b1,x,y,z,rvb},
 				R = Rs[d,(\[Phi]L[[i+1]]-v) ,\[Alpha][[i+1]],b];Sow[R,x];
 			,{i,pos,Ns}];
 			v+= -( 4./(d-2))(-\[Alpha][[Ns+1]]) R^2 ;Sow[v,y];
-			b+= (4./d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; ][[2]];
+			b+= (4./d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; 
+		][[2]];
 		Return[rvb]        
 	];       
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*FindInitialRadii*)
 
 
@@ -271,18 +258,18 @@ FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_, method_,maxIteR_,accuracyB_,ansatzRinit
 		(*Picks up the best estimate*)
 		Off[FindRoot::cvmit];
 		Off[FindRoot::lstol];
-		If[NumericQ[aRinitial],Rinitial =aRinitial,
-			R = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,"forward",1][[1]]//Chop;
+		If[NumericQ[aRinitial],Rinitial = aRinitial,
+			R = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1][[1]]//Chop;
 			If[ Abs[ Im[R[[-1]]]]<10^(-12),
 				Rinitial = Abs[R[[-2]]],
 				Rinitial = Abs[ansatzRinitial] ];   ];
 		Rinitial0 = Rinitial;
 		(*Defines the method to use*)
-		\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Chop[ Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,"backward",None]] ];
+		\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Chop[ Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,None]] ];
 		If[method == "DerrickRescaling",
 			RW[Rinitial_]:= RW[Rinitial] = Block[{rw} ,rw =Abs[\[Lambda][Rinitial]] Abs[Rinitial]; Return[Abs[rw]]  ];          ];
 		If[method == "DerrickFindRoot", (*Can be improved by the explicit computation of \[Lambda]*)
-			RW[Rinitial_]:= RW[Rinitial] = Block[{rw}, rw =rw/.FindRoot[Abs[\[Lambda][rw]-1],{rw, Rinitial}, MaxIterations->1,PrecisionGoal->0,AccuracyGoal->accuracyB ];   
+			RW[Rinitial_]:= RW[Rinitial] = Block[{rw}, rw =rw/.FindRoot[Abs[\[Lambda][rw]-1],{rw,Rinitial}, MaxIterations->1,PrecisionGoal->0,AccuracyGoal->accuracyB ];   
 									Return[Abs[rw]]];      ];
 		(*Finds interval of the solution Sol \[Element] [Rreal, Rcomplex] or reduces the interval*)
 		ite = 0; switch = True; k = 1;
@@ -311,7 +298,7 @@ FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_, method_,maxIteR_,accuracyB_,ansatzRinit
 	]; 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[ScriptCapitalT],\[ScriptCapitalV],\[ScriptCapitalS],\[CapitalLambda]*)
 
 
@@ -324,13 +311,13 @@ FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_, method_,maxIteR_,accuracyB_,ansatzRinit
 		8 a[[i]]b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2)  +
 		( VL[[i]]-VL[[-1]]+ 8 a[[i]]( v[[i]] - \[Phi]L[[i]]))(R[[i+1]]^d-R[[i]]^d)/d ,{i,1,Ns}]+
 	1/d R[[1]]^d (VL[[1]] - VL[[-1]]) ) ;
-\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,forBack_,pos_]:=\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,forBack,pos] = 
-	Block[{R,v,b}, {R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,forBack,pos]; 
+\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_]:=\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,backward,pos] = 
+	Block[{R,v,b}, {R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos]; 
 	Return[(2-d)\[ScriptCapitalT][v,a,b,R,d,Ns] /(d \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns])] ];
 \[ScriptCapitalS][v_,a_,b_,R_,d_,Ns_,VL_,\[Phi]L_]:= \[ScriptCapitalS][v,a,b,R,d,Ns,VL,\[Phi]L] = \[ScriptCapitalT][v,a,b,R,d,Ns] + \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*SingleFieldBounce*)
 
 
@@ -350,8 +337,11 @@ SingleFieldBounce[V_,aV_,Ns_,\[Phi]_,noFields_,\[Phi]L_,dim_,methodRinitial_,max
 		a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8. ,{s,Ns} ]; 
 		pos = FindSegment[a,\[Phi]L,dim,Ns];
 		Rinitial = FindInitialRadii[dim,VL,\[Phi]L,a,Ns,methodRinitial,maxIteR,accuracyB,ansatzRinitial,aRinitial]//Re;
-		If[Rinitial<10^(-5.),Message[SingleFieldBounce::Rinitial0];Return[$Failed,Module]];
-		{R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,dim,Ns,"backward",None]//Re;	
+		If[Rinitial<10^(-5.),
+			Message[SingleFieldBounce::Rinitial0];
+			Return[$Failed,Module]
+		];
+		{R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,dim,Ns,True,None]//Re;	
 		a = Join[a,{0.}];	
 		T1 = \[ScriptCapitalT][v,a,b,R,dim,Ns]; 
 		V1 = \[ScriptCapitalV][v,a,b,R,dim,VL,\[Phi]L,Ns]; 
@@ -360,11 +350,11 @@ SingleFieldBounce[V_,aV_,Ns_,\[Phi]_,noFields_,\[Phi]L_,dim_,methodRinitial_,max
 	];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*SingleFieldBounceImprovement*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Find\[ScriptCapitalI]*)
 
 
@@ -386,7 +376,7 @@ Find\[ScriptCapitalI][v_,\[Phi]L_,a_,b_,Ns_,pos_,R_,ddVL_,d_]:= Find\[ScriptCapi
 	{\[ScriptCapitalI],d\[ScriptCapitalI]}   ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*BounceParameterr\[Beta]\[Nu]*)
 
 
@@ -414,7 +404,7 @@ Block[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 	r\[Beta]\[Nu]M ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*FindInitialRadiiImprovement*)
 
 
@@ -426,11 +416,11 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[ScriptCapitalT]\[Xi], \[ScriptCapitalV]\[Xi], \[ScriptCapitalS]\[Xi]*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalT]\[Xi]*)
 
 
@@ -454,13 +444,17 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalT] ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalV]\[Xi]*)
 
 
 (*Potential term from Int[\[Rho]^(D-1)(Vperturbation[\[CurlyPhi]]-8a)]*)
-\[ScriptCapitalV]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=\[ScriptCapitalV]\[Xi]4[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r] =1/48 \[Rho]^2 (5 a^2 ddVL \[Rho]^6+16 a (12 \[Beta]+6 \[Nu] \[Rho]^2+\[Rho]^4 (8 \[Alpha]+ddVL (v-\[Phi]L)))+24 b (8 \[Alpha]+ddVL (v-\[Phi]L))+6 \[Rho]^2 (16 \[Alpha]+ddVL (v-\[Phi]L)) (v-\[Phi]L))+1/2 b ddVL (b+2 a \[Rho]^4) Log[\[Rho]]+8 a b r \[Rho]^2+1/4 r \[Rho]^4 (4 (VL-VN)+32 a^2 \[Rho]^2+32 a (v-\[Phi]L));
-\[ScriptCapitalV]\[Xi]3[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=\[ScriptCapitalV]\[Xi]3[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r]=1/630 \[Rho] (1260 b^2 ddVL+210 b \[Rho] (24 \[Alpha]+ddVL (3 v+8 a \[Rho]^2-3 \[Phi]L))+\[Rho] (128 a^2 ddVL \[Rho]^5+336 a (15 \[Beta]+5 \[Nu] \[Rho]+\[Rho]^3 (8 \[Alpha]+ddVL (v-\[Phi]L)))+105 \[Rho] (16 \[Alpha]+ddVL (v-\[Phi]L)) (v-\[Phi]L)))+16 a b r \[Rho]^2+1/3 r \[Rho]^3 (3 (VL-VN)+32 a^2 \[Rho]^2+24 a (v-\[Phi]L));
+\[ScriptCapitalV]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=\[ScriptCapitalV]\[Xi]4[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r] =1/48 \[Rho]^2 (5 a^2 ddVL \[Rho]^6+
+	16 a (12 \[Beta]+6 \[Nu] \[Rho]^2+\[Rho]^4 (8 \[Alpha]+ddVL (v-\[Phi]L)))+24 b (8 \[Alpha]+ddVL (v-\[Phi]L))+6 \[Rho]^2 (16 \[Alpha]+ddVL (v-\[Phi]L)) (v-\[Phi]L))+
+	1/2 b ddVL (b+2 a \[Rho]^4) Log[\[Rho]]+8 a b r \[Rho]^2+1/4 r \[Rho]^4 (4 (VL-VN)+32 a^2 \[Rho]^2+32 a (v-\[Phi]L));
+\[ScriptCapitalV]\[Xi]3[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=\[ScriptCapitalV]\[Xi]3[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r]=1/630 \[Rho] (1260 b^2 ddVL+
+	210 b \[Rho] (24 \[Alpha]+ddVL (3 v+8 a \[Rho]^2-3 \[Phi]L))+\[Rho] (128 a^2 ddVL \[Rho]^5+336 a (15 \[Beta]+5 \[Nu] \[Rho]+\[Rho]^3 (8 \[Alpha]+ddVL (v-\[Phi]L)))+105 \[Rho] (16 \[Alpha]+
+	ddVL (v-\[Phi]L)) (v-\[Phi]L)))+16 a b r \[Rho]^2+1/3 r \[Rho]^3 (3 (VL-VN)+32 a^2 \[Rho]^2+24 a (v-\[Phi]L));
 \[ScriptCapitalV]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] := \[ScriptCapitalV]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r]=
 	Block[{\[ScriptCapitalV],VN,v0,\[Phi]L0,a0,b0,VL0,\[Alpha]0,\[Nu]0,\[Beta]0,ddVL0,\[ScriptCapitalV]\[Xi]D},
 		VN = VL[[-1]];a0 =Join[{0},a,{0}];VL0 =Join[{VL[[1]]},VL,{0}];
@@ -474,7 +468,7 @@ FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapi
 	Return[2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalV]] ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalS]\[Xi]*)
 
 
@@ -500,7 +494,7 @@ Block[{\[ScriptCapitalS],VN,v0,\[Phi]L0,a0,b0,VL0,\[Alpha]0,\[Nu]0,\[Beta]0,ddVL
 	2\[Pi]^(d/2)/Gamma[d/2]\[ScriptCapitalS] ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*SingleFieldBounceImprovement*)
 
 
@@ -513,7 +507,6 @@ SingleFieldBounceImprovement[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,po
 			Table[(dV/.rule[[s]]).eL[[If[s==Ns+1,Ns,s]]],{s,Ns+1}]
 		];
 		\[Alpha]  = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
-		Aux= {\[Alpha],dVL};
 		ddVL = Join[
 			Table[ (dVL[[s+1]]-8(a[[s]] + \[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,Ns}],
 			{0} ];
@@ -536,7 +529,7 @@ SingleFieldBounceImprovement[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,po
 	{V\[Xi]+T\[Xi],ddVL,\[Nu],\[Alpha],\[Beta],r}];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*ParameterInFieldSpace*)
 
 
@@ -548,7 +541,7 @@ ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,
 	{v,a,b}];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*MultiFieldBounce*)
 
 
@@ -561,30 +554,26 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 	rules = Table[fields[[i]]->\[Phi]0[[s,i]],{s,p,Ns+1},{i,noFields}];
 	
 	(*======\[Equal]Derivative of Poential and PB ===============*)
-	DV = Chop[Join[ConstantArray[0.,{p-1,noFields}],
-		Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]]
-	];
-	D2V = Chop[Join[Table[ConstantArray[0.,{noFields,noFields}],{s,1,p-1}], 
-		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]]
-	];
-	d\[CurlyPhi] = Join[Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
-		Table[   8/d a0[[s+m]] R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),
-		{s,p,Ns-1},{m,0,1}]
-	];		
+	DV = Chop@Join[ConstantArray[0.,{p-1,noFields}],Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]];
+	D2V = Chop@Join[Table[ConstantArray[0.,{noFields,noFields}],{s,1,p-1}], 
+		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];
+	d\[CurlyPhi] = Chop@Join[Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
+		Table[   8/d a0[[s+m]] R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]];
+	
 	(*======\[Equal]Initial Values================*)
 	If[pos>1, 
-		\[Nu]0[p] = ConstantArray[0.,noFields]; \[Beta]0[p]=ConstantArray[0.,noFields];,
+		\[Nu]0[p] = ConstantArray[0.,noFields]; 
+		\[Beta]0[p] = ConstantArray[0.,noFields];,
 		(*-----------------------------*) 
 		\[Nu]0[p] = ((16 a0[[1]]-DV[[1]]-DV[[2]]) R[[1]]^2)/(4 (-2+d));  
 		\[Beta]0[p] = ((-16 a0[[1]]+DV[[1]]+DV[[2]]) R[[1]]^d)/(4 d);  
 	];
 	Do[ \[Nu]0[s] = \[Nu]0[s-1]+ 1/(4 (-2+d)) R[[s]] (4 d\[CurlyPhi][[-1+s,1]]-4 d\[CurlyPhi][[-1+s,2]]+
-				(-16 a0[[-1+s]]+16 a0[[s]]+DV[[-1+s]]-DV[[1+s]]) R[[s]]);
-		\[Beta]0[s] = \[Beta]0[s-1]+ 1/(4 d) R[[s]]^(-1+d) (-2 d d\[CurlyPhi][[-1+s,1]]+
-				2 d d\[CurlyPhi][[-1+s,2]]+(16 a0[[-1+s]]-16 a0[[s]]-DV[[-1+s]]+
-				DV[[1+s]]) R[[s]]);,{s,p+1,Ns}
+			(-16 a0[[-1+s]]+16 a0[[s]]+DV[[-1+s]]-DV[[1+s]]) R[[s]]);
+		\[Beta]0[s] = \[Beta]0[s-1]+ 1/(4 d) R[[s]]^(-1+d) (-2 d d\[CurlyPhi][[-1+s,1]]+2 d d\[CurlyPhi][[-1+s,2]]+
+			(16 a0[[-1+s]]-16 a0[[s]]-DV[[-1+s]]+DV[[1+s]]) R[[s]]);,{s,p+1,Ns}
 	];
-	(*======\[Equal]Body of Matrix================*)
+	(*======= Body of Matrix M ===============*)
 		\[Nu]\[Xi]p[s_]:= \[Nu]\[Xi]p[s]= -( (R[[s]]^2) /(4 (-2+d)))D2V[[1+s]];(*\[Zeta]ts[1+s]*)
 		\[Beta]\[Xi]p[s_]:= \[Beta]\[Xi]p[s]=(D2V[[1+s]] (R[[s]]^d) )/(4 d);  (*\[Zeta]ts[1+s]*)
 		\[Nu]\[Xi]m[s_]:= \[Nu]\[Xi]m[s]=(D2V[[s-1]] (R[[s]]^2) )/(4 (-2+d));  (*\[Zeta]ts[-1+s]*)
@@ -600,10 +589,10 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 	fD1[s_]:= (-IdentityMatrix[noFields]+(D2V[[1+s]] R[[1+s]]^2)/(4 d))+(2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]p[s])+\[Nu]\[Xi]p[s] ;(*[Eq[s],\[Xi][s+1]]*)
 	frI[s_]:= ((2 (R[[1+s]]^(2-d)) )/(-2+d) (4 a0[[p]] R[[p]]^d)-(8  a0[[p]] R[[p]]^2)/(-2+d)  )IdentityMatrix[noFields]; 
 	
-	(*======\[Equal] M.\[Xi]\[Equal]c ===============*)
+	(*============= M.\[Xi]\[Equal]c ===============*)
 	c  = -Flatten[ {If[pos>1,{},ConstantArray[0.,noFields]],
-		Table[ ((-16 a0[[s]]+DV[[s]]+DV[[1+s]]) R[[1+s]]^2)/(4 d)+
-		(2 (R[[1+s]]^(2-d)) )/(-2+d) \[Beta]0[s]  +\[Nu]0[s]  ,{s,p,Ns}],ConstantArray[0.,noFields]}    
+		Table[ ((-16 a0[[s]]+DV[[s]]+DV[[1+s]]) R[[1+s]]^2)/(4 d)+(2 (R[[1+s]]^(2-d)) )/(-2+d) \[Beta]0[s]
+		+\[Nu]0[s],{s,p,Ns}],ConstantArray[0.,noFields]}    
 	];
 	n1 = If[pos>1,0,1];
 	M = Block[{n,m},
@@ -617,20 +606,26 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 			Do[m[[s+n1,1]]=frI[s],{s,1,n-1-n1}];   
 		];
 		Do[m[[s+n1,j-1+n1]]=fLowT[s+p-1,j+p-1]; ,{s,2,n-n1-1},{j,2,s}];
-		ArrayFlatten[m]   
+		ArrayFlatten[m]
 	];
-	(*=======Linear Solve==============*)
+	
+	(*========== Linear Solve ==============*)
 	\[Xi]Mc = LinearSolve[M,c];  
-	(*----------------------------*)
+	(*-------------------------------*)
 	\[Zeta]ts = Join[ConstantArray[0.,{p-1,noFields}],Partition[\[Xi]Mc[[ 1+n1 noFields;;-1]],noFields]];
-	a  = Join[ConstantArray[0.,{p-1,noFields}],Table[   1/8(      (  DV[[s]]+DV[[s+1]]+D2V[[s]].\[Zeta]ts[[s]]+D2V[[s+1]].\[Zeta]ts[[s+1]]     )/2)-a0[[s]],{s,p,Ns}  ]];
-	rI  = If[pos>1,ConstantArray[0,noFields],\[Xi]Mc[[1;;noFields]] ];
+	a  = Join[ConstantArray[0.,{p-1,noFields}],
+		Table[ 1/8( (  DV[[s]]+DV[[s+1]]+D2V[[s]].\[Zeta]ts[[s]]+D2V[[s+1]].\[Zeta]ts[[s+1]]  )/2)-a0[[s]],{s,p,Ns}]
+	];
+	rI  = If[pos>1,
+			ConstantArray[0,noFields],
+			\[Xi]Mc[[1;;noFields]] 
+	];
 	rF  = ConstantArray[0,noFields];
 	(*-------- \[Nu]\[Beta] --------------------*)
 	If[pos>1,
 		\[Nu] = \[Zeta]ts[[p]]; 
 		\[Beta] = ConstantArray[0.,noFields];,
-		(*-----------------------------*) 
+	(*--------------------------------*) 
 		\[Nu] =-4/(d-2) (a[[1]]+2 a0[[1]] rI)R[[1]]^2;
 		\[Beta] =   4/d (a[[1]]+d a0[[1]] rI)R[[1]]^d;    
 	];     
@@ -640,7 +635,7 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 		Do[ \[Nu]+= -4/(d-2)(a[[s+1]]-a[[s]])R[[s+1]]^2-1/(d-2) (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]] ;
 			\[Beta]+=   4/d(a[[s+1]]-a[[s]])R[[s+1]]^d+1/2 (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]]^(d-1);
 			Sow[\[Nu],x];Sow[\[Beta],y]; ,{s,p,Ns-1} ];  
-	][[2]];
+		][[2]];
 	(*-------- R --------------------*)
 	R[[p]] += R[[p]]*rI; R[[Ns+1]] += R[[Ns+1]]*rF; 
 	
@@ -648,15 +643,15 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*FindBounce*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*BounceFunction: Summary Box*)
 
 
-summaryBoxGraphics[bf_BounceFunction]:=BouncePlot[
+summaryBoxGraphics[bf_BounceFunction]:= BouncePlot[
 	bf,
 	(* Small plot has to render fast. *)
 	PerformanceGoal->"Speed",
@@ -683,11 +678,11 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 	
 	 (* column *)
 	above = {
-		BoxForm`SummaryItem[{"Action: ", obj["Action"]}],		
-		BoxForm`SummaryItem[{"Domain: ", obj["Domain"]}]
+		BoxForm`SummaryItem[{"Action: ", obj["Action"]}],
+		BoxForm`SummaryItem[{"Dimension: ", obj["Dimension"]}]
 	};
 	below = {
-		BoxForm`SummaryItem[{"Dimensions: ", obj["Dimensions"]}],		
+		BoxForm`SummaryItem[{"Domain: ", obj["Domain"]}],		
 		BoxForm`SummaryItem[{"InitialSegment: ", obj["InitialSegment"]}],
 		BoxForm`SummaryItem[{"Iterations: ", obj["Iterations"]}],
 		BoxForm`SummaryItem[{"Segments: ", obj["Segments"]}]
@@ -708,7 +703,7 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Process results: piecewiseBounce*)
 
 
@@ -736,13 +731,13 @@ piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,Ns_,noFields_}]:=Module[{
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*FindBounce*)
 
 
 FindBounce::usage = "FindBounce[potential,fields,{min1, min2}] computes false vacuum decay in potential with multiple scalar fields.";
 FindBounce::syms = "Field symbols should not have any value.";
-FindBounce::dim = "Only supported \"Dimensions\" are 3 and 4, default value was taken.";
+FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
 FindBounce::iter = "Maximum number of iterations should be a positive integer, default value was taken.";
 FindBounce::AnsatzPath = "Wrong AnsatzPath.";
 FindBounce::gradient = "The gradient is not a vector.";
@@ -762,8 +757,8 @@ Options[FindBounce] = {
 	"AnsatzV" -> None,
 	"AccuracyBounce" -> 10,
 	"AccuracyPathDeformation" -> 10,
-	"Dimensions" -> 4,
-	"ForwardBackward" -> "backward",
+	"Dimension" -> 4,
+	"Backward" -> True,
 	"Segments" -> 30,
 	"Improvement" ->True,
 	"InitialFieldValue"  -> Automatic,
@@ -788,7 +783,7 @@ FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,accuracyB,accuracyPath,
-	noFields,VL,d\[Phi]L,point,itePath,maxIteR,ps,R,forBack,methodRinitial,methodSeg,
+	noFields,VL,d\[Phi]L,point,itePath,maxIteR,ps,R,backward,methodRinitial,methodSeg,
 	improvePB,ImprovePB,uPotential,\[CapitalDelta]Vm,\[Phi]0,V\[Xi],T\[Xi],V1,T1,aV,\[Phi]N3,rule,improvementPB,
 	dVL,ddVL,\[Alpha],\[Beta],\[Nu],r,pos,rw,r1,\[ScriptCapitalI],d\[ScriptCapitalI],l,eL,dV,d2V,\[Phi]l,RM,
 	gradient,hessian,iter,Action,Actio\[Xi],vM,aM,bM},
@@ -805,9 +800,9 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 	aV = OptionValue["AnsatzV"];
 	accuracyB = OptionValue["AccuracyBounce"]/.{Except[_Integer?Positive]:>(Message[FindBounce::AccuracyBounce];10)};
 	accuracyPath = OptionValue["AccuracyPathDeformation"]/.{Except[_Integer?Positive]:>(Message[FindBounce::AccuracyPathDeformation];10)};
-	dim = OptionValue["Dimensions"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
-	forBack = OptionValue["ForwardBackward"]/.{Except["backward"|"forward"]:>(Message[FindBounce::ForwardBackward];"backward")};
-	Nfv = OptionValue["Segments"]+1/.x_/;x<=2:>(Message[FindBounce::NumberSegments];30);  (*field values = "number of segement" + 1*)
+	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
+	backward = OptionValue["Backward"]/.{Except[True|False]:>(Message[FindBounce::ForwardBackward];True)};
+	Nfv = OptionValue["Segments"]+1/.x_/;(x<=2||x \[NotElement] Integers):>(Message[FindBounce::NumberSegments];30);  (*field values = "number of segement" + 1*)
 	maxIteR = OptionValue["MaxIterationsR"]/.{Except[_Integer?Positive]:>(Message[FindBounce::MaxIterationsR];100)};
 	methodRinitial = OptionValue["MethodBounce"]/.{Except["DerrickFindRoot"|"DerrickRescaling"]:>(Message[FindBounce::ErrorMethod];"DerrickFindRoot")};
 	methodSeg = OptionValue["MethodSegmentation"]/.{Except["HS"|"biHS"|"HSPlus"]:>(Message[FindBounce::MethodSegmentation];"HS")};
@@ -872,7 +867,7 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 	BounceFunction@Association[
 		"Action"->Action,
 		"BounceParameters"->{v,a,b,pos,R},
-		"Dimensions"->dim,
+		"Dimension"->dim,
 		"Domain"->{If[pos>1,0.,R[[pos]]],R[[-1]]},
 		"InitialSegment"->pos(*If[pos>1,pos-1,pos]*),
 		"ImprovedBounce"->ImprovePB,
@@ -887,30 +882,41 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Visualization: BouncePlot*)
 
 
 BouncePlot::usage="BouncePlot[bf] plots the content of BounceFunction bf.";
+BouncePlot::bfs="Argument should be a list of function(s).";
 
-BouncePlot//Options=Options[Plot];
+BouncePlot//Options=Options@Plot;
 
 BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 
-BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= Module[
+BouncePlot[bf_BounceFunction/;Length[bf]==1,opts:OptionsPattern[]]:=
+	BouncePlot[{bf},opts];
+
+BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 	{bounce,R,markers,plotRange},
-	bounce=bf["Bounce"];
+	
+	(* Check if bf is a BounceFunction*)
+	If[
+		Not@ArrayQ[bf,1,(Head[#]===BounceFunction&)],
+		Message[BouncePlot::bfs];Return[$Failed,Module]
+	];
+	
+	bounce=#["Bounce"]&/@bf;
 	(* This helps to draw discrete radii R. *)
-	R=Last@bf["BounceParameters"];
+	R=Last[#["BounceParameters"]]&/@bf;
 	plotRange=Clip[
 		MinMax[R,Scaled[0.25]],
 		{0,Infinity}
 	];
-	markers=Transpose@{R,bounce/@R};
+	markers=Transpose@{R[[#]],bounce[[#]]/@R[[#]]}&/@Range[Length@bf];
 	
 	Plot[
-		bounce[r],
-		{r,Sequence@@plotRange},
+		#[\[Rho]]&/@bounce,
+		{\[Rho],Sequence@@plotRange},
 		opts,
 		(* Default options come here. Keep them as short as possible, for flexibiltiy.
 		Explicitly given options (above) have precedence. *)
@@ -918,12 +924,13 @@ BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= Module[
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
 		LabelStyle->Directive[Black,FontSize->17, FontFamily->"Times New Roman",FontSlant->Plain],
 		GridLines->Automatic,
-		PlotStyle->Orange
+		PlotStyle->Orange(*,
+		Epilog\[Rule]{PointSize[Medium], Orange,Point[markers]}*)
 	]
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*End Package*)
 
 
