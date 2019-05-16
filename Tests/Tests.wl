@@ -51,6 +51,22 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
+(*2 field*)
+
+
+VerificationTest[
+	FindBounce[
+		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2,
+		{x,y},
+		{{0.,12.91},{20.,0.}}
+	]["Action"],
+	4945.,
+	SameTest->(Abs[(#1-#2)/#2]<5.&),
+	TestID->"FindBounce - 2F default"
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Fail checks*)
 
 
