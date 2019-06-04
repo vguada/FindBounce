@@ -1,168 +1,104 @@
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Description*)
 
 
-(* "FindBounce" package must be loaded before running these tests, 
-otherwise testing is aborted. *)
+(* "FindBounce" package must be loaded before running tests, otherwise procedure is aborted. *)
 If[
 	Not@MemberQ[$Packages,"FindBounce`"],
 	Print["Error: Package is not loaded, try again"];Abort[];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Begin Test Section*)
 
 
 BeginTestSection["Tests"];
 
 
-(* ::Subsection:: *)
-(*Global Variables*)
+(* ::Subsection::Closed:: *)
+(*FindBounce*)
 
 
-\[Mu]\[Lambda]\[Alpha]\[Epsilon]={{80.,100.},{.1,.3},2.,{0.,0.}};
-
-V2[\[Phi]_]:=Sum[
-	-\[Mu]\[Lambda]\[Alpha]\[Epsilon][[1,i]] (\[Phi][[i]])^2 +\[Mu]\[Lambda]\[Alpha]\[Epsilon][[2,i]](\[Phi][[i]])^4+\[Mu]\[Lambda]\[Alpha]\[Epsilon][[4,i]]\[Phi][[i]],
-	{i,1,2}
-]+ \[Mu]\[Lambda]\[Alpha]\[Epsilon][[3]](\[Phi][[1]])^2 (\[Phi][[2]])^2; 
-
-dV[\[CurlyPhi]_]:={-160. \[CurlyPhi][[1]]+0.4 \[CurlyPhi][[1]]^3+4 \[CurlyPhi][[1]] \[CurlyPhi][[2]]^2,-200. \[CurlyPhi][[2]]+4.\[CurlyPhi][[1]]^2 \[CurlyPhi][[2]]+1.2 \[CurlyPhi][[2]]^3};
-
-d2V[\[CurlyPhi]_]:={{-160. +1.2 \[CurlyPhi][[1]]^2+4. \[CurlyPhi][[2]]^2,8. \[CurlyPhi][[1]] \[CurlyPhi][[2]]},{8. \[CurlyPhi][[1]] \[CurlyPhi][[2]],-200.+4. \[CurlyPhi][[1]]^2+3.6 \[CurlyPhi][[2]]^2}};
+(* ::Subsubsection::Closed:: *)
+(*1 field*)
 
 
-(* Tests should be always run from development environment - there they make sense. *)
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518}]["Action"],
+	482.955,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-2)&),
+	TestID->"FindBounce - default"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"Segments"->10]["Action"],
+	482.955,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-1)&),
+	TestID->"FindBounce - 10 segments"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"Segments"->100]["Action"],
+	482.955,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-3)&),
+	TestID->"FindBounce - 100 segments"
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*2 field*)
+
+
+VerificationTest[
+	FindBounce[
+		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2,
+		{x,y},
+		{{0.,12.91},{20.,0.}}
+	]["Action"],
+	4945.,
+	SameTest->(Abs[(#1-#2)/#2]<5.&),
+	TestID->"FindBounce - 2F default"
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fail checks*)
+
+
+(* Slightly moved minima. *)
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518}+0.1],
+	$Failed,
+	{SingleFieldBounce::extrema},
+	TestID->"FindBounce - wrong minima"
+];
+
+
+(* ::Subsection::Closed:: *)
+(*BouncePlot*)
+
+
+(* We just check if plot (Graphics expression) is produced without messages. 
+Only BouncePlot is inside VerificationTest for relevant timing. *)
 With[{
-	dir=FileNameJoin[{ParentDirectory["Location"/.PacletInformation["FindBounce"]],"Tests"}]
+	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"Segments"->10]
 	},
-	If[
-		DirectoryQ[dir],
-		$testDir=dir,
-		Print["Cannot find directory with tests."];Abort[]
+	VerificationTest[
+		BouncePlot[bf,PerformanceGoal->"Speed"],
+		_Graphics,
+		SameTest->MatchQ,
+		TestID->"BouncePlot - 1 field default"
 	]
 ];
 
-Get@FileNameJoin[{$testDir,"variablesTest.wl"}];
-If[
-	Head[variableTest1]=!=List||Head[variableTest2]=!=List,
-	Print["Error: Needs variablesTest.wl in the NotebookDirectory[], try again"];Abort[];
-];
 
-{aRw,\[Phi]N3,a,R,v,b,d,\[Phi]L,VL,dVL,ddVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r,\[Beta],\[Nu],
-r1,Ns,pos,forBack,timeRw,\[Phi]t,\[Phi],N\[CurlyPhi],l,eL,\[Phi]s,vs,as,bs,Rs,Ts,
-Vs,T\[Xi],V\[Xi],T1,V1,Rw,methodRw,maxIteR,accuracyB,ansatzRw,accuracyPath,ite\[Zeta],methodSeg,Nfv,aV1} = variableTest1;
-{\[Phi]s2,vs2,as2,bs2,Rs2,\[Phi]2,\[Phi]L2,eL2,l2,v2,a2,b2,R2,VL2,ddVL2,\[ScriptCapitalI]2,d\[ScriptCapitalI]2,\[Alpha]2,pos2,r2,\[Beta]2,\[Nu]2,r12,T\[Xi]2,V\[Xi]2} = variableTest2; 
-
-
-(* ::Subsection:: *)
-(*VerificationTest*)
-
-
-VerificationTest[
-	Round[
-		Segmentation[{1,2,6},"NumberFieldValues"->4],
-		0.01
-	],
-	{1.,2.67,4.33,6.},
-	TestID->"Segmentation"
-];
-
-
-VerificationTest[
-	findSegment[a,\[Phi]L,d,Ns],
-	pos,
-	TestID->"findSegment"
-];
-
-
-VerificationTest[
-	Round[newAnsatz[\[Phi]s[[-1]],Ns,N\[CurlyPhi]],0.01],
-	Round[{Ns,\[Phi],\[Phi]L,eL,l},0.01],
-	TestID->"newAnsatz"
-];
-
-
-VerificationTest[
-	Round[Re[Rvb[Rw,\[Phi]L,a,d,Ns,forBack,pos]],0.01],
-	Round[{R,v,b},0.01],
-	TestID->"Rvb"
-];
-
-
-VerificationTest[
-	Round[findRw[d,VL,\[Phi]L,a,Ns, methodRw,maxIteR,accuracyB,ansatzRw,aRw][[-1]],0.0001],
-	Round[Rw,0.0001],
-	TestID->"findRw"
-];
-
-
-VerificationTest[
-	Round[find\[ScriptCapitalI][v2,\[Phi]L2,a2,b2,Ns,pos,R2,ddVL2,d],0.01],
-	Round[{\[ScriptCapitalI]2,d\[ScriptCapitalI]2},0.01],
-	TestID->"find\[ScriptCapitalI]"
-];
-
-
-VerificationTest[Round[r\[Beta]\[Nu][r12,a2,b2,d,Ns,\[Alpha]2,R2,\[ScriptCapitalI]2,d\[ScriptCapitalI]2,pos2],0.01][[All,2;;-1]],Round[{r2,\[Beta]2,\[Nu]2},0.01],
-	TestID->"r\[Beta]\[Nu]"
-];
-
-
-VerificationTest[
-	Round[rw/.FindRoot[findrw[rw,a2,b2,d,Ns,\[Alpha]2,R2,\[ScriptCapitalI]2,d\[ScriptCapitalI]2,pos2],{rw,-1}],0.01],
-	Round[r12,0.01],
-	TestID->"findrw"
-];
-
-
-VerificationTest[
-	Round[\[Phi]vabRs[dV,d2V,\[Phi],eL,l,\[Phi]L,v,a,b,Ns,R,N\[CurlyPhi],pos,d,ite\[Zeta],accuracyPath],0.01],
-	Round[{\[Phi]s2,vs2,as2,bs2,Rs2},0.01],
-	TestID->"\[Phi]vabRs"
-];
-
-
-VerificationTest[
-	Round[PathDeformation[dV,d2V,Ns,N\[CurlyPhi],pos,d,Rs[[1]],\[Phi]s[[1]],vs[[1]],as[[1]],bs[[1]],accuracyPath],0.01],
-	Round[{\[Phi]s[[2]]-\[Phi]s[[1]],vs[[2]]-vs[[1]],as[[2]]-as[[1]],bs[[2]]-bs[[1]],Rs[[2,pos]]-Rs[[1,pos]],Rs[[2,-1]]-Rs[[1,-1]]},0.01],
-	TestID->"PathDeformation"
-];
-
-
-VerificationTest[
-	Round[\[ScriptCapitalT][v,a,b,R,d,Ns],0.01],
-	Round[T1,0.01],
-	TestID->"\[ScriptCapitalT]"
-];
-
-
-VerificationTest[
-	Round[\[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns],0.01],
-	Round[V1,0.01],
-	TestID->"\[ScriptCapitalV]"
-];
-
-
-VerificationTest[
-	Round[\[ScriptCapitalT]\[Xi][d,a2,R2,b2,v2,\[Alpha]2,\[Beta]2,\[Nu]2,ddVL2,VL2,\[Phi]L2,Ns,pos2,r2],0.01],
-	Round[T\[Xi]2,0.01],
-	TestID->"\[ScriptCapitalT]\[Xi]"
-];
-
-
-VerificationTest[
-	Round[\[ScriptCapitalV]\[Xi][d,a2,R2,b2,v2,\[Alpha]2,\[Beta]2,\[Nu]2,ddVL2,VL2,\[Phi]L2,Ns,pos2,r2],0.01],
-	Round[V\[Xi]2,0.01],
-	TestID->"\[ScriptCapitalV]\[Xi]"
-];
-
-
-(* ::Subsection:: *)
-(*EndTestSection*)
+(* ::Subsection::Closed:: *)
+(*End Test Section*)
 
 
 EndTestSection[];
