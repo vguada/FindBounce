@@ -215,7 +215,6 @@ RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,backward_]:= Rinitial;
 
 (* ::Input:: *)
 (**)
-(**)
 
 
 (* ::Subsection::Closed:: *)
@@ -876,7 +875,7 @@ Options[FindBounce] = {
 	"Iterations" -> 3,
 	"MaxIterationsR" -> 100,
 	"MethodBounce" -> "DerrickFindRoot",
-	"MethodSegmentation" -> "HS",
+	"MethodSegmentation" -> "biHS",
 	Gradient-> None,
 	Hessian-> None
 };
