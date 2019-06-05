@@ -215,6 +215,7 @@ RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,backward_]:= Rinitial;
 
 (* ::Input:: *)
 (**)
+(**)
 
 
 (* ::Subsection::Closed:: *)
@@ -287,7 +288,7 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 	Rinitial0 = Rinitial;
 	
 	(*Defines \[Lambda] of eq. 26*)
-	\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Chop@Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos]] ;
+	\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Chop@Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos]];
 	(*Discriminates between undershooting and overshooting*)
 	RComplexity[Rinitial_] := RComplexity[Rinitial] = Abs@Im@BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,None][[1,1]];
 
@@ -343,32 +344,35 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 			\[Lambda]prev = \[Lambda][Rinitial];
 			If[ RComplexity[Rinitial]>0,
 				If[ (*Overshooting*)
-					Rinitial <  Rcomplex,
+					Rinitial < Rcomplex,
 					Rcomplex = Rinitial;
 					Rinitial = RW[Rinitial],
 					Rinitial = Abs[Rcomplex +Rreal]/2.
 				];
 				,
 				If[ (*Undershooting*)
-					Rinitial >  Rreal, 
+					Rinitial > Rreal, 
 					Rreal = Rinitial; 
 					Rinitial = RW[Rinitial],
 					Rinitial = Abs[Rcomplex +Rreal]/2.  
 				]
 			];
 			ite++; 
-			If[Abs[\[Lambda][Rinitial] - \[Lambda]prev]< .5*10^(-accuracyB)&&switchMessage, 
+			
+			If[Abs[\[Lambda][Rinitial] - \[Lambda]prev] < .5*10^(-accuracyB-1)&&switchMessage, 
 				Message[FindInitialRadii::cvmit,maxIteR];
-				Break[];  
+				Break[] 
 			];      	
-		];    
+		];
+		    
 		If[ Re[Chop[\[Lambda][Rinitial]]] == 0., 
 			k++;switch=True;
 			Rinitial = 0.5*k*Abs[Rinitial0]  
 		];     
-	];     
+	];    
+	 
 	If[ ite > maxIteR&&switchMessage, Message[FindInitialRadii::cvmit,maxIteR] ];  
-	
+
 	Rinitial  
 ]; 
 
@@ -862,7 +866,7 @@ FindBounce::ansatzPath = "Wrong \"AnsatzPath\".";
 FindBounce::optionValue = "Wrong \"`1`\", default value `2` was taken.";
 
 Options[FindBounce] = {
-	"AccuracyBounce" -> 7,
+	"AccuracyBounce" -> 10,
 	"AccuracyPathDeformation" -> 10,
 	"Dimension" -> 4,
 	"Backward" -> True,
@@ -875,7 +879,7 @@ Options[FindBounce] = {
 	"Iterations" -> 3,
 	"MaxIterationsR" -> 100,
 	"MethodBounce" -> "DerrickFindRoot",
-	"MethodSegmentation" -> "biHS",
+	"MethodSegmentation" -> "HS",
 	Gradient-> None,
 	Hessian-> None
 };
@@ -962,9 +966,9 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 	];
 	
 	(*-------- Single Field Bounce-----------------------*)
-	{Action,VL,v,a,b,pos,R,Rinitial} = SingleFieldBounce[V,aV,Ns,noFields,\[Phi]L,dim,methodRinitial,maxIteR,accuracyB,ansatzRinitial,aRinitial,rule,iter,iter == itePath]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-	{Actio\[Xi],ddVL,\[Nu],\[Alpha],\[Beta],r} = ImprovePB = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,improvePB&&iter == itePath];
-	Action += Actio\[Xi];
+		{Action,VL,v,a,b,pos,R,Rinitial} = SingleFieldBounce[V,aV,Ns,noFields,\[Phi]L,dim,methodRinitial,maxIteR,accuracyB,ansatzRinitial,aRinitial,rule,iter,iter == itePath]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+		{Actio\[Xi],ddVL,\[Nu],\[Alpha],\[Beta],r} = ImprovePB = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,improvePB&&iter == itePath];
+		Action += Actio\[Xi];
 	
 	(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 	{v,a,b} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,VL,Ns,noFields,pos,dim];
@@ -983,7 +987,8 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 
 	BounceFunction@Association[
 		"Action"->Action,
-		"BounceParameters"->{v,a,b,pos,R},
+		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
+		"BounceParameters"->{pos,v,a,b,R},
 		"Dimension"->dim,
 		"Domain"->{If[pos>1,0.,R[[pos]]],R[[-1]]},
 		"InitialSegment"->pos,
@@ -993,8 +998,8 @@ Module[{a,Rinitial,aPath,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Nfv,aRinitial,
 		"Method"->methodRinitial,
 		"Path"->\[Phi],
 		"PathLongitudinal"->\[Phi]L,
-		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
-		"Potential"->VL
+		"Potential"->VL,
+		"Radii"->R
 	]
 ];
 
@@ -1024,7 +1029,7 @@ BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 	
 	bounce=#["Bounce"]&/@bf;
 	(* This helps to draw discrete radii R. *)
-	R=Last[#["BounceParameters"]]&/@bf;
+	R=#["Radii"]&/@bf;
 	plotRange=Clip[
 		MinMax[R,Scaled[0.25]],
 		{0,Infinity}
