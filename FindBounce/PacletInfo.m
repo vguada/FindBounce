@@ -5,10 +5,11 @@
 Paclet[
 	Name -> "FindBounce",
 	Version -> "0.1.0",
-	WolframVersion -> "8.+",
+	WolframVersion -> "10.+",
 	Description -> "Computes tunneling transition with multiple scalar fields.",
-	Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar.",
-	Thumbnail->"FrontEnd/Icon.png.",
+	Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar",
+	URL->"https://github.com/vguada/FindBounce",
+	Thumbnail->"FrontEnd/Icon.png",
 	Extensions -> {
 		{"Kernel",
 			Root -> ".",

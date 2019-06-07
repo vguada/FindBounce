@@ -68,10 +68,10 @@ Module[
 			FileNameJoin[{$target,#}],
 			OverwriteTarget->True
 		]&,
-		{"HeatTrans.wl","PacletInfo.m"}
+		{"FindBounce.m","PacletInfo.m"}
 	];
 	(* Delete old and copy the new source directories. Documentation notebook stays unmodified. *)
-	directories={"Documentation","Kernel"};
+	directories={"Documentation","FrontEnd","Kernel"};
 	Map[
 		If[
 			FileExistsQ[FileNameJoin[{$target,#}]],
@@ -126,8 +126,8 @@ Module[
 	RebuildPacletData[];
 	
 	If[
-		Length@PacletFind["HeatTrans"]===1,
-		Print["  ",FileNameTake[pacletPath]," built and installed succesfully."];Quit[0],
-		Print["Paclet build failed."];Quit[1]
+		Length@PacletFind[$name]===1,
+		Print["  Paclet built and installed succesfully: ",FileNameTake[pacletPath]];Quit[0],
+		Print["  Paclet build failed."];Quit[1]
 	]
 ];
