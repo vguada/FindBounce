@@ -104,25 +104,24 @@ VerificationTest[
 
 VerificationTest[
 	FindBounce[
-		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2+800y,
+		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2,
 		{x,y},
-		{{0.,10.},{19.917,-0.577}},"Dimension"->3
+		{{0.,12.91},{20.,0.}},"Dimension"->3
 	]["Action"],
 	2336.512,
 	SameTest->(Abs[(#1-#2)/#2]<1.&),
-	TestID->"FindBounce - 2F default (Case B)"
+	TestID->"FindBounce - 2F 3 dimensions (Case B)"
 ];
 
 
 VerificationTest[
 	FindBounce[
-		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2+800y,
+		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2+800.y,
 		{x,y},
-		{{0.,10.},{19.917,-0.577}},"Dimension"->3
-	]["Action"],
+		{{0.,10.},{19.917,-0.577}},"Dimension"->3]["Action"],
 	127.042,
 	SameTest->(Abs[(#1-#2)/#2]<1.&),
-	TestID->"FindBounce - 2F default (Case A)"
+	TestID->"FindBounce - 2F 3 dimensions (Case A)"
 ];
 
 
@@ -151,7 +150,7 @@ VerificationTest[
 	FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518}+0.1],
 	$Failed,
 	{SingleFieldBounce::extrema},
-	TestID->"FindBounce - wrong minima"
+	TestID->"FindBounce - Error: wrong minima"
 ];
 
 
