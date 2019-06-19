@@ -81,6 +81,49 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
+(*1 field - biquartic potential*)
+
+
+(* This type of biquartic potential has exact solution. *)
+Module[
+	{Vt=5,\[Phi]m=10,Vm=-20,\[Phi]p=-5,\[Epsilon]=2,Vp,\[CapitalDelta]Vp,\[CapitalDelta]Vm,\[Alpha],\[CapitalDelta]},
+	Vp = -18+(\[Epsilon]-1)*3;
+	\[CapitalDelta]Vm=Vt-Vm;
+	\[CapitalDelta]Vp= Vt - Vp;
+	\[Alpha] = -\[Phi]p/\[Phi]m;
+	\[CapitalDelta] = \[CapitalDelta]Vp/\[CapitalDelta]Vm;
+	biQuarticPotential[\[Phi]_]:=Piecewise[{
+		{(Vp+\[CapitalDelta]Vp/\[Phi]p^4*(\[Phi]-\[Phi]p)^4)-Vp,\[Phi]<0},
+		{(Vm+\[CapitalDelta]Vm/\[Phi]m^4*(\[Phi]-\[Phi]m)^4)-Vp,\[Phi]>=0}
+	}];
+	biQuarticAction[]:=((2*\[Pi]^2*\[Phi]m^4)/(3\[CapitalDelta]Vm))*(4\[Alpha]^3 + 6\[Alpha]^2*\[CapitalDelta]+4\[Alpha]*\[CapitalDelta]^2+\[CapitalDelta]^3+\[Alpha]^4*(3+\[CapitalDelta](\[CapitalDelta]-3)))/(1-\[CapitalDelta])^3;
+];
+
+
+(* Actual output (action value) is compared to exact analytical value of expected output.
+Precision is chosen to satisfy the test. *)
+VerificationTest[
+	FindBounce[biQuarticPotential[x],{x},{-5,10}]["Action"],
+	biQuarticAction[],
+	{SingleFieldBounceImprovement::dVFailed},
+	SameTest->(Abs[(#1-#2)/#2]<10^(-1)&),
+	TestID->"FindBounce - 1F biquartic (default)"
+];
+
+
+(* TODO: Why does the message SingleFieldBounceImprovement::dVFailed not appear in this case?*)
+VerificationTest[
+	FindBounce[
+		biQuarticPotential[x],{x},{-5,10},
+		"Segments"->70
+	]["Action"],
+	biQuarticAction[],
+	SameTest->(Abs[(#1-#2)/#2]<10^(-2)&),
+	TestID->"FindBounce - 1F biquartic (70 segments)"
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*2 fields*)
 
 
