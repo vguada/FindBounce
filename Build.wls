@@ -5,10 +5,11 @@
 (*Git functions*)
 
 
+(* Get human readable description of current state of repository.
+For more info see: https://git-scm.com/docs/git-describe *)
 getGitRevision[dir_]:=Module[
 	{description},
 	SetDirectory[dir];
-	(* For meaning of this see: https://git-scm.com/docs/git-describe *)
 	description=First[
 		ReadList["!git describe --long --tags --dirty --always",String],
 		Return[$Failed]
@@ -18,17 +19,17 @@ getGitRevision[dir_]:=Module[
 ];
 
 
+(* Get repository commit count. It is useful to mark "build number". *)
 getGitCommitCount[dir_]:=Module[
 	{value},
 	SetDirectory[dir];
-	(* For meaning of this see: https://git-scm.com/docs/git-describe *)
 	value=First[
 		ReadList["!git rev-list --count HEAD",Number],
 		Return[$Failed]
 	];
 	ResetDirectory[];
 	value
-]
+];
 
 
 (* ::Subsubsection:: *)
@@ -70,7 +71,8 @@ Module[
 		]&,
 		{"FindBounce.m","PacletInfo.m"}
 	];
-	(* Delete old and copy the new source directories. Documentation notebook stays unmodified. *)
+	
+	(* Delete old and copy the new source directories. *)
 	directories={"Documentation","FrontEnd","Kernel"};
 	Map[
 		If[
@@ -87,22 +89,31 @@ Module[
 
 
 Module[
-	{original, modified,noCommits,revision,internalQ},
+	{original,modified,noCommits,revision,publicQ,version},
 
-	original=Import[FileNameJoin[{$source,"PacletInfo.m"}]];
+	original=List@@Import[FileNameJoin[{$source,"PacletInfo.m"}]];
 	noCommits=getGitCommitCount[$rootDir];
 	revision=getGitRevision[$rootDir];
-	internalQ=Not@MemberQ[Rest@$ScriptCommandLine,"-r"|"--release"];
+	publicQ=MemberQ[Rest@$ScriptCommandLine,"-r"|"--release"];
+	version=Version/.original;
+	(* Internal releases have number of commits appended. Public releases conform to 
+	"semantic versioning" convention with 3 version numbers. *)
+	If[Not@publicQ,version=version<>"."<>ToString@noCommits];
 		
 	(* Description of git repository (git describe ...) returns a string that cannot 
 	be used as BuildNumber because only integers are accepted. 
-	Otherwise PackPaclet returns $Failed and procedure fails. Instead now commit count is used. *)
-	modified=Fold[
-			Insert[#1,#2,4]&,
-			original,
-			{Internal->internalQ,BuildNumber->noCommits,"Hash"->revision}
-	];
+	Otherwise PackPaclet returns $Failed and procedure fails. Instead commit count is used. *)
+	modified=Paclet@@Normal[Merge[{
+		Association@@original,
+		<|Version->version,Internal->Not@publicQ,BuildNumber->noCommits,"Hash"->revision|>
+		},
+		Last
+	]];
 	
+	If[
+		StringContainsQ[revision,"dirty"],
+		Print["  Warning! Repository contains uncommited changes."]
+	];
 	Export[
 		FileNameJoin[{$target,"PacletInfo.m"}],
 		modified,
@@ -120,14 +131,14 @@ Module[
 	pacletPath=PackPaclet[$name];
 	ResetDirectory[];
 	
-	(*Uninstall a possibly old version. *)
+	(* Uninstall older versions first. *)
 	If[PacletFind[$name]=!={},PacletUninstall[$name]];
 	newPaclet=PacletInstall[pacletPath];
 	RebuildPacletData[];
 	
 	If[
-		Length@PacletFind[$name]===1,
-		Print["  Paclet built and installed succesfully: ",FileNameTake[pacletPath]];Quit[0],
-		Print["  Paclet build failed."];Quit[1]
+		Length@PacletFind["HeatTrans"]===1,
+		Print["  ",FileNameTake[pacletPath]," built and installed succesfully."];Quit[0],
+		Print["  Paclet build failed!"];Quit[1]
 	]
 ];
