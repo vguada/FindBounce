@@ -72,8 +72,9 @@ Module[
 		{"FindBounce.m","PacletInfo.m"}
 	];
 	
-	(* Delete old and copy the new source directories. *)
-	directories={"Documentation","FrontEnd","Kernel"};
+	(* Delete old and copy the new source directories. 
+	Documentation should be built with a separate procedure. *)
+	directories={"FrontEnd","Kernel"};
 	Map[
 		If[
 			FileExistsQ[FileNameJoin[{$target,#}]],
