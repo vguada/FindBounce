@@ -207,9 +207,9 @@ VerificationTest[
 (* TODO: Message should be probably appended to public function (e.g. FindBounce).
 Is this result the most appropriate or should we rather return "Action" as Infinity? *)
 VerificationTest[
-	FindBounce[x^4-x^2,{x},{-0.707107,0.707107}],
-	$Failed,
-	{FindBounce`Private`InitialValue::degeneracy},
+	FindBounce[x^4-x^2,{x},{-0.707107,0.707107}]["Action"],
+	\[Infinity],
+	{FindBounce::degeneracy},
 	TestID->"FindBounce - Error: degenerated minima"
 ];
 
