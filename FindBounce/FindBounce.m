@@ -171,7 +171,6 @@ DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:= Module[{dV,d2V},
 
 (* ::Input::Initialization:: *)
 InitialValue::wrongInput = "Wrong \"`1`\".";
-InitialValue::degeneracy = "There is not tunneling decay since the vacua are degenerated.";
 InitialValue::dimArray = "The array dimention of min1,min2 and fields are inconsistent.";
 
 InitialValue[V_,fields_,noFields_,min1_,point_,min2_,segments_,Vinitial_,methodSeg_,Path_,gradient_,hessian_]:=
@@ -197,9 +196,6 @@ rule = If[
 (*Checks for errors*)
 	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
 		Message[InitialValue::wrongInput,"InitialPotential"];Return[$Failed,Module]
-	];
-	If[VL[[1]] == VL[[-1]], 
-		Message[InitialValue::degeneracy];Return[$Failed,Module]
 	];
 	 
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
@@ -247,7 +243,7 @@ Rinitial = Abs[.5(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-
 ];
 eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 
-{Rinitial,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}   
+{Rinitial,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}
 ];
 
 
@@ -916,6 +912,7 @@ FindBounce::syms = "Field symbols should not have any value.";
 FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
 FindBounce::iter = "Maximum number of iterations should be a positive integer, default value was taken.";
 FindBounce::optionValue = "Wrong \"`1`\", default value `2` was taken.";
+FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 
 Options[FindBounce] = {
 	"AccuracyInitialRadii" -> 10,
@@ -945,9 +942,9 @@ FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,accuracyPath,
 	noFields,VL,d\[Phi]L,point,itePath,maxIteR,R,methodSeg,improvePB,Vinitial,
-	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,iter,Action,vM,aM,bM,posM},
+	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,vM,aM,bM,posM,iter=0},
 	
-	(*------- OptionValues -----------------------------*)
+	(*OptionValues*)
 	Rinitial = N[OptionValue["InitialRadii"]]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadii",None];None)};
 	Path = OptionValue["InitialPath"];
 	Vinitial = OptionValue["InitialPotential"];
@@ -962,17 +959,17 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 	itePath = OptionValue["MaxIterationsPath"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::iter];3);
 	If[noFields == 1, itePath = 0];
 		
-	(* Checks if field variables do not have any values.*)
+	(*Checks if field variables do not have any values.*)
 	If[
 		Not@ArrayQ[fields,1,(Head[#]===Symbol&)],
 		Message[FindBounce::syms];Return[$Failed,Module]
 	];
-	(* Checks if InitialPath is valid*)
+	(*Checks if InitialPath is valid*)
 	If[
 		Not@ArrayQ[Path,noFields]&&Path=!=None,
 		Message[FindBounce::optionValue,"InitialPath",{min1,point,min2}]
 	];
-	(* Checks if InitialPotential is valid*)
+	(*Checks if InitialPotential is valid*)
 	If[
 		Not@ArrayQ[Vinitial,1]&&Path=!=None,
 		Message[FindBounce::optionValue,"InitialPotential",""]
@@ -981,9 +978,29 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 	(*InitialValue*)
 	{ansatzRinitial,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = InitialValue[V,fields,noFields,min1,point,min2,Ns,Vinitial,
 		methodSeg,Path,OptionValue[Gradient],OptionValue[Hessian]]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+	
+	(*If the vacua are degenerated*)
+	If[
+		Head[ansatzRinitial]===DirectedInfinity,
+		Message[FindBounce::degeneracy];
+		Return[BounceFunction@Association[
+				"Action"->\[Infinity],
+				"Bounce"->Function[\[Phi][[1]]],
+				"Coefficients"->Null,
+				"Dimension"->dim,
+				"Domain"->{\[Infinity],\[Infinity]},
+				"InitialSegment"->1,
+				"IterationsPath"->Null,
+				"Segments"->Ns,
+				"Path"->\[Phi],
+				"PathLongitudinal"->\[Phi]L,
+				"Potential"->VL,
+				"Radii"->\[Infinity]
+			]
+		]
+	];
 
 	(*Bounce and Path deformation*)
-	iter=0;
 	While[iter <= itePath,
 	
 		(*Rule*)
@@ -992,6 +1009,7 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 			Table[fields[[1]]->\[Phi][[s]],{s,Ns+1}],
 			Table[fields[[i]]->\[Phi][[s,i]],{s,Ns+1},{i,noFields}]
 		];
+		
 		(*Single Field Bounce*)
 		{Action,VL,v,a,b,pos,R,Rinitial} = SingleFieldBounce[V,Vinitial,Ns,noFields,\[Phi]L,dim,maxIteR,
 				accuracyRadii,ansatzRinitial,Rinitial,rule,iter,iter == itePath]/.x_/;FailureQ[x]:>Return[$Failed,Module];
@@ -1056,11 +1074,15 @@ BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 	bounce=#["Bounce"]&/@bf;
 	(* This helps to draw discrete radii R. *)
 	R=#["Radii"]&/@bf;
-	plotRange=Clip[
-		MinMax[R,Scaled[0.25]],
-		{0,Infinity}
+	
+	If[ArrayQ[R],
+		plotRange = Clip[
+			MinMax[R,Scaled[0.25]],
+			{0,Infinity}
+		]
+		,
+		plotRange = {0,100}
 	];
-	markers=Transpose@{R[[#]],bounce[[#]]/@R[[#]]}&/@Range[Length@bf];
 	
 	Plot[
 		#[\[Rho]]&/@bounce,
@@ -1072,8 +1094,7 @@ BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
 		LabelStyle->Directive[Black,FontSize->17, FontFamily->"Times New Roman",FontSlant->Plain],
 		GridLines->Automatic,
-		PlotStyle->Orange(*,
-		Epilog\[Rule]{PointSize[Medium], Orange,Point[markers]}*)
+		PlotStyle->Orange
 	]
 ];
 
