@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 (* ::Package:: *)
 
-(* ::Subsubsection:: *)
+(* ::Subsection:: *)
 (*Git functions*)
 
 
@@ -32,13 +32,18 @@ getGitCommitCount[dir_]:=Module[
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsection:: *)
 (*Build procedure*)
 
 
+(* ::Subsubsection:: *)
+(*Initialization*)
+
+
 $name="FindBounce";
-(* Get the distribution directory by using this notebook\[CloseCurlyQuote]s directory. *)
+(* Get the distribution directory by using this notebook directory. *)
 $root=If[$Notebooks,NotebookDirectory[],Directory[]];
+(* Directory of main source code. *)
 $source=FileNameJoin[{$root,$name}];
 (* Construct the target directory from this notebooks base directory. *)
 $target=FileNameJoin[{$root,"build",$name}];
@@ -48,24 +53,100 @@ $target=FileNameJoin[{$root,"build",$name}];
 $args=Join[$ScriptCommandLine,$CommandLine];
 
 
-$helpMessage=("  Usage: Build.wls [options]
+$helpMessage=("  Usage: wolfram -script Build.wls [options]
 
   Options:
     -h, --help                   Output usage information
-    -r, --release                Build public release");
+    --release                    Build public release
+    --docs                       Build documentation");
+
+
+If[
+	MemberQ[$args,"/?"|"-h"|"--help"],
+	Print[$helpMessage];Quit[0]
+];
+
+
+If[
+	Not@DirectoryQ[$target],
+	CreateDirectory[$target,CreateIntermediateDirectories->True]
+];
+
+
+(* ::Subsubsection:: *)
+(*Process documentation notebooks*)
+
+
+(* Notebook name should be relative to root directory. *)
+processDocumentation[nbName_]:=Module[
+	{original,copy,copyDir,nb,tStart,time},
+	tStart=AbsoluteTime[];
+	original=FileNameJoin[{$source,nbName}];
+	If[
+		Not@FileExistsQ[original],
+		Return[$Failed];Print[original," file does not exist!"]
+	];
+	copy=FileNameJoin[{$target,nbName}];
+	copyDir=DirectoryName[copy];
+	If[
+		Not@DirectoryQ[copyDir],
+		CreateDirectory[copyDir,CreateIntermediateDirectories->True]
+	];
+	CopyFile[original,copy,OverwriteTarget->True];
+	
+	UsingFrontEnd[
+		NotebookEvaluate[copy,InsertResults->True];
+		nb=NotebookOpen[copy];
+		SetOptions[
+			nb,
+			WindowSize->{Scaled[0.5], Scaled[1]},
+			WindowMargins->{{0,Automatic},{Automatic,0}},
+			Saveable->False
+		];
+		NotebookSave[nb];
+		NotebookClose[nb];
+	];
+	time=Round[AbsoluteTime[]-tStart,0.1];
+	Print["  Processed ",nbName," in ",time," seconds."]
+];
+
+
+If[
+	MemberQ[$args,"--docs"|"--release"],
+	
+	(* NotebookEvaluate doesn't work properly (unrendered graphic output)
+	if $EvaluationEnvironment is not "Session". *)
+	If[
+		$EvaluationEnvironment=!="Session",
+		Print["For correct processing of documentation script needs to be run with: \"wolfram -script Build.wls [opts]\"."];
+		Quit[1]
+	];
+	Print["  Building documentation. This may take a few minutes..."];
+	(* Documentation should be evaluated with development version of the package. 
+	Actuall loading of the package should happen inside each documentation notebook. *)
+	Needs["PacletManager`"];
+	PacletDirectoryAdd[$root];
+	
+	SetOptions[First[$Output],FormatType->StandardForm];
+	
+	(* Add more function calls here if documentation contains more notebooks. *)
+	processDocumentation[
+		FileNameJoin[{"Documentation","English","Tutorials","Examples_FindBounce.nb"}]
+	];
+	
+	(* Remove path to development version to enble correct paclet uninstallation 
+	before installing a newly produced .paclet file. *)
+	PacletDirectoryRemove[$root];
+	Print["\n  Documentation build finished."];
+];
+
+
+(* ::Subsubsection:: *)
+(*Copy files*)
 
 
 Module[
-	{directories},
-	If[
-		MemberQ[$args,"/?"|"-h"|"--help"],
-		Print[$helpMessage];Quit[1]
-	];
-	
-	If[
-		Not@DirectoryQ[$target],
-		CreateDirectory[$target,CreateIntermediateDirectories->True]
-	];
+	{},
 	(* Copy package files from the source to the target directory. *)
 	Map[
 		CopyFile[
@@ -76,19 +157,22 @@ Module[
 		{"FindBounce.m","PacletInfo.m"}
 	];
 	
-	(* Delete old and copy the new source directories. 
-	Documentation should be built with a separate procedure. *)
-	directories={"FrontEnd","Kernel"};
+	(* Delete old and copy the new source directories. *)
 	Map[
+		(
 		If[
 			FileExistsQ[FileNameJoin[{$target,#}]],
 			DeleteDirectory[FileNameJoin[{$target,#}],DeleteContents->True]
-		]&,
-		directories
+		];
+		CopyDirectory[FileNameJoin[{$source,#}],FileNameJoin[{$target,#}]]
+		)&,
+		{"FrontEnd","Kernel"}
 	];
-	Map[
-		CopyDirectory[FileNameJoin[{$source,#}],FileNameJoin[{$target,#}]]&,
-		directories
+
+	(* Documentation should be built with a separate procedure before. *)
+	If[
+		Not@DirectoryQ[FileNameJoin[{$target,"Documentation"}]],
+		Print["  Warning! Documentation directory is missing in build folder."]
 	];
 ];
 
@@ -99,7 +183,7 @@ Module[
 	original=List@@Import[FileNameJoin[{$source,"PacletInfo.m"}]];
 	noCommits=getGitCommitCount[$root];
 	revision=getGitRevision[$root];
-	publicQ=MemberQ[$args,"-r"|"--release"];
+	publicQ=MemberQ[$args,"--release"];
 		
 	(* Description of git repository (git describe ...) returns a string that cannot 
 	be used as BuildNumber because only integers are accepted. 
@@ -123,6 +207,10 @@ Module[
 		"Comments"->{"Paclet Info File","Created on "<>DateString[]}
 	];
 ];
+
+
+(* ::Subsubsection:: *)
+(*Create .paclet file*)
 
 
 Module[
