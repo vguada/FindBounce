@@ -38,10 +38,14 @@ getGitCommitCount[dir_]:=Module[
 
 $name="FindBounce";
 (* Get the distribution directory by using this notebook\[CloseCurlyQuote]s directory. *)
-$rootDir=If[$Notebooks,NotebookDirectory[],Directory[]];
-$source=FileNameJoin[{$rootDir,$name}];
+$root=If[$Notebooks,NotebookDirectory[],Directory[]];
+$source=FileNameJoin[{$root,$name}];
 (* Construct the target directory from this notebooks base directory. *)
-$target=FileNameJoin[{$rootDir,"build",$name}];
+$target=FileNameJoin[{$root,"build",$name}];
+
+(* This should support text based interface with "wolframscript" mechanism and 
+"wolfram -script" mechanism. See tutorial/WolframLanguageScripts for more info. *)
+$args=Join[$ScriptCommandLine,$CommandLine];
 
 
 $helpMessage=("  Usage: Build.wls [options]
@@ -54,7 +58,7 @@ $helpMessage=("  Usage: Build.wls [options]
 Module[
 	{directories},
 	If[
-		MemberQ[Rest@$ScriptCommandLine,"/?"|"-h"|"--help"],
+		MemberQ[$args,"/?"|"-h"|"--help"],
 		Print[$helpMessage];Quit[1]
 	];
 	
@@ -93,20 +97,18 @@ Module[
 	{original,modified,noCommits,revision,publicQ,version},
 
 	original=List@@Import[FileNameJoin[{$source,"PacletInfo.m"}]];
-	noCommits=getGitCommitCount[$rootDir];
-	revision=getGitRevision[$rootDir];
-	publicQ=MemberQ[Rest@$ScriptCommandLine,"-r"|"--release"];
-	version=Version/.original;
-	(* Internal releases have number of commits appended. Public releases conform to 
-	"semantic versioning" convention with 3 version numbers. *)
-	If[Not@publicQ,version=version<>"."<>ToString@noCommits];
+	noCommits=getGitCommitCount[$root];
+	revision=getGitRevision[$root];
+	publicQ=MemberQ[$args,"-r"|"--release"];
 		
 	(* Description of git repository (git describe ...) returns a string that cannot 
 	be used as BuildNumber because only integers are accepted. 
-	Otherwise PackPaclet returns $Failed and procedure fails. Instead commit count is used. *)
+	Otherwise PackPaclet returns $Failed and procedure fails. Instead commit count is used. 
+	Version cannot be appended with build number, because otherwise we break procedure
+	of loading development version with PacletDirectoryAdd. *)
 	modified=Paclet@@Normal[Merge[{
 		Association@@original,
-		<|Version->version,Internal->Not@publicQ,BuildNumber->noCommits,"Hash"->revision|>
+		<|Internal->Not@publicQ,BuildNumber->noCommits,"Hash"->revision|>
 		},
 		Last
 	]];
@@ -128,7 +130,7 @@ Module[
 	
 	Needs["PacletManager`"];
 	(* Change into the build directory and create the paclet. *)	
-	SetDirectory[FileNameJoin[{$rootDir,"build"}]];
+	SetDirectory[FileNameJoin[{$root,"build"}]];
 	pacletPath=PackPaclet[$name];
 	ResetDirectory[];
 	
