@@ -66,7 +66,7 @@ VerificationTest[
 
 VerificationTest[
 	FindBounce[0.5x^2-0.5x^3+0.12x^4,x,{0.,2.160892},"Dimension"->3]["Action"],
-	1067.706,
+	1051.704,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 3 dimensions (Case B)"
 ];
@@ -74,7 +74,7 @@ VerificationTest[
 
 VerificationTest[
 	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.882782},"Dimension"->3]["Action"],
-	97.156,
+	95.116,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 3 dimensions (Case A)"
 ];
@@ -207,9 +207,9 @@ VerificationTest[
 (* TODO: Message should be probably appended to public function (e.g. FindBounce).
 Is this result the most appropriate or should we rather return "Action" as Infinity? *)
 VerificationTest[
-	FindBounce[x^4-x^2,{x},{-0.707107,0.707107}],
-	$Failed,
-	{FindBounce`Private`InitialValue::degeneracy},
+	FindBounce[x^4-x^2,{x},{-0.707107,0.707107}]["Action"],
+	\[Infinity],
+	{FindBounce::degeneracy},
 	TestID->"FindBounce - Error: degenerated minima"
 ];
 
