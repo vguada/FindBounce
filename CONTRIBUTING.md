@@ -1,6 +1,6 @@
 # Development of FindBounce package
 
-If you would like to modify FindBounce package yourself or contribute back to the original repository,
+If you would like to modify _FindBounce_ package yourself or contribute back to the original repository,
 then the following instructions can help you.
 First you need to install [Git](https://git-scm.com/) and
 [clone](https://help.github.com/articles/cloning-a-repository/) the project
@@ -14,7 +14,7 @@ Essential:
 
 Recommended:
 
-* [WolframScript](https://www.wolfram.com/wolframscript/) for building the `.paclet` file from command line.
+* [WolframScript](https://www.wolfram.com/wolframscript/) for easier running of testing suite from command line.
  On most systems it already comes bundled with Mathematica installation.
 
 ## Testing code
@@ -39,5 +39,6 @@ Minimal example of `pre-commit` file content is:
 
 ## How to build the package
 
-Open terminal window (command line) in FindBounce root directory and run file `Build.wls`.
-This will leave you with a FindBounce-X.Y.Z.paclet file in the _build_ folder.
+Open terminal window (command line) in _FindBounce_ root directory and run file `wolfram -script Build.wls`.
+This will automatically create a `FindBounce-X.Y.Z.paclet` file in the "build" folder and also install it to `$UserBasePacletsDirectory`.
+Command line option `--docs` also processes documentation notebooks and should be used for proper releases.
