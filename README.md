@@ -1,6 +1,6 @@
 # FindBounce
 
-_FindBounce_ is a [Mathematica] (http://www.wolfram.com/mathematica/) package
+_FindBounce_ is a [Mathematica](http://www.wolfram.com/mathematica/) package
 that computes the bounce configuration needed to compute the false vacuum decay rate with multiple scalar fields.  
 The physics background is described in the paper by [Guada, Maiezza and Nemevšek (2019)](https://arxiv.org/abs/1803.02227).
 
