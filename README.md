@@ -1,17 +1,15 @@
 # FindBounce
-Computes the `Bounces` of a false vacuum decay with multiple scalar fields in QFT.
 
-[![releases](http://img.shields.io/github/release-pre/vguada/FindBounces.svg)](https://github.com/vguada/FindBounce/releases)
+_FindBounce_ is a [Mathematica](http://www.wolfram.com/mathematica/) package
+which computes the bounces of a false vacuum decay with multiple scalar fields.  
+Its background is described in the paper by [Guada, Maiezza and Nemevšek (2019)](https://arxiv.org/abs/1803.02227).
 
 ![example1](Images/ExamplesBounces.png)
 
 ## Installation
 
-The following description is for people who just want to use the package functionality and
-are not interested in package development.
 To use _FindBounce_ package you need Mathematica version 10. or later.
-
-_FindBounce_ package is released in the `.paclet` file format, which contains code,
+The package is released in the `.paclet` file format, which contains code,
 documentation and other necessary resources.
 Download the latest `.paclet` file from the
 repository ["releases"](https://github.com/vguada/FindBounces/releases) page
@@ -38,24 +36,61 @@ PacletUninstall["FindBounce"]
 
 ## Usage
 
-After you have installed the paclet, load it to Mathematica session with `Get`.
+After you have installed the paclet, load it to Mathematica session with `Needs`.
+To access the documentation, open the notebook interface help viewer and search for "FindBounce".
 
 ```mathematica
-Get["FindBounce`"]
+Needs["FindBounce`"]
+```
+Define one field potential, find its extrema and plot it.
 
-U[x_] := .5 x^2 - .5 x^3 + .1 x^4;
-Extrema = Block[{x}, x /. Sort@NSolve[(D[U[x], x]) == 0, x]];
-PB =  FindBounce[ U[x], {x}, {Extrema[[1]], Extrema[[3]]},"Dimensions" -> 3]
-BouncePlot[PB, PlotLabel -> Row[{"Action: ", PB["Action"]}]]
+```mathematica
+potential[x_] := 0.5 x^2 - 0.5 x^3 + 0.1 x^4;
+
+extrema = Block[{x}, x /. NSolve[D[potential[x], x] == 0, x]]
+(* {0., 0.867218, 2.88278} *)
+
+pts = Transpose[{extrema, potential /@ extrema}]
+Plot[
+    potential[x],
+    {x, -1, 4},
+    Epilog -> {Red, PointSize[Large], Point[pts]}
+]
+ ```
+
+![usage1.1](Images/UsageExample-1.1.png)
+
+Use the main function `FindBounce` to calculate result in form of `BounceFunction` object.
+It can be queried about different properties, like euclidean action.
+
+ ```mathematica
+bf = FindBounce[potential[x], {x}, {0., 2.882}, "Dimension" -> 3]
+(* Returns BounceFunction[...]*)
+
+bf["Action"]
+(* 95.1162 *)
+
+bf["Properties"]
+(* {"Action", "Coefficients", "Dimension", "Domain", "InitialSegment",  "Path", "Potential", "Radii", "Segments"} *)
+ ```
+
+Plot the bounce field configuration.
+
+ ```mathematica
+BouncePlot[bf]
 ```
 
-![screenshot](Images/ExaplesBounces1D.png )
+![usage1.2](Images/UsageExample-1.2.png )
 
-To access the documentation, open the notebook interface help viewer and search for FindBounce.
+## Contributing and feedback
 
-## Contributing and bug reports
+Please use the repository ["issues"](https://github.com/vguada/FindBounces/issues) page to submit bugs or feature ideas.
+If you find this package useful, feel free to send feedback by email to `victor.guada(at)ijs.si`.
 
-Please use the repository  page to submit bugs or feature ideas.
+Pull requests to this repository are welcome.
+For major changes, please open an issue first to discuss what you would like to change.
+Instructions on building the `.paclet` file from source code can be found in [CONTRIBUTING.md]( CONTRIBUTING.md ) file.
 
-Contributions to this repository are very welcome.
-Guidelines on how to build paclet file from source code can be found in  file.
+## License
+
+[GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
