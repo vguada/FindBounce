@@ -5,8 +5,8 @@
 $rootDir=If[$Notebooks,ParentDirectory@NotebookDirectory[],Directory[]];
 
 
-(* ::Subsubsection:: *)
-(*Create package icon*)
+(* ::Subsection:: *)
+(*Package icon*)
 
 
 (* Icon should have 46x46 size. *)
@@ -27,3 +27,55 @@ Export[
 	FileNameJoin[{$rootDir,"FindBounce","FrontEnd","Icon.png"}],
 	icon
 ]
+
+
+(* ::Subsection:: *)
+(*README examples*)
+
+
+(* We want to load the development version. *)
+PacletDirectoryAdd[$rootDir];
+Needs["FindBounce`"]
+
+
+(* ::Subsubsection:: *)
+(*One field usage example*)
+
+
+potential[x_]:=0.5 x^2-0.5 x^3+0.1 x^4;
+
+extrema=Block[{x},x/.NSolve[D[potential[x],x]==0,x]]
+
+
+pts=Transpose[{extrema,potential/@extrema}];
+Plot[
+	potential[x],
+	{x,-1,4},
+	AxesLabel->{"\[Phi]","V(\[Phi])"},
+	LabelStyle->12,
+	Epilog->{Red,PointSize[Large],Point[pts]}
+]
+
+Export[
+	FileNameJoin[{$rootDir,"Images","UsageExample-1.1.png"}],
+	%,
+	ImageSize->{600,200}
+];
+
+
+bf=FindBounce[potential[x],{x},{0.,2.882},"Dimension"->3]
+
+
+bf["Action"]
+
+
+bf["Properties"]
+
+
+BouncePlot[bf]
+
+Export[
+	FileNameJoin[{$rootDir,"Images","UsageExample-1.2.png"}],
+	%,
+	ImageSize->{600,200}
+];
