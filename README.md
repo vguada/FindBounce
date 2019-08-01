@@ -1,18 +1,16 @@
 # FindBounce
 
-_FindBounce_ is a [Mathematica](http://www.wolfram.com/mathematica/) package
-which computes the bounces of a false vacuum decay with multiple scalar fields.  
-Its background is described in the paper by [Guada, Maiezza and Nemevšek (2019)](https://arxiv.org/abs/1803.02227).
+_FindBounce_ is a [Mathematica] (http://www.wolfram.com/mathematica/) package
+that computes the bounce configuration needed to compute the false vacuum decay rate with multiple scalar fields.  
+The physics background is described in the paper by [Guada, Maiezza and Nemevšek (2019)](https://arxiv.org/abs/1803.02227).
 
 ![example1](Images/ExamplesBounces.png)
 
 ## Installation
 
-To use _FindBounce_ package you need Mathematica version 10. or later.
-The package is released in the `.paclet` file format, which contains code,
-documentation and other necessary resources.
-Download the latest `.paclet` file from the
-repository ["releases"](https://github.com/vguada/FindBounces/releases) page
+To use the _FindBounce_ package you need Mathematica version 10 or later.
+The package is released in the `.paclet` file format that contains the code, documentation and other necessary resources.
+Download the latest `.paclet` file from the repository ["releases"](https://github.com/vguada/FindBounces/releases) page
 to your computer and install it by evaluating the following command in the Mathematica:
 
 ```mathematica
@@ -25,7 +23,7 @@ PacletInstall["full/path/to/FindBounce-X.Y.Z.paclet"]
 
 This will permanently install the _FindBounce_ package to `$UserBasePacletsDirectory`.
 To update the documentation it may be necessary to restart Mathematica.
-Mathematica will always use the latest installed version of package and all installed versions
+Mathematica will always use the latest installed version of the package and all installed versions
 can be enumerated by evaluating `PacletFind["FindBounce"]`.
 You can get more detailed information about the package with `PacletInformation["FindBounce"]`.
 All versions can be uninstalled with:
@@ -36,13 +34,13 @@ PacletUninstall["FindBounce"]
 
 ## Usage
 
-After you have installed the paclet, load it to Mathematica session with `Needs`.
+After installing the paclet, load it in the Mathematica session with `Needs`.
 To access the documentation, open the notebook interface help viewer and search for "FindBounce".
 
 ```mathematica
 Needs["FindBounce`"]
 ```
-Define one field potential, find its extrema and plot it.
+Define a single field potential, find its extrema and plot it.
 
 ```mathematica
 potential[x_] := 0.5 x^2 - 0.5 x^3 + 0.1 x^4;
@@ -60,8 +58,8 @@ Plot[
 
 ![usage1.1](Images/UsageExample-1.1.png)
 
-Use the main function `FindBounce` to calculate result in form of `BounceFunction` object.
-It can be queried about different properties, like euclidean action.
+Use the main function `FindBounce` to calculate the bounce configuration contained in the `BounceFunction` object.
+It can be queried about different properties, like the Euclidean action.
 
  ```mathematica
 bf = FindBounce[potential[x], {x}, {0., 2.882}, "Dimension" -> 3]
