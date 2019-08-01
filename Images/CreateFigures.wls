@@ -63,10 +63,13 @@ Export[
 ];
 
 
-bf=FindBounce[potential[x],{x},{0.,2.882},"Dimension"->3]
+bf=FindBounce[potential[x],{x},{0.,2.883}]
 
 
 bf["Action"]
+
+
+bf["Dimension"]
 
 
 bf["Properties"]

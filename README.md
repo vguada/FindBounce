@@ -62,14 +62,17 @@ Use the main function `FindBounce` to calculate the bounce configuration contain
 It can be queried about different properties, like the Euclidean action.
 
  ```mathematica
-bf = FindBounce[potential[x], {x}, {0., 2.882}, "Dimension" -> 3]
+bf = FindBounce[potential[x], {x}, {0., 2.883}]
 (* Returns BounceFunction[...]*)
 
 bf["Action"]
-(* 95.1162 *)
+(* 1515.5 *)
+
+bf["Dimension"]
+(* 4 *)
 
 bf["Properties"]
-(* {"Action", "Coefficients", "Dimension", "Domain", "InitialSegment",  "Path", "Potential", "Radii", "Segments"} *)
+(* {"Action", "Coefficients", "Dimension", "Domain", "InitialSegment",  "Path", "Potential", "Radii",...} *)
  ```
 
 Plot the bounce field configuration.
