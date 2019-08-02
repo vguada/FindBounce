@@ -40,7 +40,8 @@ To access the documentation, open the notebook interface help viewer and search 
 ```mathematica
 Needs["FindBounce`"]
 ```
-Define a single field potential, find its extrema and plot it.
+
+To begin, let us define a single field potential, find its extrema and plot it.
 
 ```mathematica
 potential[x_] := 0.5 x^2 - 0.5 x^3 + 0.1 x^4;
@@ -56,14 +57,15 @@ Plot[
 ]
  ```
 
-![usage1.1](Images/UsageExample-1.1.png)
+![usage1.1](Images/UsageExample_1-1.png)
 
-Use the main function `FindBounce` to calculate the bounce configuration contained in the `BounceFunction` object.
-It can be queried about different properties, like the Euclidean action.
+Now we simply evaluate the `FindBounce` function on this potential going from one minimum to the other.
+The results are stored in a `BounceFunction` object, that stores the results of the calculation
+and properties of the solution, like the Euclidean action.
 
  ```mathematica
-bf = FindBounce[potential[x], {x}, {0., 2.883}]
-(* Returns BounceFunction[...]*)
+bf = FindBounce[potential[x], {x}, { extrema[[1]], extrema[[3]] }]
+(* BounceFunction[...]*)
 
 bf["Action"]
 (* 1515.5 *)
@@ -75,13 +77,13 @@ bf["Properties"]
 (* {"Action", "Coefficients", "Dimension", "Domain", "InitialSegment",  "Path", "Potential", "Radii",...} *)
  ```
 
-Plot the bounce field configuration.
+The field configuration can also be easily plotted.
 
  ```mathematica
 BouncePlot[bf]
 ```
 
-![usage1.2](Images/UsageExample-1.2.png )
+![usage1.2](Images/UsageExample_1-2.png )
 
 ## Contributing and feedback
 

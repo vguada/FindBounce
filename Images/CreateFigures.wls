@@ -55,15 +55,15 @@ Plot[
 	LabelStyle->12,
 	Epilog->{Red,PointSize[Large],Point[pts]}
 ]
-
+(* We use this naming for .png file, because there might be more than on usage example. *)
 Export[
-	FileNameJoin[{$rootDir,"Images","UsageExample-1.1.png"}],
+	FileNameJoin[{$rootDir,"Images","UsageExample_1-1.png"}],
 	%,
 	ImageSize->{600,200}
 ];
 
 
-bf=FindBounce[potential[x],{x},{0.,2.883}]
+bf=FindBounce[potential[x],{x},{extrema[[1]],extrema[[3]]}]
 
 
 bf["Action"]
@@ -78,7 +78,7 @@ bf["Properties"]
 BouncePlot[bf]
 
 Export[
-	FileNameJoin[{$rootDir,"Images","UsageExample-1.2.png"}],
+	FileNameJoin[{$rootDir,"Images","UsageExample_1-2.png"}],
 	%,
 	ImageSize->{600,200}
 ];
