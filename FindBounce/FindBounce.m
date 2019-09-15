@@ -159,7 +159,7 @@ InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 
 InitialValue[V_,fields_,noFields_,min1_,point_,min2_,segments_,Vinitial_,methodSeg_,Path_,gradient_,hessian_,dim_,precision_]:=
-Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,Rinitial,
+Module[{VL,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,Rinitial,
 Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0 },
 SetPrecision[
 
@@ -240,7 +240,7 @@ If[Vinitial===None,
 	If[Not[gradient === False &&noFields==1],
 		{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
 	];
-	If[gradient===Automatic&&Ns>3,
+	If[gradient===Automatic&&segments>3,
 		improvePB = True
 	];
 ];
@@ -294,12 +294,12 @@ RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,backward_]:= Rinitial;
 (*See eqs. 18-20*)
 Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
 Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},  
-	\[Xi]= ( Sqrt[ 36 a b^2 -  c1^3 ] - 6 b a^(1/2)  )^(1/3) /a^(1/2); 
-	
-	If[Re@\[Xi]!=0, 
-		1/2 (c1/a/\[Xi] + \[Xi]),
-		( Sqrt[ 36 a b^2 -  c1^3 ] + 6 b a^(1/2)  )^(1/3) /a^(1/2)
-	] 
+	\[Xi]= ( Sqrt[ 36 a b^2 - c1^3 ] - 6 b a^(1/2) )^(1/3) /a^(1/2);
+	If[Re@\[Xi]==0,
+		\[Xi] = (Sqrt[ 36 a b^2 - c1^3 ] + 6 b a^(1/2) )^(1/3) /a^(1/2)
+	]; 
+
+	1/2 (c1/a/\[Xi] + \[Xi])	 
 ];
 (*=========== BounceParameterRvb ======================*) 
 (*See eqs. 15-16*)
@@ -1096,7 +1096,7 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 		{Action,VL,v,a,b,pos,R,Rinitial} = SingleFieldBounce[V,Vinitial,Ns,noFields,\[Phi]L,dim,maxIteR,
 				accuracyRadii,ansatzRinitial,Rinitial,rule,iter,iter == itePath,precision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		{Action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,improvePB&&iter==itePath&&Path===None];
-	
+		
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,VL,Ns,noFields,pos,dim];
 	
@@ -1112,13 +1112,14 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 		ansatzRinitial = Rinitial;
 		iter++
 	];
-
+	
+SetPrecision[
 	BounceFunction@Association[
-		"Action"-> SetPrecision[Action+Action\[Xi],MachinePrecision],
+		"Action"-> Action+Action\[Xi],
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
 		"Coefficients"->{v,a,b},
 		"Dimension"->dim,
-		"Domain"->SetPrecision[{If[pos>1,0,R[[pos]]],R[[-1]]},MachinePrecision],
+		"Domain"->{If[pos>1,0,R[[pos]]],R[[-1]]},
 		"InitialSegment"->pos,
 		"IterationsPath"->iter,
 		"Segments"->Ns,
@@ -1128,6 +1129,8 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 		"PotentialSecondDerivative"->ddVL,
 		"Radii"->R
 	]
+,MachinePrecision]
+
 ];
 
 
