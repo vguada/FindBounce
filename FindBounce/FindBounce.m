@@ -1117,13 +1117,13 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,
 		iter++
 	];
 	
-SetPrecision[
+
 	BounceFunction@Association[
-		"Action"-> Action+Action\[Xi],
+		"Action"-> SetPrecision[Action+Action\[Xi],MachinePrecision],
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
 		"Coefficients"->{v,a,b},
 		"Dimension"->dim,
-		"Domain"->{If[pos>1,0,R[[pos]]],R[[-1]]},
+		"Domain"->SetPrecision[{If[pos>1,0,R[[pos]]],R[[-1]]},MachinePrecision],
 		"InitialSegment"->pos,
 		"IterationsPath"->iter,
 		"Segments"->Ns,
@@ -1133,7 +1133,6 @@ SetPrecision[
 		"PotentialSecondDerivative"->ddVL,
 		"Radii"->R
 	]
-,MachinePrecision]
 
 ];
 
