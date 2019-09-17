@@ -126,7 +126,8 @@ Module[{l,\[Phi]L,eL},
 DerivativePotential::gradient = "\"Gradient\" is not a vector, default value was taken.";
 DerivativePotential::hessian = "\"Hessian\" is not a matrix, default value was taken."; 
 
-DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:= Module[{dV,d2V},
+DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:=
+Module[{dV,d2V},
 	If[
 		ArrayQ[gradient,1],
 		dV = gradient,
@@ -146,7 +147,7 @@ DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:= Module[{dV,d2V},
 		d2V = D[V,{fields},{fields}]
 	];
 
-{dV,d2V}
+	{dV,d2V}
 ];
 
 
@@ -259,7 +260,8 @@ eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 (*FindSegment*)
 
 
-FindSegment[a_,\[Phi]L_,d_,Ns_,setPrecision_]:=Module[{pos = 1,R,estimateRmin,estimateRmax,ps},
+FindSegment[a_,\[Phi]L_,d_,Ns_,setPrecision_]:=
+Module[{pos = 1,R,estimateRmin,estimateRmax,ps},
 	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos,setPrecision][[1]];
 	
 	While[Im[R[[-1]]] == 0 && pos< Ns,
@@ -303,7 +305,7 @@ Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},
 ];
 (*=========== BounceParameterRvb ======================*) 
 (*See eqs. 15-16*)
-BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_,setPrecision_]:= BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos,setPrecision] =
+BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_,setPrecision_]:=
 Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
 SetPrecision[
 	(*-------Backward--------------------*)
@@ -352,7 +354,7 @@ FindInitialRadii::noSolution = "Large error solving the boundaries conditions. T
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadii_,ansatzRinitial_,aRinitial_,pos_,switchMessage_,setPrecision_]:= 
-Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,switch,k,Rinitial0,RComplexity},
+Module[{R,Rinitial,timeRinitial,ite,Rcomplex,Rreal,switch,k,Rinitial0,RComplexity,rw,RW,\[Lambda]after,\[Lambda],Rcomplexity},
 SetPrecision[
 	If[Ns==2&&Not[d==3&&pos==1],
 		Return[ansatzRinitial]
@@ -371,17 +373,17 @@ SetPrecision[
 	Rinitial0 = Rinitial;
 	
 	(*Defines \[Lambda] of eq. 26*)
-	\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos,setPrecision]];
+	\[Lambda][Rinitial_] := Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos,setPrecision]];
 	(*Discriminates between undershooting and overshooting*)
-	RComplexity[Rinitial_] := RComplexity[Rinitial] = Abs@Im@BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision][[1,1]];
+	RComplexity[Rinitial_] := Abs@Im@BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision][[1,1]];
 
-	RW[Rinitial_]:= RW[Rinitial] = Module[{rw}, 
-		rw =rw/.Quiet[FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,Rinitial}, 
-			MaxIterations->1,PrecisionGoal->0,AccuracyGoal->accuracyRadii],
-			{FindRoot::lstol,FindRoot::cvmit}];   
-
-		Abs[rw]
-	];      
+	RW[Rinitial_]:=
+		Quiet[Abs[rw/.FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,Rinitial}, 
+					MaxIterations->1,
+					PrecisionGoal->0,
+					AccuracyGoal->accuracyRadii]
+				],
+		{FindRoot::lstol,FindRoot::cvmit}];    
 	
 	(*Finds the interval of the solution Sol \[Element] [Rreal, Rcomplex] or reduces the interval*)
 	ite = 0; 
@@ -391,36 +393,42 @@ SetPrecision[
 		Rcomplex = Infinity;
 		Rreal = 0;
 		switch = False;
-		If[ RComplexity[Rinitial]>0,
+		Rcomplexity = RComplexity[Rinitial];
+		\[Lambda]after = \[Lambda][Rinitial];
+		If[ Rcomplexity > 0,
 			(*Overshooting*)
-			While[ RComplexity[Rinitial]>0&&ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop[Re[\[Lambda][Rinitial]]]!=0.,
+			While[ Rcomplexity > 0 &&ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadii)&&Chop[Re@\[Lambda]after]!=0,
 				If[Rinitial < Rcomplex,
 					Rcomplex = Rinitial;
 					Rinitial = RW[Rinitial];
 					,
 					(*Perturbs 10% down the ansatz since Rinitial>Rcomplex*) 
 					Rinitial = .9*Rcomplex
-				]; 
+				];
+				Rcomplexity = RComplexity[Rinitial];
+				\[Lambda]after = \[Lambda][Rinitial];
 				ite++
 			]; 
 			Rreal = Rinitial;,
 			(*Undershooting*)
 			(*----else----------*)
-			While[ RComplexity[Rinitial] == 0&&ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop@Re[\[Lambda][Rinitial]]!=0.,
+			While[ Rcomplexity == 0&&ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadii)&&Chop[Re@\[Lambda]after]!=0.,
 				If[Rinitial > Rreal,
 					Rreal = Rinitial;  
 					Rinitial = RW[Rinitial],
 					(*Perturbs 10% up the ansatz since Rinitial<Rreal*)  
 					Rinitial = 1.1*Rreal
 				];
+				Rcomplexity = RComplexity[Rinitial];
+				\[Lambda]after = \[Lambda][Rinitial];
 				ite++
 			]; 
 			Rcomplex = Rinitial;    
 		];  
 		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop@Re@\[Lambda][Rinitial]!=0., 
+		While[ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadii)&&Chop[Re@\[Lambda]after]!=0., 
 			
-			If[ RComplexity[Rinitial]>0,
+			If[ Rcomplexity>0,
 				If[ (*Overshooting*)
 					Rinitial < Rcomplex,
 					Rcomplex = Rinitial;
@@ -437,11 +445,12 @@ SetPrecision[
 					Rinitial = Abs[Rcomplex+Rreal]/2.;
 				];
 			];
-
+			Rcomplexity = RComplexity[Rinitial];
+			\[Lambda]after = \[Lambda][Rinitial];
 			ite++   
 		];
 	   
-		If[ Re@Chop@\[Lambda][Rinitial] == 0.,
+		If[ Chop[Re@\[Lambda]after] == 0.,
 			k++;
 			switch=True;
 			Rinitial = (1+k)*Abs[Rinitial0]  
@@ -452,7 +461,7 @@ SetPrecision[
 		Message[FindInitialRadii::cvmit,maxIteR] 
 	];
 	
-	If[ Abs[\[Lambda][Rinitial]-1] >.5*10^(-1)&&switchMessage, 
+	If[ Abs[\[Lambda]after-1] >.5*10^(-1)&&switchMessage, 
 		Message[FindInitialRadii::noSolution];
 		Return[$Failed,Module]
 	];  
@@ -467,7 +476,7 @@ SetPrecision[
 
 
 (*See eqs. 10*)
-\[ScriptCapitalT][v_,a_,b_,R_,d_,Ns_,pos_,setPrecision_]:= \[ScriptCapitalT][v,a,b,R,d,Ns,pos,setPrecision] = 
+\[ScriptCapitalT][v_,a_,b_,R_,d_,Ns_,pos_,setPrecision_]:= 
 Module[{p,T},
 SetPrecision[
 	If[pos>1,
@@ -486,7 +495,7 @@ SetPrecision[
 ];
  
  (*See eq. 11*)
-\[ScriptCapitalV][v_,a_,b_,R_,d_,VL_,\[Phi]L_,Ns_,setPrecision_]:= \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns,setPrecision] = 
+\[ScriptCapitalV][v_,a_,b_,R_,d_,VL_,\[Phi]L_,Ns_,setPrecision_]:= 
 SetPrecision[2\[Pi]^(d/2)/Gamma[d/2](Sum[   
 	32 a[[i]]^2/(d(d+2))  (R[[i+1]]^(2+d) - R[[i]]^(2+d)) + 
 	8 a[[i]]b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2) +
@@ -495,7 +504,7 @@ SetPrecision[2\[Pi]^(d/2)/Gamma[d/2](Sum[
 ,setPrecision];
  
  (*See eq. 26*)
-\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_,setPrecision_]:= \[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,backward,pos,setPrecision] = 
+\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_,setPrecision_]:= 
 Module[{R,v,b}, 
 SetPrecision[
 	{R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos,setPrecision]; 
@@ -562,7 +571,7 @@ SetPrecision[
 
 
 (*See eqs. 47-48*)
-Find\[ScriptCapitalI][v_,\[Phi]L_,a_,b_,Ns_,pos_,R_,ddVL_,d_]:= Find\[ScriptCapitalI][v,\[Phi]L,a,b,Ns,pos,R,ddVL,d]=
+Find\[ScriptCapitalI][v_,\[Phi]L_,a_,b_,Ns_,pos_,R_,ddVL_,d_]:=
 Module[{\[ScriptCapitalI],d\[ScriptCapitalI],v0,\[Phi]L0,a0,b0,ddVL0},
 	v0 =Join[{0},v,{0}]; 
 	\[Phi]L0 =Join[{0},\[Phi]L,{0}]; 
@@ -593,7 +602,7 @@ Module[{\[ScriptCapitalI],d\[ScriptCapitalI],v0,\[Phi]L0,a0,b0,ddVL0},
 
 
 (*See eqs. 50-52*)
-BounceParameterr\[Beta]\[Nu][rw_?NumericQ,a_,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_] :=BounceParameterr\[Beta]\[Nu][rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos] = 
+BounceParameterr\[Beta]\[Nu][rw_?NumericQ,a_,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_] := 
 Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 	a0 = Join[{0},a]; 
 	\[Alpha]0 = Join[{0},\[Alpha]];
@@ -631,7 +640,7 @@ Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 
 
 (*Solves Boundary Conditions \[Xi][N-1] = 0*)
-FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_]:= FindInitialRadiiImprovement[rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos]=
+FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_]:=
 Module[{bc,r,\[Beta],\[Nu]},
 		{r,\[Beta],\[Nu]} = BounceParameterr\[Beta]\[Nu][rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos] ;
 		
@@ -648,16 +657,16 @@ Module[{bc,r,\[Beta],\[Nu]},
 
 
 (*Kinetic term from Int[\[Rho]^(D-1)(1/2 d\[Xi]^2)]*)
-\[ScriptCapitalT]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] := (*\[ScriptCapitalT]\[Xi]4[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r] = *)
+\[ScriptCapitalT]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=
 	1/(24 \[Rho]^2) (a \[Rho]^4 (-48 \[Beta]+\[Rho]^4 (2 ddVL v+16 \[Alpha]+a ddVL \[Rho]^2-2 ddVL \[Phi]L))+
 	b (-48 \[Beta]+2 \[Rho]^4 (-3 ddVL v-24 \[Alpha]+2 a ddVL \[Rho]^2+3 ddVL \[Phi]L))
 	-24 b^2 ddVL \[Rho]^2 Log[\[Rho]])+ (r (4 b-4 a \[Rho]^4)^2)/(8 \[Rho]^2);
 
-\[ScriptCapitalT]\[Xi]3[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] := (*\[ScriptCapitalT]\[Xi]3[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r] = *)
+\[ScriptCapitalT]\[Xi]3[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=
 	-((4 b \[Beta])/\[Rho])-2 b^2 ddVL \[Rho]+8/15 a b ddVL \[Rho]^4+32/315 a^2 ddVL \[Rho]^7-1/3 \[Rho]^2 (8 a \[Beta]+b (8 \[Alpha]+ddVL (v-\[Phi]L)))+
 	8/45 a \[Rho]^5 (8 \[Alpha]+ddVL (v-\[Phi]L))+(2 r (3 b-4 a \[Rho]^3)^2)/(9 \[Rho]);
 
-\[ScriptCapitalT]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] := (*\[ScriptCapitalT]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r] =*)
+\[ScriptCapitalT]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] :=
 Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 	VN = VL[[-1]];
 	If[d==4,\[ScriptCapitalT]\[Xi]D = \[ScriptCapitalT]\[Xi]4];
@@ -679,7 +688,7 @@ Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 
 
 (*Potential term from Int[\[Rho]^(D-1)(Vperturbation[\[CurlyPhi]]-8a)]*)
-\[ScriptCapitalV]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=(*\[ScriptCapitalV]\[Xi]4[a,\[Rho],b,v,\[Alpha],\[Beta],\[Nu],VL,VN,ddVL,\[Phi]L,r] =*) 
+\[ScriptCapitalV]\[Xi]4[a_,\[Rho]_?NumericQ,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,VL_,VN_,ddVL_,\[Phi]L_,r_] :=
 	1/48 \[Rho]^2 (5 a^2 ddVL \[Rho]^6+ 16 a (12 \[Beta]+6 \[Nu] \[Rho]^2+\[Rho]^4 (8 \[Alpha]+ddVL (v-\[Phi]L)))+
 	24 b (8 \[Alpha]+ddVL (v-\[Phi]L))+6 \[Rho]^2 (16 \[Alpha]+ddVL (v-\[Phi]L)) (v-\[Phi]L))+
 	1/2 b ddVL (b+2 a \[Rho]^4) Log[\[Rho]]+8 a b r \[Rho]^2+1/4 r \[Rho]^4 (4 (VL-VN)+32 a^2 \[Rho]^2+32 a (v-\[Phi]L));
@@ -688,7 +697,7 @@ Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 	210 b \[Rho] (24 \[Alpha]+ddVL (3 v+8 a \[Rho]^2-3 \[Phi]L))+\[Rho] (128 a^2 ddVL \[Rho]^5+336 a (15 \[Beta]+5 \[Nu] \[Rho]+\[Rho]^3 (8 \[Alpha]+ddVL (v-\[Phi]L)))+105 \[Rho] (16 \[Alpha]+
 	ddVL (v-\[Phi]L)) (v-\[Phi]L)))+16 a b r \[Rho]^2+1/3 r \[Rho]^3 (3 (VL-VN)+32 a^2 \[Rho]^2+24 a (v-\[Phi]L));
 
-\[ScriptCapitalV]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] := (*\[ScriptCapitalV]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r]=*)
+\[ScriptCapitalV]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] := 
 Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 	If[d==4, \[ScriptCapitalV]\[Xi]D = \[ScriptCapitalV]\[Xi]4];
 	If[d==3, \[ScriptCapitalV]\[Xi]D = \[ScriptCapitalV]\[Xi]3];
@@ -864,9 +873,7 @@ SetPrecision[
 			\[Beta]+=   4/d(a[[s+1]]-a[[s]])R[[s+1]]^d+1/2 (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]]^(d-1);
 			Sow[\[Nu],x];Sow[\[Beta],y]; ,{s,p,Ns-1} ];  
 	][[2]];
-	
-	R[[p]] += R[[p]]*rI; 
-	R[[Ns+1]] += R[[Ns+1]]*rF; 
+	 
 	{\[Phi]0[[1]],\[Zeta]ts[[1]]} = {\[CapitalPhi]0[[1]],ConstantArray[0,noFields]};
 ,setPrecision];
 	If[Max[Abs@\[Zeta]ts]/lengthPath < \[CapitalDelta]path,
