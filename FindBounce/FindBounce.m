@@ -105,21 +105,6 @@ Module[{Nfv,\[Phi]3,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[Capi
 
 
 (* ::Subsection::Closed:: *)
-(*FindSegment*)
-
-
-FindSegment[a_,\[Phi]L_,d_,Ns_]:=Module[{pos=1,R,estimateRmin,estimateRmax,ps},
-	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos][[1]];
-	While[Im[R[[-1]]] == 0 &&pos< Ns,
-		pos++;
-		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos][[1]]; 
-	];
-	
-	pos   
-];
-
-
-(* ::Subsection::Closed:: *)
 (*NewAnsatz*)
 
 
@@ -173,8 +158,11 @@ DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:= Module[{dV,d2V},
 InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 
-InitialValue[V_,fields_,noFields_,min1_,point_,min2_,segments_,Vinitial_,methodSeg_,Path_,gradient_,hessian_]:=
-Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,Rinitial,Length\[Phi]0,dV = None,d2V=None,improvePB=False},
+InitialValue[V_,fields_,noFields_,min1_,point_,min2_,segments_,Vinitial_,methodSeg_,Path_,gradient_,hessian_,dim_,setPrecision_]:=
+Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,Rinitial,
+Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0 },
+SetPrecision[
+
 If[Path === None, 
 	\[Phi] = N[{min1,point,min2}],
 	\[Phi] = N[Path]
@@ -213,19 +201,27 @@ If[
 
 (*Finds the Logitudinal field values \[Phi]L3, fields \[Phi]3, distance l3, and direction eL3 for 3 Segments *)
 \[Phi]3 = \[Phi][[{1,Position[ VL,VL3[[2]] ][[1,1]],-1}]];
-	L3 = Table[Norm[\[Phi]3[[s+1]]-\[Phi]3[[s]]],{s,2}];
-	\[Phi]L3 = Table[Sum[L3[[s1]],{s1,s-1}],{s,3}];
-	eL3 = Table[(\[Phi]3[[s+1]]-\[Phi]3[[s]])/L3[[s]],{s,2}];	
-	a3 = Table[(VL3[[s+1]]-VL3[[s]])/(\[Phi]L3[[s+1]]-\[Phi]L3[[s]]) 1/8. ,{s,2}]  ;
+L3 = Table[Norm[\[Phi]3[[s+1]]-\[Phi]3[[s]]],{s,2}];
+\[Phi]L3 = Table[Sum[L3[[s1]],{s1,s-1}],{s,3}];
+eL3 = Table[(\[Phi]3[[s+1]]-\[Phi]3[[s]])/L3[[s]],{s,2}];
+a3 = Table[(VL3[[s+1]]-VL3[[s]])/(\[Phi]L3[[s+1]]-\[Phi]L3[[s]]) 1/8. ,{s,2}]  ;
 
-(*Estimates the initial radii Rinitial = R[2] of the Triangular (Segments = 2) close form solution*)
-Rinitial = If[ VL3[[1]]!= VL3[[3]]  ,
-			Abs[.5(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-
-	\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])])],
-			Infinity
-		];
+(*Estimates the initial radii Rinitial with the N=2 close form solution*)
+Rinitial =
+ If[ VL3[[1]]!= VL3[[3]] ,
+	R0 =1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])]);
+	If[Im@R0>0,
+		c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
+		\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
+		Sqrt[dim/4 (\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
+		,
+		R0
+	]
+,
+		Infinity
+];
 
-(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
+	(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
 	If[Path === None,
 	\[Phi]L = Segmentation[\[Phi]L3, "Segments" -> segments ,"Method" -> methodSeg];
 		\[Phi] = Chop@Table[ 
@@ -235,17 +231,21 @@ Rinitial = If[ VL3[[1]]!= VL3[[3]]  ,
 		]
 	,{s,1,Length[\[Phi]L]} ];
 	l = \[Phi]L[[2;;-1]]-\[Phi]L[[1;;-2]];
-	If[Not[gradient === False &&noFields==1],
-		{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
-	];
-	If[gradient===Automatic,
-		improvePB = True
-	];
 	,
 	l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,Length\[Phi]0-1}];
 	\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,Length\[Phi]0}];
 ];
+
+If[Vinitial===None,
+	If[Not[gradient === False &&noFields==1],
+		{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
+	];
+	If[gradient===Automatic&&segments>3,
+		improvePB = True
+	];
+];
 eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
+,setPrecision];
 
 {Rinitial,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}
 ];
@@ -253,6 +253,22 @@ eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 
 (* ::Section::Closed:: *)
 (*SingleFieldBounce*)
+
+
+(* ::Subsection::Closed:: *)
+(*FindSegment*)
+
+
+FindSegment[a_,\[Phi]L_,d_,Ns_,setPrecision_]:=Module[{pos = 1,R,estimateRmin,estimateRmax,ps},
+	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos,setPrecision][[1]];
+	
+	While[Im[R[[-1]]] == 0 && pos< Ns,
+		pos++;
+		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos,setPrecision][[1]]; 
+	];
+	
+	pos
+];
 
 
 (* ::Subsection::Closed:: *)
@@ -277,11 +293,19 @@ RInitial[3,Rinitial_?NumericQ,a_,\[Phi]L_,pos_,backward_]:= Rinitial;
 (*=========== Rs(D) ====================*) 
 (*See eqs. 18-20*)
 Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
-Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},  \[Xi]= ( Sqrt[ 36 a b^2 -  c1^3 ] - 6 b a^(1/2)  )^(1/3) /a^(1/2); 1/2 (c1/a/\[Xi] + \[Xi]) ];
+Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},  
+	\[Xi]= ( Sqrt[ 36 a b^2 - c1^3 ] - 6 b a^(1/2) )^(1/3) /a^(1/2);
+	If[Re@\[Xi]==0,
+		\[Xi] = (Sqrt[ 36 a b^2 - c1^3 ] + 6 b a^(1/2) )^(1/3) /a^(1/2)
+	]; 
+
+	1/2 (c1/a/\[Xi] + \[Xi])	 
+];
 (*=========== BounceParameterRvb ======================*) 
 (*See eqs. 15-16*)
-BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_]:= BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos] =
-Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb},
+BounceParameterRvb[Rinitial_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_,setPrecision_]:= BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos,setPrecision] =
+Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
+SetPrecision[
 	(*-------Backward--------------------*)
 	If[backward,
 		\[Alpha] = Join[a,{0.}]; 
@@ -290,32 +314,33 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb},
 		v=\[Phi]L[[-1]];
 		Rvb = Reap[
 			Sow[b,x];Sow[v,y];Sow[R,z];
-			Do[ b +=-(4./d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
-				v +=( 4./(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y]; 
+			Do[ b +=-(4/d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
+				v +=(4/(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y];
 				R  = Rs[d,(\[Phi]L[[-i-1]]-v) ,\[Alpha][[-i-1]],b];Sow[R,z];
 				,{i,1,Ns}
-			]; 
+			];
 		][[2]];
 		
 		Chop@Return[Reverse[Rvb,{1,2}]],     
 	(*--------Else-Forward---------------*)
-		\[Alpha] = Join[{0.}, a ]; 
+		\[Alpha] = Join[{0}, a ]; 
 		R = RInitial[d,Rinitial,\[Alpha],\[Phi]L,pos,backward]; 
 		b=0.;
 		v = \[Phi]L[[pos]] -(4/d)R^2\[Alpha][[pos]];
 		Rvb = Reap[
 			If[pos>1,Do[Sow[0,x];Sow[v,y];Sow[b,z];,{i,1,pos-1}]];
 			Sow[R,x];
-			Do[ v+= -( 4./(d-2)) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^2 ;Sow[v,y];
-				b+= (4./d) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^(d);Sow[b,z];
+			Do[ v+= -( 4/(d-2)) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^2 ;Sow[v,y];
+				b+= (4/d) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^(d);Sow[b,z];
 				R = Rs[d,(\[Phi]L[[i+1]]-v) ,\[Alpha][[i+1]],b];Sow[R,x];
 			,{i,pos,Ns}];
-			v+= -( 4./(d-2))(-\[Alpha][[Ns+1]]) R^2 ;Sow[v,y];
-			b+= (4./d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; 
+			v+= -( 4/(d-2))(-\[Alpha][[Ns+1]]) R^2 ;Sow[v,y];
+			b+= (4/d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; 
 		][[2]];
 		
 		Chop@Return[Rvb]        
-	];       
+	]; 
+, setPrecision]; 
 ];
 
 
@@ -326,14 +351,18 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb},
 FindInitialRadii::noSolution = "Large error solving the boundaries conditions. This potential may not have a bounce solution.";
 
 (*Find the solution of eq. 25 or 26.*)
-FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadii_,ansatzRinitial_,aRinitial_,pos_,switchMessage_]:= 
-Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,switch,k,Rinitial0,RComplexity},
+FindInitialRadii[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadii_,ansatzRinitial_,aRinitial_,pos_,switchMessage_,setPrecision_]:= 
+Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,switch,k,Rinitial0,RComplexity},
+SetPrecision[
+	If[Ns==2&&Not[d==3&&pos==1],
+		Return[ansatzRinitial]
+	];
 	
 	(*Picks up the best estimate*)
 	If[NumericQ[aRinitial],
 		Rinitial = aRinitial
 		,
-		R = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1][[1]];
+		R = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1,setPrecision][[1]];
 		If[ Abs[Im[R[[-1]]]]<0,
 			Rinitial = Abs[R[[-2]]],
 			Rinitial = Abs[ansatzRinitial] 
@@ -342,15 +371,15 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 	Rinitial0 = Rinitial;
 	
 	(*Defines \[Lambda] of eq. 26*)
-	\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos]];
+	\[Lambda][Rinitial_] := \[Lambda][Rinitial] = Sqrt[\[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,True,pos,setPrecision]];
 	(*Discriminates between undershooting and overshooting*)
-	RComplexity[Rinitial_] := RComplexity[Rinitial] = Abs@Im@BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,None][[1,1]];
+	RComplexity[Rinitial_] := RComplexity[Rinitial] = Abs@Im@BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision][[1,1]];
 
 	RW[Rinitial_]:= RW[Rinitial] = Module[{rw}, 
 		rw =rw/.Quiet[FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,Rinitial}, 
 			MaxIterations->1,PrecisionGoal->0,AccuracyGoal->accuracyRadii],
 			{FindRoot::lstol,FindRoot::cvmit}];   
-			
+
 		Abs[rw]
 	];      
 	
@@ -358,7 +387,7 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 	ite = 0; 
 	switch = True; 
 	k = 1;
-	While[ ite <= maxIteR && switch,    
+	While[ ite <= maxIteR && switch,   
 		Rcomplex = Infinity;
 		Rreal = 0;
 		switch = False;
@@ -367,11 +396,13 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 			While[ RComplexity[Rinitial]>0&&ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop[Re[\[Lambda][Rinitial]]]!=0.,
 				If[Rinitial < Rcomplex,
 					Rcomplex = Rinitial;
-					Rinitial = RW[Rinitial],
+					Rinitial = RW[Rinitial];
+					,
 					(*Perturbs 10% down the ansatz since Rinitial>Rcomplex*) 
-					Rinitial = .9 Rcomplex
+					Rinitial = .9*Rcomplex
 				]; 
-				ite++]; 
+				ite++
+			]; 
 			Rreal = Rinitial;,
 			(*Undershooting*)
 			(*----else----------*)
@@ -380,47 +411,54 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 					Rreal = Rinitial;  
 					Rinitial = RW[Rinitial],
 					(*Perturbs 10% up the ansatz since Rinitial<Rreal*)  
-					Rinitial = 1.1  Rreal
+					Rinitial = 1.1*Rreal
 				];
-				ite++]; 
+				ite++
+			]; 
 			Rcomplex = Rinitial;    
-		];   
-		
+		];  
 		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop[Re[\[Lambda][Rinitial]]]!=0., 
-			\[Lambda]prev = \[Lambda][Rinitial];
+		While[ite <= maxIteR&&Abs[\[Lambda][Rinitial]-1]>.5*10^(-accuracyRadii)&&Chop@Re@\[Lambda][Rinitial]!=0., 
+			
 			If[ RComplexity[Rinitial]>0,
 				If[ (*Overshooting*)
 					Rinitial < Rcomplex,
 					Rcomplex = Rinitial;
-					Rinitial = RW[Rinitial],
-					Rinitial = Abs[Rcomplex+Rreal]/2.
+					Rinitial = RW[Rinitial];
+					,
+					Rinitial = Abs[Rcomplex+Rreal]/2.;
 				];
 				,
 				If[ (*Undershooting*)
 					Rinitial > Rreal, 
 					Rreal = Rinitial; 
-					Rinitial = RW[Rinitial],
-					Rinitial = Abs[Rcomplex+Rreal]/2.  
-				]
+					Rinitial = RW[Rinitial];
+					,
+					Rinitial = Abs[Rcomplex+Rreal]/2.;
+				];
 			];
-			ite++
-		];
-		    
-		If[ Re[Chop[\[Lambda][Rinitial]]] == 0., 
-			k++;switch=True;
-			Rinitial = (1+k)*Abs[Rinitial0]  
-		];     
 
+			ite++   
+		];
+	   
+		If[ Re@Chop@\[Lambda][Rinitial] == 0.,
+			k++;
+			switch=True;
+			Rinitial = (1+k)*Abs[Rinitial0]  
+		];   
 	];    
-	 
-	If[ ite > maxIteR&&switchMessage, Message[FindInitialRadii::cvmit,maxIteR] ];
-	If[ Abs[\[Lambda][Rinitial]-1] >.5*10^(-1), 
+	
+	If[ ite > maxIteR&&switchMessage,
+		Message[FindInitialRadii::cvmit,maxIteR] 
+	];
+	
+	If[ Abs[\[Lambda][Rinitial]-1] >.5*10^(-1)&&switchMessage, 
 		Message[FindInitialRadii::noSolution];
 		Return[$Failed,Module]
 	];  
-	
-	Re@Rinitial  
+, setPrecision];	
+			
+	Re@Rinitial
 ]; 
 
 
@@ -429,8 +467,9 @@ Module[{R,Rinitial,timeRinitial,ite,RW,\[Lambda],Rcomplex,Rreal,\[Lambda]prev,sw
 
 
 (*See eqs. 10*)
-\[ScriptCapitalT][v_,a_,b_,R_,d_,Ns_,pos_]:= \[ScriptCapitalT][v,a,b,R,d,Ns,pos] = 
+\[ScriptCapitalT][v_,a_,b_,R_,d_,Ns_,pos_,setPrecision_]:= \[ScriptCapitalT][v,a,b,R,d,Ns,pos,setPrecision] = 
 Module[{p,T},
+SetPrecision[
 	If[pos>1,
 		T = 2\[Pi]^(d/2)/Gamma[d/2](
 			32 a[[pos-1]]^2/(d^2(d+2)) (R[[pos]]^(2+d)) -
@@ -443,21 +482,26 @@ Module[{p,T},
 		 8*a[[i]]*b[[i]]/d  (R[[i+1]]^2 - R[[i]]^2) -
 		(2/(d-2))*b[[i]]^2 (R[[i+1]]^(2-d)-R[[i]]^(2-d))
 	,{i,pos,Ns}]
+,setPrecision]
 ];
  
  (*See eq. 11*)
-\[ScriptCapitalV][v_,a_,b_,R_,d_,VL_,\[Phi]L_,Ns_]:= \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns] = 2\[Pi]^(d/2)/Gamma[d/2](Sum[   
+\[ScriptCapitalV][v_,a_,b_,R_,d_,VL_,\[Phi]L_,Ns_,setPrecision_]:= \[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns,setPrecision] = 
+SetPrecision[2\[Pi]^(d/2)/Gamma[d/2](Sum[   
 	32 a[[i]]^2/(d(d+2))  (R[[i+1]]^(2+d) - R[[i]]^(2+d)) + 
 	8 a[[i]]b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2) +
 	( VL[[i]]-VL[[-1]]+ 8 a[[i]]( v[[i]] - \[Phi]L[[i]]))(R[[i+1]]^d-R[[i]]^d)/d ,{i,1,Ns}] +
-		1/d R[[1]]^d (VL[[1]] - VL[[-1]]) ) ;
+		1/d R[[1]]^d (VL[[1]] - VL[[-1]]) )
+,setPrecision];
  
  (*See eq. 26*)
-\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_]:= \[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,backward,pos] = 
+\[CapitalLambda][Rinitial_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_,setPrecision_]:= \[CapitalLambda][Rinitial,d,VL,\[Phi]L,a,Ns,backward,pos,setPrecision] = 
 Module[{R,v,b}, 
-	{R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos]; 
+SetPrecision[
+	{R,v,b} = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,backward,pos,setPrecision]; 
 	
-	(2-d)*\[ScriptCapitalT][v,a,b,R,d,Ns,pos]/(d*\[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns]) 
+	(2-d)*\[ScriptCapitalT][v,a,b,R,d,Ns,pos,setPrecision]/(d*\[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns,setPrecision])
+,setPrecision]
 ];
 
 
@@ -466,11 +510,12 @@ Module[{R,v,b},
 
 
 SingleFieldBounce::extrema = "Wrong position of the minima.";
-SingleFieldBounce::pathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
+MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
 SingleFieldBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
 
-SingleFieldBounce[V_,Vinitial_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadii_,ansatzRinitial_,aRinitial_,rule_,iter_,switchMessage_]:= 
+SingleFieldBounce[V_,Vinitial_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadii_,ansatzRinitial_,aRinitial_,rule_,iter_,switchMessage_,setPrecision_]:= 
 Module[{a,VL,pos,Rinitial,R,v,b,T1,V1},
+SetPrecision[	
 	If[
 		Vinitial===None,
 		VL = Table[V/.rule[[s]],{s,Ns+1}]
@@ -480,24 +525,30 @@ Module[{a,VL,pos,Rinitial,R,v,b,T1,V1},
 			VL = Reverse[Vinitial]
 		];
 	];
+	
+	
 	If[VL[[1]]>=VL[[2]]||VL[[-1]]>=VL[[-2]],
 		If[iter === 0,
 			Message[SingleFieldBounce::extrema];Return[$Failed,Module],
-			Message[SingleFieldBounce::pathDeformation];Return[$Failed,Module]
+			Message[MultiFieldBounce::pathDeformation];Return[$Failed,Module]
 		]
 	];
-	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8. ,{s,Ns} ]; 
-	pos = FindSegment[a,\[Phi]L,dim,Ns];
-	Rinitial = FindInitialRadii[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadii,ansatzRinitial,aRinitial,pos,switchMessage]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-	{R,v,b} = Re@BounceParameterRvb[Rinitial,\[Phi]L,a,dim,Ns,True,pos];
-	If[R[[-2]]<10^(-5.),
+	
+	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
+	pos = FindSegment[a,\[Phi]L,dim,Ns,setPrecision];
+	Rinitial = FindInitialRadii[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadii,ansatzRinitial,aRinitial,pos,switchMessage,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+	{R,v,b} = Re@BounceParameterRvb[Rinitial,\[Phi]L,a,dim,Ns,True,pos,setPrecision];	
+	
+	If[R[[-2]]<10^(-5),
 		Message[SingleFieldBounce::Rinitial0];
 		Return[$Failed,Module]
-	];	
-	a = Join[a,{0.}];	
-	T1 = \[ScriptCapitalT][v,a,b,R,dim,Ns,pos]; 
-	V1 = \[ScriptCapitalV][v,a,b,R,dim,VL,\[Phi]L,Ns]; 
-	
+	];
+		
+	a = Join[a,{0}];	
+	T1 = \[ScriptCapitalT][v,a,b,R,dim,Ns,pos,setPrecision]; 
+	V1 = \[ScriptCapitalV][v,a,b,R,dim,VL,\[Phi]L,Ns,setPrecision]; 
+,setPrecision];
+
 	{V1+T1,VL,v,a,b,pos,R,Rinitial}
 ];
 
@@ -708,10 +759,12 @@ Module[{v,a,b},
 (*MultiFieldBounce*)
 
 
-MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_]:=
+MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,setPrecision_,lengthPath_,\[CapitalDelta]path_]:=
 Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,rN,DV,D2V,
-	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,rulesQuartic, \[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0},(*rF*)
-
+	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,rulesQuartic, 
+	\[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False},
+		
+SetPrecision[
 	If[pos>1,
 		p = pos-1;
 		\[Phi]0[[p]] = v0[[p]]
@@ -721,18 +774,18 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 
 	R = Transpose@Table[R0,{i,noFields}];
 	rules = Table[fields[[i]]->\[Phi]0[[s,i]],{s,p,Ns+1},{i,noFields}];
-	
-	(*Derivative of Poential and PB *)
-	DV = Chop@Join[ConstantArray[0.,{p-1,noFields}],Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]];
-	D2V = Chop@Join[Table[ConstantArray[0.,{noFields,noFields}],{s,1,p-1}], 
-		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];	
-	d\[CurlyPhi] = Chop@Join[Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
-		Table[8/d a0[[s+m]] R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]];
 
+	(*Derivative of Poential and PB*)
+	DV = Chop@Join[ConstantArray[0,{p-1,noFields}],Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]];
+	D2V = Chop@Join[Table[ConstantArray[0,{noFields,noFields}],{s,1,p-1}], 
+		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];	
+	d\[CurlyPhi] = Chop@Join[Table[ConstantArray[0,{2,noFields}],{s,1,p-1}],
+		Table[8/d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]];
+		
 	(*c*)
 	If[pos>1, 
-		\[Nu]0[p] = ConstantArray[0.,noFields]; 
-		\[Beta]0[p] = ConstantArray[0.,noFields];
+		\[Nu]0[p] = ConstantArray[0,noFields]; 
+		\[Beta]0[p] = ConstantArray[0,noFields];
 		, 
 		\[Nu]0[p] = ((16 a0[[1]]-DV[[1]]-DV[[2]]) R[[1]]^2)/(4 (-2+d));  
 		\[Beta]0[p] = ((-16 a0[[1]]+DV[[1]]+DV[[2]]) R[[1]]^d)/(4 d);  
@@ -744,10 +797,10 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 			(16 a0[[-1+s]]-16 a0[[s]]-DV[[-1+s]]+DV[[1+s]]) R[[s]]);
 	,{s,p+1,Ns}];
 	
-	c  = -Flatten[ {If[pos>1,{},ConstantArray[0.,noFields]],
+	c  = -Flatten[ {If[pos>1,{},ConstantArray[0,noFields]],
 		Table[ ((-16 a0[[s]]+DV[[s]]+DV[[1+s]]) R[[1+s]]^2)/(4 d)+
 			(2 (R[[1+s]]^(2-d)) )/(-2+d) \[Beta]0[s]+\[Nu]0[s],{s,p,Ns}]
-		,ConstantArray[0.,noFields]}    
+		,ConstantArray[0,noFields]}    
 	];
 	
 	(*M*)
@@ -758,17 +811,17 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 	fLowT[s_,j_]:= (2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]m[j]+\[Beta]\[Xi]p[j-2])+\[Nu]\[Xi]m[j]+\[Nu]\[Xi]p[j-2];(*[Eq[s],\[Xi][j-1]]*) (* 2 \[LessEqual] j \[LessEqual] s*)
 
 		\[Nu]\[Xi]p[p-1]= If[pos>1,IdentityMatrix[noFields],-((D2V[[p]]*(R[[p]]^2) )/(4 (-2+d))) ];
-		\[Beta]\[Xi]p[p-1]= If[pos>1,ConstantArray[0.,{noFields,noFields}],(D2V[[p]]*R[[p]]^d)/(4 d)];
+		\[Beta]\[Xi]p[p-1]= If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[p]]*R[[p]]^d)/(4 d)];
 	fD[s_] := (D2V[[s]]*(R[[1+s]]^2) )/(4 d) +(2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]p[s-1])+ \[Nu]\[Xi]p[s-1];(*[Eq[s],\[Xi][s]]*)
 
-		\[Nu]\[Xi]p[p] = If[pos>1,ConstantArray[0.,{noFields,noFields}],-((D2V[[1+p]] R[[p]]^2)/(4 (-2+d)))];
-		\[Beta]\[Xi]p[p] = If[pos>1,ConstantArray[0.,{noFields,noFields}],(D2V[[1+p]] (R[[p]]^d) )/(4 d)];
+		\[Nu]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],-((D2V[[1+p]] R[[p]]^2)/(4 (-2+d)))];
+		\[Beta]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[1+p]] (R[[p]]^d) )/(4 d)];
 	fD1[s_]:= (-IdentityMatrix[noFields]+(D2V[[1+s]] R[[1+s]]^2)/(4 d))+(2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]p[s])+\[Nu]\[Xi]p[s] ;(*[Eq[s],\[Xi][s+1]]*)
 	frI[s_]:= ((2 (R[[1+s]]^(2-d)) )/(-2+d) (4 a0[[p]] R[[p]]^d)-(8  a0[[p]] R[[p]]^2)/(-2+d)  )IdentityMatrix[noFields]; 
 	
 	n1 = If[pos>1,0,1];
 	M = Module[{n,m},
-		n=(Ns+1-p)+1+n1;
+		n = (Ns+1-p)+1+n1;
 		m = SparseArray[{{n,n}->0}];
 		Do[m[[s+n1,s+n1]]=fD[s+p-1],{s,1,n-1-n1}];
 		Do[m[[s+n1,s+1+n1]]=fD1[s+p-1],{s,1,n-1-n1}];
@@ -782,14 +835,17 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 		ArrayFlatten[m]
 	];
 	
-	(*Solves[M.\[Xi] = c]*)
+	(*Solving M.\[Xi] = c*)
 	\[Xi]Mc = LinearSolve[M,c];  
 	
 	(*\[Zeta]ts,a,r,R*)
-	\[Zeta]ts = Join[ConstantArray[0.,{p-1,noFields}],Partition[\[Xi]Mc[[ 1+n1 noFields;;-1]],noFields]];
-	a  = Join[ConstantArray[0.,{p-1,noFields}],Table[ 1/8( (  DV[[s]]+DV[[s+1]]+
+	\[Zeta]ts = Join[ConstantArray[0,{p-1,noFields}],Partition[\[Xi]Mc[[ 1+n1 noFields;;-1]],noFields]];
+	a  = Join[ConstantArray[0,{p-1,noFields}],Table[ 1/8( (  DV[[s]]+DV[[s+1]]+
 		D2V[[s]].\[Zeta]ts[[s]]+D2V[[s+1]].\[Zeta]ts[[s+1]]  )/2)-a0[[s]],{s,p,Ns}] ];
-	rI  = If[pos>1,ConstantArray[0,noFields],\[Xi]Mc[[1;;noFields]] ];
+	rI  = If[pos>1,
+			ConstantArray[0,noFields], 
+			\[Xi]Mc[[1;;noFields]] 
+			];
 	rF  = ConstantArray[0,noFields];
 	
 	(*\[Nu]\[Beta]*)
@@ -809,10 +865,15 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 			Sow[\[Nu],x];Sow[\[Beta],y]; ,{s,p,Ns-1} ];  
 	][[2]];
 	
-	R[[p]] += R[[p]]*rI; R[[Ns+1]] += R[[Ns+1]]*rF; 
-	\[Phi]0[[1]] = \[CapitalPhi]0[[1]];
-
-	{\[Phi]0+\[Zeta]ts,v0+\[Nu]\[Beta][[1]],a0+a,b0+\[Nu]\[Beta][[2]],R0,pos}   
+	R[[p]] += R[[p]]*rI; 
+	R[[Ns+1]] += R[[Ns+1]]*rF; 
+	{\[Phi]0[[1]],\[Zeta]ts[[1]]} = {\[CapitalPhi]0[[1]],ConstantArray[0,noFields]};
+,setPrecision];
+	If[Max[Abs@\[Zeta]ts]/lengthPath < \[CapitalDelta]path,
+		switchPath = True
+	];
+	
+	{\[Phi]0+\[Zeta]ts,v0+\[Nu]\[Beta][[1]],a0+a,b0+\[Nu]\[Beta][[2]],R0,pos,switchPath}   	
 ];
 
 
@@ -937,18 +998,19 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 
 Options[FindBounce] = {
 	"AccuracyInitialRadii" -> 10,
-	"AccuracyPath" -> 10,
+	"\[CapitalDelta]Path" -> .01,
 	"Dimension" -> 4,
-	"Segments" -> 30,
+	Gradient -> Automatic,
+	Hessian -> None,
 	"InitialLocalMaximum" -> Automatic,
 	"InitialRadii" -> None,
 	"InitialPath" -> None,
 	"InitialPotential" -> None,
+	"MethodSegmentation" -> "2H",
 	"MaxIterationsPath" -> 3,
 	"MaxIterationsRadii" -> 100,
-	"MethodSegmentation" -> "H",
-	Gradient -> Automatic,
-	Hessian -> None
+	"Segments" -> 30,
+	"SetPrecision" -> 20
 };
 
 FindBounce//SyntaxInformation={
@@ -961,16 +1023,18 @@ FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 	FindBounce[V,{fields},{min1,min2},opts];
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
-Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,accuracyPath,
+Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,
 	noFields,VL,d\[Phi]L,point,itePath,maxIteR,R,methodSeg,improvePB,Vinitial,
-	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,Action\[Xi],vM,aM,bM,posM,ddVL,iter=0},
+	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,Action\[Xi],vM,aM,bM,posM,
+	ddVL,setPrecision,\[CapitalDelta]path,switchPath=False,iter=0},
 	
 	(*OptionValues*)
-	Rinitial = N[OptionValue["InitialRadii"]]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadii",None];None)};
+	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
+	Rinitial = N[OptionValue["InitialRadii"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadii",None];None)};
 	Path = OptionValue["InitialPath"];
 	Vinitial = OptionValue["InitialPotential"];
 	accuracyRadii = OptionValue["AccuracyInitialRadii"]/.{Except[_Integer?Positive]:>(Message[FindBounce::optionValue,"AccuracyInitialRadii",10];10)};
-	accuracyPath = OptionValue["AccuracyPath"]/.{Except[_Integer?Positive]:>(Message[FindBounce::optionValue,"AccuracyPath",10];10)};
+	\[CapitalDelta]path = N[OptionValue["\[CapitalDelta]Path"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"\[CapitalDelta]Path",.01];.01)};
 	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
 	Ns = OptionValue["Segments"]/.x_/;(x<2||x \[NotElement] Integers):>(Message[FindBounce::optionValue,"Segments",30];30);
 	maxIteR = OptionValue["MaxIterationsRadii"]/.{Except[_Integer?Positive]:>(Message[FindBounce::optionValue,"MaxIterationsRadii",100];100)};
@@ -992,13 +1056,13 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 	];
 	(*Checks if InitialPotential is valid*)
 	If[
-		Not@ArrayQ[Vinitial,1]&&Path=!=None,
+		Not@ArrayQ[Vinitial,1]&&Vinitial=!=None,
 		Message[FindBounce::optionValue,"InitialPotential",""]
 	];
 
 	(*InitialValue*)
 	{ansatzRinitial,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = InitialValue[V,fields,noFields,min1,point,min2,Ns,Vinitial,
-		methodSeg,Path,OptionValue[Gradient],OptionValue[Hessian]]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+		methodSeg,Path,OptionValue[Gradient],OptionValue[Hessian],dim,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 	
 	(*If the vacua are degenerated*)
 	If[
@@ -1023,7 +1087,7 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 	];
 
 	(*Bounce and Path deformation*)
-	While[iter <= itePath,
+	While[iter <= itePath||switchPath,
 	
 		(*Rule*)
 		rule = If[
@@ -1034,31 +1098,32 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 		
 		(*Single Field Bounce*)
 		{Action,VL,v,a,b,pos,R,Rinitial} = SingleFieldBounce[V,Vinitial,Ns,noFields,\[Phi]L,dim,maxIteR,
-				accuracyRadii,ansatzRinitial,Rinitial,rule,iter,iter == itePath]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-		{Action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,improvePB&&iter==itePath&&Path===None];
+				accuracyRadii,ansatzRinitial,Rinitial,rule,iter,switchPath||iter==itePath,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+		{Action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,improvePB&&(iter==itePath||switchPath)&&Path===None];
 	
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,VL,Ns,noFields,pos,dim];
 	
 		(*Breaks the interations of path deformation*)
-		If[iter == itePath, 
+		If[switchPath||iter == itePath, 
 			If[noFields>1&&itePath>0, {pos,v,a,b,R} = {posM,vM,aM,bM,RM}]; 
 			Break[]
 		];
 
 		(*Multi Field Bounce*)
-		{\[Phi],vM,aM,bM,RM,posM} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,dim,R,\[Phi],v,a,b];
+		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,dim,R,\[Phi],v,a,b,setPrecision,\[Phi]L[[-1]],\[CapitalDelta]path];
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		ansatzRinitial = Rinitial;
 		iter++
 	];
+	
 
 	BounceFunction@Association[
-		"Action"->Action+Action\[Xi],
+		"Action"-> SetPrecision[Action+Action\[Xi],MachinePrecision],
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields}],
 		"Coefficients"->{v,a,b},
 		"Dimension"->dim,
-		"Domain"->{If[pos>1,0,R[[pos]]],R[[-1]]},
+		"Domain"->SetPrecision[{If[pos>1,0,R[[pos]]],R[[-1]]},MachinePrecision],
 		"InitialSegment"->pos,
 		"IterationsPath"->iter,
 		"Segments"->Ns,
@@ -1068,6 +1133,7 @@ Module[{a,Path,\[Phi]L,ansatzRinitial,b,v,\[Phi],Ns,dim,Rinitial,accuracyRadii,a
 		"PotentialSecondDerivative"->ddVL,
 		"Radii"->R
 	]
+
 ];
 
 
@@ -1112,8 +1178,7 @@ BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
 		LabelStyle->Directive[Black,FontSize->17, FontFamily->"Times New Roman",FontSlant->Plain],
-		GridLines->Automatic,
-		ImageSize->Medium
+		GridLines->Automatic
 	]
 ];
 
