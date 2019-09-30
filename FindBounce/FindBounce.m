@@ -803,13 +803,17 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,VL_,Ns_,noFields_,pos_,dim_]:=
-Module[{v,a,b},
+ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_]:=
+Module[{v,a,b,path=\[Phi]},
 	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
 	b = Table[eL[[s]]*bs[[s]],{s,Ns}]; 
 	
-	{v,a,b}
+	If[bottomless,
+		path[[1]] = v[[1]]+b[[1]]
+	];
+	
+	{v,a,b,path}
 ];
 
 
@@ -1138,6 +1142,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		Return[BounceFunction@Association[
 				"Action"->Infinity,
 				"Bounce"->Function[\[Phi][[1]]],
+				"BottomlessPotential"->Missing["NotAvailable"],
 				"Coefficients"->Null,
 				"Dimension"->dim,
 				"FieldPoints"->Ns+1,
@@ -1176,7 +1181,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 				improvePB&&(iter==maxItePath||switchPath)&&path===None];
 
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
-		{v,a,b} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,VL,Ns,noFields,pos,dim];
+		{v,a,b,\[Phi]} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,bottomless];
 	
 		(*Breaks the interations of path deformation*)
 		If[switchPath||iter == maxItePath||bottomless, 
@@ -1196,6 +1201,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	BounceFunction@Association[
 		"Action"->SetPrecision[Action+Action\[Xi],MachinePrecision],
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields,bottomless}],
+		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
 		"Coefficients"->{v,a,b}[[All,p;;-1]],
 		"Dimension"->dim,
 		"FieldPoints"->Ns+1,
@@ -1491,8 +1497,9 @@ BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 
 
 BottomlessPotentialBounce[V_,initialPotential_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
 ansatzInitialR_,aRinitial_,rule_,iter_,fields_,setPrecision_]:= 
-Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0,p=1},
+Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 SetPrecision[
+
 	cList = CoefficientList[Expand@Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
 	If[Length[cList]===5,
 		\[Lambda] = Abs@cList[[5]];
@@ -1514,7 +1521,7 @@ SetPrecision[
 	];
 	
 	a  = Table[ ( (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) )/8,{s,Ns}]; 
-	a[[p]] = \[Lambda];
+	a[[1]] = \[Lambda];
 	\[Phi]m = v0 + \[Phi]L[[-1]];
 	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,aRinitial,\[Phi]m,setPrecision]//Re;
 	
@@ -1528,10 +1535,10 @@ SetPrecision[
 	a = Join[a,{0.}];	
 	T1 = \[ScriptCapitalT]B[R,Ns,a,b,setPrecision]; 
 	V1 = \[ScriptCapitalV]B[R,v,VL,\[Phi]L,Ns,a,b,\[Phi]m,setPrecision];
-	
+	VL[[1]] = VL[[2]]+\[Lambda]*\[Phi]m^4;
 ,setPrecision];
 
-	{V1+T1,VL,v,a,b,p+1,R,initialR}
+	{V1+T1,VL,v,a,b,2,R,initialR}
 ];
 
 
