@@ -157,16 +157,53 @@ Module[{dV,d2V},
 InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 
-InitialValue[V_,fields_,noFields_,min1_,point_,min2_,Nsegments_,
-initialPotential_,methodSeg_,path_,gradient_,hessian_,
-dim_,setPrecision_,bottomless_]:=
+InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,initialPotential_,
+gradient_,hessian_,dim_,setPrecision_,bottomless_,fieldpoints_]:=
 Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,
-Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0 },
+Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0,point = Point,methodSeg,path },
 SetPrecision[
 
+If[point === None,
+		point = (min1+min2)/2;
+		methodSeg = "H"
+		,
+		If[Not[Length[point]===noFields||(noFields===1&&Length[point]===0)],
+			Message[FindBounce::mpts];
+			Return[$Failed,Module]
+		];
+		methodSeg = "2H"
+	];
+
+	(*Checks if field points is a integer or a vector.*)
+	If[ Head[fieldpoints] === Integer,
+		Ns = fieldpoints-1/.x_/;x<2:>(Message[FindBounce::optionValue,"FieldPoints",31];30);
+		path = None
+		,
+		If[Length[fieldpoints]>2 && ArrayQ[fieldpoints,noFields,(Head[#]===Integer||Head[#]===Real)&],
+			path = fieldpoints;
+			Ns = Length[fieldpoints]-1
+			,
+			Message[FindBounce::fpts];
+			Return[$Failed,Module]
+		]
+	];
+
+	(*Checks if field variables do not have any values.*)
+	If[
+		Not@ArrayQ[fields,1,(Head[#]===Symbol&)],
+		Message[FindBounce::syms];
+		Return[$Failed,Module]
+	];
+	(*Checks if InitialPotential is valid*)
+	If[
+		Not@ArrayQ[initialPotential,1]&&initialPotential=!=None,
+		Message[FindBounce::iptial,"PotentialPoints",None];
+		Return[$Failed,Module]
+	];
+
 	If[path === None, 
-		\[Phi] = N[{min1,point,min2}],
-		\[Phi] = N[path]
+		\[Phi] ={min1,point,min2},
+		\[Phi] = path
 	];
 	Length\[Phi]0 = Length[\[Phi]];
 
@@ -182,11 +219,12 @@ SetPrecision[
 		{initialPotential[[1]],Max[initialPotential],initialPotential[[-1]]}
 	];
 
-	(*Checks for errors*)
+	(*Checks if the values of the potential are well definited*)
 	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
 		Message[InitialValue::wrongInput,"PotentialPoints"];Return[$Failed,Module]
 	];
 	 
+(*Checks the dimension of the field values*)
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
 		Message[InitialValue::dimArray];Return[$Failed,Module]   
 	];
@@ -224,7 +262,7 @@ If[VL3[[1]]!= VL3[[3]] ,
 
 	(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
 	If[path === None,
-	\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Nsegments +1 ,"Method"->methodSeg];
+	\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Ns +1 ,"Method"->methodSeg];
 	\[Phi] = Chop@Table[ 
 		If[ \[Phi]L[[s]]< \[Phi]L3[[2]],
 			eL3[[1]](\[Phi]L[[s]]-L3[[1]])+ \[Phi]3[[2]],
@@ -240,7 +278,7 @@ If[VL3[[1]]!= VL3[[3]] ,
 	If[initialPotential===None&&Not[bottomless],
 		If[Not[gradient === False &&noFields==1],
 	{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
-	If[Nsegments>3,
+	If[Ns>3,
 		improvePB = True
 	];
 		];
@@ -248,7 +286,7 @@ If[VL3[[1]]!= VL3[[3]] ,
 	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 ,setPrecision];
 
-	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}
+	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path}
 ];
 
 
@@ -526,7 +564,7 @@ MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the pot
 SingleFieldBounce::initialR0 = "Trivial solution founded, increase the number of segments or accuracy.";
 
 SingleFieldBounce[V_,initialPotential_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
-ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_,setPrecision_]:= 
+	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_,setPrecision_]:= 
 Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 SetPrecision[	
 	If[
@@ -1068,13 +1106,12 @@ FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,initialR,accuracyRadius,
-	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,methodSeg,improvePB,initialPotential,
+	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,initialPotential,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,Action\[Xi],vM,aM,bM,posM,
 	ddVL,setPrecision,dPath,switchPath=False,iter=0,bottomless,p},
 	
 	(*OptionValues*)
 	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
-	
 	bottomless = OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"];
 	dPath = N[OptionValue["DeltaPath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"DeltaPath",.01];.01)};
@@ -1086,48 +1123,13 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	fieldpoints = OptionValue["FieldPoints"];
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
-	
 	point = OptionValue["MidFieldPoint"];
-	If[point === None,
-		point = (min1+min2)/2;
-		methodSeg = "H"
-		,
-		If[Not[Length[point]===noFields||(noFields===1&&Length[point]===0)],
-			Message[FindBounce::mpts];
-			Return[$Failed,Module]
-		];
-		methodSeg = "2H"
-	];
-
-	(*Checks if field points is a integer or a vector.*)
-	If[ Head[fieldpoints] === Integer,
-		Ns = fieldpoints-1/.x_/;x<2:>(Message[FindBounce::optionValue,"FieldPoints",31];30);
-		path = None
-		,
-		If[Length[fieldpoints]>2 && ArrayQ[fieldpoints,noFields,(Head[#]===Integer||Head[#]===Real)&],
-			path = fieldpoints;
-			Ns = Length[fieldpoints]-1
-			,
-			Message[FindBounce::fpts];
-			Return[$Failed,Module]
-		]
-	];
-	(*Checks if field variables do not have any values.*)
-	If[
-		Not@ArrayQ[fields,1,(Head[#]===Symbol&)],
-		Message[FindBounce::syms];
-		Return[$Failed,Module]
-	];
-	(*Checks if InitialPotential is valid*)
-	If[
-		Not@ArrayQ[initialPotential,1]&&initialPotential=!=None,
-		Message[FindBounce::iptial,"PotentialPoints",None];
-		Return[$Failed,Module]
-	];
 
 	(*InitialValue*)
-	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = InitialValue[V,fields,noFields,min1,point,min2,Ns,initialPotential,
-		methodSeg,path,OptionValue[Gradient],OptionValue[Hessian],dim,setPrecision,bottomless]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path} = 
+		InitialValue[V,fields,noFields,min1,point,min2,initialPotential,
+		OptionValue[Gradient],OptionValue[Hessian],dim,setPrecision,
+		bottomless,fieldpoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*If the vacua are degenerated*)
 	If[
