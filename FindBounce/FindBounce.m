@@ -1085,7 +1085,7 @@ FindBounce::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the 
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
-	"DeltaPath" -> .01,
+	"TolerancePath" -> .01,
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
@@ -1118,7 +1118,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
 	bottomless = OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"];
-	dPath = N[OptionValue["DeltaPath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"DeltaPath",.01];.01)};
+	dPath = N[OptionValue["TolerancePath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"TolerancePath",.01];.01)};
 	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
 	initialR = N[OptionValue["InitialRadius"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadius",None];None)};
 	initialPotential = OptionValue["PotentialPoints"];
