@@ -49,7 +49,7 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"Segments"->10]["Action"],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"FieldPoints"->11]["Action"],
 	486.801,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 10 segments"
@@ -57,7 +57,7 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"Segments"->100]["Action"],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"FieldPoints"->101]["Action"],
 	483.062,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 100 segments"
@@ -81,7 +81,7 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
-(*1 field - biquartic potential*)
+(*1 field - bi-quartic potential*)
 
 
 (* This type of biquartic potential has exact solution. *)
@@ -115,7 +115,7 @@ VerificationTest[
 VerificationTest[
 	FindBounce[
 		biQuarticPotential[x],{x},{-5,10},
-		"Segments"->70
+		"FieldPoints"->71
 	]["Action"],
 	biQuarticAction[],
 	SameTest->(Abs[(#1-#2)/#2]<10^(-2)&),
@@ -221,7 +221,7 @@ VerificationTest[
 (* We just check if plot (Graphics expression) is produced without messages. 
 Only BouncePlot is inside VerificationTest for relevant timing. *)
 With[{
-	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"Segments"->10]
+	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"FieldPoints"->11]
 	},
 	VerificationTest[
 		BouncePlot[bf,PerformanceGoal->"Speed"],
