@@ -1094,17 +1094,20 @@ Options[FindBounce] = {
 };
 
 FindBounce//SyntaxInformation={
-	"ArgumentsPattern"->{_,_,_,OptionsPattern[]},
+	"ArgumentsPattern"->{_,OptionsPattern[]},
 	"LocalVariables"->{"Solve",{2,2}}
 };
 
 (* This definition should take care of single field case. *)
 FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
-	FindBounce[V,{fields},{min1,min2},opts];
+	FindBounce[V,{fields},{min1,min2},opts];	
+
+FindBounce[Points_/;Length[Points]>2 && ArrayQ[Points,2,(Head[#]===Integer||Head[#]===Real)&],opts:OptionsPattern[]]:=
+	FindBounce[Points,{True},Points[[1,{1,-1}]],opts];		
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,initialR,accuracyRadius,
-	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,initialPotential,
+	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,potentialPoints=None,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,Action\[Xi],vM,aM,bM,posM,
 	ddVL,setPrecision,dPath,switchPath=False,iter=0,bottomless,p},
 	
@@ -1115,13 +1118,16 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	dPath = N[OptionValue["TolerancePath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"TolerancePath",.01];.01)};
 	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
 	initialR = N[OptionValue["InitialRadius"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadius",None];None)};
-	initialPotential = OptionValue["PotentialPoints"];
 	maxIteR = OptionValue["MaxRadiusIterations"];
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::iter,3];3);
-	fieldpoints = OptionValue["FieldPoints"];
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
 	point = OptionValue["MidFieldPoint"];
+	fieldpoints = OptionValue["FieldPoints"];
+	
+	If[fields[[1]]===True,
+		{fieldpoints,potentialPoints} = Transpose@V
+	];
 
 	(*InitialValue*)
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path} = 
