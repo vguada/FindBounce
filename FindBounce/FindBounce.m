@@ -342,7 +342,6 @@ Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},
  
 (*See eqs. 15-16*)
 BounceParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_,setPrecision_]:=
-BounceParameterRvb[initialR,\[Phi]L,a,d,Ns,backward,pos,setPrecision] =
 Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
 SetPrecision[
 	(*-------Backward--------------------*)
@@ -391,7 +390,10 @@ FindInitialRadius::noSolution = "Large error solving the boundaries conditions. 
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadius_,ansatzInitialR_,aRinitial_,pos_,switchMessage_,setPrecision_]:= 
-Module[{R,initialR,ite,Rcomplex,Rreal,switch,k,initialR0,RComplexity,rw,RW,\[Lambda]after,\[Lambda],Rcomplexity},
+Module[{R,v,b,Radii,initialR,ite,Rcomplex,Rreal,switch,k,initialR0,RComplexity,rw,RW,\[Lambda],Rvb,Kinetic,Potential,V1,T1},
+(*The initial Radius can be found simply with FindRoot[R[x],{x,x0}]. However, this is not always the case since FindRoot
+use Newton's Method and it fails if it hits a singularity. Thereby, in order to be more likely to get an answer one check the output
+of FindRoot after each iterations and use the bisection method in case FindRoot fails.*)
 SetPrecision[
 	If[Ns==2&&Not[d==3&&pos==1],
 		Return[ansatzInitialR]
@@ -401,26 +403,30 @@ SetPrecision[
 	If[NumericQ[aRinitial],
 		initialR = aRinitial
 		,
-		R = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1,setPrecision][[1]];
-		If[ Abs[Im[R[[-1]]]]<0,
-			initialR = Abs[R[[-2]]],
+		Radii = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1,setPrecision][[1]];
+		If[ Abs[Im[Radii[[-1]]]]<0,
+			initialR = Abs[Radii[[-2]]],
 			initialR = Abs[ansatzInitialR] 
 		];   
 	];
 	initialR0 = initialR;
 	
+	(*Definitios of funtions*)
+	(*Saves values of BounceParameter,Kinetic and Potentail energy and simplifies the notation*)
+	Rvb[Rinitial_?NumericQ] := Rvb[Rinitial] = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision];
+	Kinetic[Rinitial_]:= Kinetic[Rinitial] = \[ScriptCapitalT][Sequence@@Rvb[Rinitial],a,d,Ns,pos,setPrecision];
+	Potential[Rinitial_]:= Potential[Rinitial] = \[ScriptCapitalV][Sequence@@Rvb[Rinitial],a,d,VL,\[Phi]L,Ns,setPrecision];
 	(*Defines \[Lambda] of eq. 26*)
-	\[Lambda][initialR_?NumericQ] := Sqrt[\[CapitalLambda][initialR,d,VL,\[Phi]L,a,Ns,True,pos,setPrecision]];
+	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Sqrt[(2-d)*Kinetic[initialR]/(d*Potential[initialR])];
 	(*Discriminates between undershooting and overshooting*)
-	RComplexity[initialR_] := Abs@Im@BounceParameterRvb[initialR,\[Phi]L,a,d,Ns,True,pos,setPrecision][[1,1]];
-
+	RComplexity[initialR_] := RComplexity[initialR] = Abs@Im@Rvb[initialR][[1,1]];
 	RW[initialR_]:=
 		Quiet[Abs[rw/.FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,initialR}, 
 					MaxIterations->1,
 					PrecisionGoal->0,
 					AccuracyGoal->accuracyRadius]
 				],
-		{FindRoot::lstol,FindRoot::cvmit}];    
+		{FindRoot::lstol,FindRoot::cvmit}];   
 	
 	(*Finds the interval of the solution Sol \[Element] [Rreal, Rcomplex] or reduces the interval*)
 	ite = 0; 
@@ -430,11 +436,9 @@ SetPrecision[
 		Rcomplex = Infinity;
 		Rreal = 0;
 		switch = False;
-		Rcomplexity = RComplexity[initialR];
-		\[Lambda]after = \[Lambda][initialR];
-		If[ Rcomplexity > 0,
+		If[ RComplexity[initialR] > 0,
 			(*Overshooting*)
-			While[ Rcomplexity > 0 &&ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]after]!=0,
+			While[ RComplexity[initialR] > 0 &&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0,
 				If[initialR < Rcomplex,
 					Rcomplex = initialR;
 					initialR = RW[initialR];
@@ -442,30 +446,26 @@ SetPrecision[
 					(*Perturbs 10% down the ansatz since initialR>Rcomplex*) 
 					initialR = .9*Rcomplex
 				];
-				Rcomplexity = RComplexity[initialR];
-				\[Lambda]after = \[Lambda][initialR];
 				ite++
 			]; 
 			Rreal = initialR;,
 			(*Undershooting*)
 			(*----else----------*)
-			While[ Rcomplexity == 0&&ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]after]!=0.,
+			While[ RComplexity[initialR] == 0&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0.,
 				If[initialR > Rreal,
 					Rreal = initialR;  
 					initialR = RW[initialR],
 					(*Perturbs 10% up the ansatz since initialR<Rreal*)  
 					initialR = 1.1*Rreal
 				];
-				Rcomplexity = RComplexity[initialR];
-				\[Lambda]after = \[Lambda][initialR];
 				ite++
 			]; 
 			Rcomplex = initialR;    
 		];  
 		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR&&Abs[\[Lambda]after-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]after]!=0., 
+		While[ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0., 
 			
-			If[ Rcomplexity>0,
+			If[ RComplexity[initialR]>0,
 				If[ (*Overshooting*)
 					initialR < Rcomplex,
 					Rcomplex = initialR;
@@ -482,12 +482,10 @@ SetPrecision[
 					initialR = Abs[Rcomplex+Rreal]/2.;
 				];
 			];
-			Rcomplexity = RComplexity[initialR];
-			\[Lambda]after = \[Lambda][initialR];
 			ite++   
 		];
 	   
-		If[ Chop[Re@\[Lambda]after] == 0.,
+		If[ Chop[Re@\[Lambda][initialR]] == 0.,
 			k++;
 			switch=True;
 			initialR = (1+k)*Abs[initialR0]  
@@ -498,23 +496,27 @@ SetPrecision[
 		Message[FindInitialRadius::cvmit,maxIteR] 
 	];
 
-	If[ Re[\[Lambda]after-1] >.5*10^(-1)&&switchMessage, 
+	If[ Re[\[Lambda][initialR]-1] >.5*10^(-1)&&switchMessage, 
 		Message[FindInitialRadius::noSolution];
 		Return[$Failed,Module]
-	];  
-, setPrecision];	
+	];
+	
+	{R,v,b} = Rvb[initialR];
+	{V1,T1} = {Potential[initialR],Kinetic[initialR]};   
+, setPrecision];
+	Clear[Rvb,RComplexity,\[Lambda],Potential,Kinetic]; 	
 			
-	Re@initialR
+	Re@{initialR,R,v,b,V1,T1}
 ]; 
 
 
 (* ::Subsection::Closed:: *)
-(*\[ScriptCapitalT],\[ScriptCapitalV],\[CapitalLambda]*)
+(*\[ScriptCapitalT]*)
 
 
+(* ::Input::Initialization:: *)
 (*See eqs. 10*)
-\[ScriptCapitalT][v_,a_,b_,R_,d_,Ns_,pos_,setPrecision_]:= 
-\[ScriptCapitalT][v,a,b,R,d,Ns,pos,setPrecision] =
+\[ScriptCapitalT][R_,v_,b_,a_,d_,Ns_,pos_,setPrecision_]:= 
 Module[{p,T},
 SetPrecision[
 	If[pos>1,
@@ -531,27 +533,21 @@ SetPrecision[
 	,{i,pos,Ns}]
 ,setPrecision]
 ];
- 
+
+
+(* ::Subsection::Closed:: *)
+(*\[ScriptCapitalV]*)
+
+
  (*See eq. 11*)
-\[ScriptCapitalV][v_,a_,b_,R_,d_,VL_,\[Phi]L_,Ns_,setPrecision_]:= 
-\[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns,setPrecision] =
-SetPrecision[2\[Pi]^(d/2)/Gamma[d/2](Sum[   
+\[ScriptCapitalV][R_,v_,b_,a_,d_,VL_,\[Phi]L_,Ns_,setPrecision_]:= 
+SetPrecision[
+	2\[Pi]^(d/2)/Gamma[d/2](Sum[   
 	32 a[[i]]^2/(d(d+2))  (R[[i+1]]^(2+d) - R[[i]]^(2+d)) + 
 	8 a[[i]]*b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2) +
 	( VL[[i]]-VL[[-1]]+ 8 a[[i]]( v[[i]] - \[Phi]L[[i]]))(R[[i+1]]^d-R[[i]]^d)/d ,{i,1,Ns}] +
 		1/d R[[1]]^d (VL[[1]] - VL[[-1]]) )
 ,setPrecision];
- 
- (*See eq. 26*)
-\[CapitalLambda][initialR_?NumericQ,d_,VL_,\[Phi]L_,a_,Ns_,backward_,pos_,setPrecision_]:= 
-\[CapitalLambda][initialR,d,VL,\[Phi]L,a,Ns,backward,pos,setPrecision] =
-Module[{R,v,b}, 
-SetPrecision[
-	{R,v,b} = BounceParameterRvb[initialR,\[Phi]L,a,d,Ns,backward,pos,setPrecision]; 
-	
-	(2-d)*\[ScriptCapitalT][v,a,b,R,d,Ns,pos,setPrecision]/(d*\[ScriptCapitalV][v,a,b,R,d,VL,\[Phi]L,Ns,setPrecision])
-,setPrecision]
-];
 
 
 (* ::Subsection::Closed:: *)
@@ -586,20 +582,16 @@ SetPrecision[
 	
 	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
 	pos = FindSegment[a,\[Phi]L,dim,Ns,setPrecision];
-	initialR = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,
+	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,
 					aRinitial,pos,switchMessage,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-	{R,v,b} = Re@BounceParameterRvb[initialR,\[Phi]L,a,dim,Ns,True,pos,setPrecision];	
-	
+	(*Checks if we got a consistent answer.*)		
 	If[R[[-2]]<10^(-5),
 		Message[SingleFieldBounce::initialR0];
 		Return[$Failed,Module]
 	];
 	
 	If[pos>1, R[[pos-1]]=0 ];
-		
 	a = Join[a,{0}];	
-	T1 = \[ScriptCapitalT][v,a,b,R,dim,Ns,pos,setPrecision]; 
-	V1 = \[ScriptCapitalV][v,a,b,R,dim,VL,\[Phi]L,Ns,setPrecision]; 
 ,setPrecision];
 
 	{V1+T1,VL,v,a,b,pos,R,initialR}
@@ -647,7 +639,6 @@ Module[{\[ScriptCapitalI],d\[ScriptCapitalI],v0,\[Phi]L0,a0,b0,ddVL0},
 
 (*See eqs. 50-52*)
 BounceParameterr\[Beta]\[Nu][rw_?NumericQ,a_,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_] := 
-BounceParameterr\[Beta]\[Nu][rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos] =
 Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 	a0 = Join[{0},a]; 
 	\[Alpha]0 = Join[{0},\[Alpha]];
@@ -694,10 +685,6 @@ Module[{r,\[Beta],\[Nu]},
 
 
 (* ::Subsection::Closed:: *)
-(* \[ScriptCapitalT]\[Xi], \[ScriptCapitalV]\[Xi]*)
-
-
-(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalT]\[Xi]*)
 
 
@@ -712,7 +699,6 @@ Module[{r,\[Beta],\[Nu]},
 	8/45 a \[Rho]^5 (8 \[Alpha]+ddVL (v-\[Phi]L))+(2 r (3 b-4 a \[Rho]^3)^2)/(9 \[Rho]);
 
 \[ScriptCapitalT]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] :=
-\[ScriptCapitalT]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r] =
 Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 	VN = VL[[-1]];
 	If[d==4,\[ScriptCapitalT]\[Xi]D = \[ScriptCapitalT]\[Xi]4];
@@ -729,7 +715,7 @@ Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*\[ScriptCapitalV]\[Xi]*)
 
 
@@ -745,7 +731,6 @@ Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 	ddVL (v-\[Phi]L)) (v-\[Phi]L)))+16 a b r \[Rho]^2+1/3 r \[Rho]^3 (3 (VL-VN)+32 a^2 \[Rho]^2+24 a (v-\[Phi]L));
 
 \[ScriptCapitalV]\[Xi][d_?NumericQ,a_,R_,b_,v_,\[Alpha]_,\[Beta]_,\[Nu]_,ddVL_,VL_,\[Phi]L_,Ns_,pos_,r_] := 
-\[ScriptCapitalV]\[Xi][d,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r] =
 Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 	If[d==4, \[ScriptCapitalV]\[Xi]D = \[ScriptCapitalV]\[Xi]4];
 	If[d==3, \[ScriptCapitalV]\[Xi]D = \[ScriptCapitalV]\[Xi]3];
