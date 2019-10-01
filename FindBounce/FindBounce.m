@@ -156,8 +156,11 @@ Module[{dV,d2V},
 (* ::Input::Initialization:: *)
 InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
+InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
+InitialValue::syms = "Field symbols should not have any value.";
+InitialValue::fpts = "\"FieldPoints\" should be an integer or a list of length larger than 2.";
 
-InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,initialPotential_,
+InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,setPrecision_,bottomless_,fieldpoints_]:=
 Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,
 Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0,point = Point,methodSeg,path },
@@ -168,7 +171,7 @@ If[point === None,
 		methodSeg = "H"
 		,
 		If[Not[Length[point]===noFields||(noFields===1&&Length[point]===0)],
-			Message[FindBounce::mpts];
+			Message[InitialValue::mpts];
 			Return[$Failed,Module]
 		];
 		methodSeg = "2H"
@@ -183,7 +186,7 @@ If[point === None,
 			path = fieldpoints;
 			Ns = Length[fieldpoints]-1
 			,
-			Message[FindBounce::fpts];
+			Message[InitialValue::fpts];
 			Return[$Failed,Module]
 		]
 	];
@@ -191,13 +194,7 @@ If[point === None,
 	(*Checks if field variables do not have any values.*)
 	If[
 		Not@ArrayQ[fields,1,(Head[#]===Symbol&)],
-		Message[FindBounce::syms];
-		Return[$Failed,Module]
-	];
-	(*Checks if InitialPotential is valid*)
-	If[
-		Not@ArrayQ[initialPotential,1]&&initialPotential=!=None,
-		Message[FindBounce::iptial,"PotentialPoints",None];
+		Message[InitialValue::syms];
 		Return[$Failed,Module]
 	];
 
@@ -214,19 +211,21 @@ If[point === None,
 	];
 	
 	VL = If[
-		initialPotential===None, 
+		potentialPoints===None, 
 		Table[V/.rule[[s]],{s,Length\[Phi]0}], 
-		{initialPotential[[1]],Max[initialPotential],initialPotential[[-1]]}
+		{potentialPoints[[1]],Max[potentialPoints],potentialPoints[[-1]]}
 	];
 
 	(*Checks if the values of the potential are well definited*)
 	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
-		Message[InitialValue::wrongInput,"PotentialPoints"];Return[$Failed,Module]
+	Message[InitialValue::wrongInput,"Potential"];
+	Return[$Failed,Module]
 	];
 	 
 (*Checks the dimension of the field values*)
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
-		Message[InitialValue::dimArray];Return[$Failed,Module]   
+	Message[InitialValue::dimArray];
+	Return[$Failed,Module]   
 	];
 
 	(*The number 3 stands for Number of Field Values: Segments+1 = 3*) 
@@ -275,7 +274,7 @@ If[VL3[[1]]!= VL3[[3]] ,
 	\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,Length\[Phi]0}];
 	];
 
-	If[initialPotential===None&&Not[bottomless],
+	If[potentialPoints===None&&Not[bottomless],
 		If[Not[gradient === False &&noFields==1],
 	{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
 	If[Ns>3,
@@ -563,17 +562,17 @@ SingleFieldBounce::extrema = "Wrong position of the minima.";
 MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
 SingleFieldBounce::initialR0 = "Trivial solution founded, increase the number of segments or accuracy.";
 
-SingleFieldBounce[V_,initialPotential_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
+SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
 	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_,setPrecision_]:= 
 Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 SetPrecision[	
 	If[
-		initialPotential===None,
+		potentialPoints===None,
 		VL = Table[V/.rule[[s]],{s,Ns+1}]
 		,
-		If[initialPotential[[1]]<initialPotential[[-1]],
-			VL = initialPotential,
-			VL = Reverse[initialPotential]
+		If[potentialPoints[[1]]<potentialPoints[[-1]],
+			VL = potentialPoints,
+			VL = Reverse[potentialPoints]
 		];
 	];
 	
@@ -1074,14 +1073,10 @@ Module[{\[CurlyPhi]0,MultiFieldPiecewise},
 
 
 FindBounce::usage = "FindBounce[potential,fields,{min1, min2}] computes false vacuum decay in potential with multiple scalar fields.";
-FindBounce::syms = "Field symbols should not have any value.";
-FindBounce::fpts = "\"FieldPoints\" should be an integer or a list of length larger than 2.";
-FindBounce::iptial = "\"FieldPoints\" is not a vector.";
 FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
 FindBounce::iter = "Maximum number of iterations should be a positive integer, default value `1` was taken.";
 FindBounce::optionValue = "Wrong \"`1`\", default value `2` was taken.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
-FindBounce::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1095,8 +1090,7 @@ Options[FindBounce] = {
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
 	"MidFieldPoint" -> None,
-	"PotentialPoints" -> None,
-	"SetPrecision" -> 20
+	"SetPrecision" -> MachinePrecision
 };
 
 FindBounce//SyntaxInformation={
@@ -1131,7 +1125,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 
 	(*InitialValue*)
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path} = 
-		InitialValue[V,fields,noFields,min1,point,min2,initialPotential,
+		InitialValue[V,fields,noFields,min1,point,min2,potentialPoints,
 		OptionValue[Gradient],OptionValue[Hessian],dim,setPrecision,
 		bottomless,fieldpoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
@@ -1166,19 +1160,19 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		(*Single Field Bounce*)
 		{Action,VL,v,a,b,pos,R,initialR} = 
 			If[Not[bottomless],
-				SingleFieldBounce[V,initialPotential,Ns,noFields,\[Phi]L,dim,maxIteR,
+				SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
 					accuracyRadius,ansatzInitialR,initialR,rule,iter,
 					switchPath||iter==maxItePath,setPrecision
 					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
 				,
-				BottomlessPotentialBounce[V,initialPotential,Ns,noFields,\[Phi]L,
+				BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
 					dim,maxIteR,accuracyRadius,ansatzInitialR,initialR,rule,
 					iter,fields,setPrecision
 					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
 			];
 				
 		{Action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
-				improvePB&&(iter==maxItePath||switchPath)&&path===None];
+			improvePB&&(iter==maxItePath||switchPath)&&path===None];
 
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi]} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,bottomless];
@@ -1191,8 +1185,8 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		];
 
 		(*Multi Field Bounce*)
-		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,dim,R,\[Phi],
-				v,a,b,setPrecision,\[Phi]L[[-1]],dPath];
+		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,
+			dim,R,\[Phi],v,a,b,setPrecision,\[Phi]L[[-1]],dPath];
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		ansatzInitialR = initialR;
 		iter++
@@ -1261,11 +1255,11 @@ BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
 
 
 (* ::Section::Closed:: *)
-(*Bottomless Potential*)
+(*BottomlessPotential*)
 
 
 (* ::Subsection::Closed:: *)
-(*Bottomless Potential*)
+(*BottomlessPotential*)
 
 
 BottomlessPotential[initialR_?NumericQ,a_,\[Phi]L_,\[Phi]m_,setPrecision_] :=
@@ -1495,7 +1489,7 @@ BottomlessPotentialBounce::pathDeformation = "The path is deformed irregularly o
 BottomlessPotentialBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
 BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 4.";
 
-BottomlessPotentialBounce[V_,initialPotential_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
+BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
 ansatzInitialR_,aRinitial_,rule_,iter_,fields_,setPrecision_]:= 
 Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 SetPrecision[
@@ -1509,7 +1503,7 @@ SetPrecision[
 		Return[$Failed,Module]
 	];
 	
-	VL = If[initialPotential===None,Table[V/.rule[[s]],{s,Ns+1}],initialPotential];	
+	VL = If[potentialPoints===None,Table[V/.rule[[s]],{s,Ns+1}],potentialPoints];	
 	
 	If[VL[[-1]]>=VL[[-2]],
 		If[iter === 0,
