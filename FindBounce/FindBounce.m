@@ -259,18 +259,18 @@ If[VL3[[1]]!= VL3[[3]] ,
 ];
 
 	(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
-	If[path === None,
-	\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Ns +1 ,"Method"->methodSeg];
-	\[Phi] = Chop@Table[ 
-		If[ \[Phi]L[[s]]< \[Phi]L3[[2]],
-			eL3[[1]](\[Phi]L[[s]]-L3[[1]])+ \[Phi]3[[2]],
-			eL3[[2]](\[Phi]L[[s]]-(L3[[1]] + L3[[2]]))+\[Phi]3[[3]]
-		]
+If[path === None,
+		\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Ns +1 ,"Method"->methodSeg];
+		\[Phi] = Table[ 
+			If[ \[Phi]L[[s]]< \[Phi]L3[[2]],
+				eL3[[1]](\[Phi]L[[s]]-L3[[1]])+ \[Phi]3[[2]],
+				eL3[[2]](\[Phi]L[[s]]-(L3[[1]] + L3[[2]]))+\[Phi]3[[3]]
+			]
 		,{s,1,Length[\[Phi]L]} ];
-	l = \[Phi]L[[2;;-1]]-\[Phi]L[[1;;-2]];
+		l = \[Phi]L[[2;;-1]]-\[Phi]L[[1;;-2]];
 	,
-	l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,Length\[Phi]0-1}];
-	\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,Length\[Phi]0}];
+		l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,Length\[Phi]0-1}];
+		\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,Length\[Phi]0}];
 	];
 
 	If[potentialPoints===None&&Not[bottomless],
@@ -358,7 +358,7 @@ SetPrecision[
 			];
 		][[2]];
 		
-		Chop@Return[Reverse[Rvb,{1,2}]],     
+		Return[Reverse[Rvb,{1,2}]],     
 	(*--------Else-Forward---------------*)
 		\[Alpha] = Join[{0}, a ]; 
 		R = RInitial[d,initialR,\[Alpha],\[Phi]L,pos,backward]; 
@@ -402,7 +402,7 @@ SetPrecision[
 	(*Defines \[Lambda] of eq. 26*)
 	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Sqrt[(2-d)*Kinetic[initialR]/(d*Potential[initialR])];
 	(*Discriminates between undershooting and overshooting*)
-	RComplexity[initialR_] := RComplexity[initialR] = Abs@Im@Rvb[initialR][[1,1]];
+	RComplexity[initialR_] := RComplexity[initialR] = Abs@Im@Chop@Rvb[initialR][[1,1]];
 	RW[initialR_]:=
 		Quiet[Abs[rw/.FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,initialR}, 
 					MaxIterations->1,
@@ -555,7 +555,7 @@ SetPrecision[
 
 SingleFieldBounce::extrema = "Wrong position of the minima.";
 MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
-SingleFieldBounce::initialR0 = "Trivial solution founded, increase the number of segments or accuracy.";
+SingleFieldBounce::noSolution = "Solution not founded, increase the number of segments or accuracy.";
 
 SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
 	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_,setPrecision_]:= 
@@ -571,24 +571,26 @@ SetPrecision[
 		];
 	];
 	
-	
 	If[VL[[1]]>=VL[[2]]||VL[[-1]]>=VL[[-2]],
 		If[iter === 0,
-			Message[SingleFieldBounce::extrema];Return[$Failed,Module],
-			Message[MultiFieldBounce::pathDeformation];Return[$Failed,Module]
+			Message[SingleFieldBounce::extrema];
+			Return[$Failed,Module]
+			,
+			Message[MultiFieldBounce::pathDeformation];
+			Return[$Failed,Module]
 		]
 	];
 	
 	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
 	pos = FindSegment[a,\[Phi]L,dim,Ns,setPrecision];
 	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,
-					aRinitial,pos,switchMessage,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-	(*Checks if we got a consistent answer.*)		
-	If[R[[-2]]<10^(-5),
-		Message[SingleFieldBounce::initialR0];
+		aRinitial,pos,switchMessage,setPrecision]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+	
+	(*Checks if we got a consistent answer.*)
+	If[V1+T1<0,
+		Message[SingleFieldBounce::noSolution];
 		Return[$Failed,Module]
 	];
-	
 	If[pos>1, R[[pos-1]]=0 ];
 	a = Join[a,{0}];	
 ,setPrecision];
@@ -1169,7 +1171,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		
 		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
 			improvePB&&path===None];
-			
+				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
 			bottomless,action,actionP+action\[Xi],dAction];
@@ -1301,7 +1303,7 @@ SetPrecision[
 			Sow[b4,x]; Sow[v4,y]; Sow[0,z];	 
 		][[2]];
 			
-		Return[Reverse[Rvb,{1,2}]],     
+		Chop@Return[Reverse[Rvb,{1,2}]],     
 	(*--------Else-Forward---------------*)
 	\[Alpha] = Join[{0.},a];
 	Rvb = Reap[
