@@ -163,7 +163,7 @@ InitialValue::fpts = "\"FieldPoints\" should be an integer or a list of length l
 InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,setPrecision_,bottomless_,fieldpoints_]:=
 Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,
-Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,R0,point = Point,methodSeg,path },
+Length\[Phi]0,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,point = Point,methodSeg,path },
 SetPrecision[
 
 If[point === None,
@@ -247,17 +247,16 @@ If[point === None,
 	(*Estimates the initial radii initialR with the N=2 close form solution*)
 	initialR = 
 If[VL3[[1]]!= VL3[[3]] ,
-		R0 =1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])]);
-		If[Im@R0>0,
-			c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
-			\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
-			Sqrt[dim/4 (\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
-			,
-			R0
-]
-		,
-		Infinity
-	];
+	c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
+	\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
+	If[Re@\[CurlyPhi]0>=0&&Im@\[CurlyPhi]0<0,
+		Sqrt[dim/4(\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
+				,
+				1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])])
+	]
+	,
+	Infinity
+];
 
 	(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
 	If[path === None,
@@ -392,26 +391,10 @@ FindInitialRadius::noSolution = "Large error solving the boundaries conditions. 
 FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadius_,ansatzInitialR_,aRinitial_,pos_,switchMessage_,setPrecision_]:= 
 Module[{R,v,b,Radii,initialR,ite,Rcomplex,Rreal,switch,k,initialR0,RComplexity,rw,RW,\[Lambda],Rvb,Kinetic,Potential,V1,T1},
 (*The initial Radius can be found simply with FindRoot[R[x],{x,x0}]. However, this is not always the case since FindRoot
-use Newton's Method and it fails if it hits a singularity. Thereby, in order to be more likely to get an answer one check the output
+use Newton's Method and it fails if it hits a singularity. Thereby, in order to have a robust mechanism one check the output
 of FindRoot after each iterations and use the bisection method in case FindRoot fails.*)
 SetPrecision[
-	If[Ns==2&&Not[d==3&&pos==1],
-		Return[ansatzInitialR]
-	];
-	
-	(*Picks up the best estimate*)
-	If[NumericQ[aRinitial],
-		initialR = aRinitial
-		,
-		Radii = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1,setPrecision][[1]];
-		If[ Abs[Im[Radii[[-1]]]]<0,
-			initialR = Abs[Radii[[-2]]],
-			initialR = Abs[ansatzInitialR] 
-		];   
-	];
-	initialR0 = initialR;
-	
-	(*Definitios of funtions*)
+	(*Definitios of internal functions*)
 	(*Saves values of BounceParameter,Kinetic and Potentail energy and simplifies the notation*)
 	Rvb[Rinitial_?NumericQ] := Rvb[Rinitial] = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision];
 	Kinetic[Rinitial_]:= Kinetic[Rinitial] = \[ScriptCapitalT][Sequence@@Rvb[Rinitial],a,d,Ns,pos,setPrecision];
@@ -427,6 +410,22 @@ SetPrecision[
 					AccuracyGoal->accuracyRadius]
 				],
 		{FindRoot::lstol,FindRoot::cvmit}];   
+	
+	
+If[Ns==2&&Not[d==3],
+	initialR = ansatzInitialR
+	,	
+	(*Picks up the best estimate*)
+	If[NumericQ[aRinitial],
+		initialR = aRinitial
+		,
+		Radii = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1,setPrecision][[1]];
+		If[ Abs[Im[Radii[[-1]]]]<0,
+			initialR = Abs[Radii[[-2]]],
+			initialR = Abs[ansatzInitialR] 
+		];   
+	];
+	initialR0 = initialR;
 	
 	(*Finds the interval of the solution Sol \[Element] [Rreal, Rcomplex] or reduces the interval*)
 	ite = 0; 
@@ -499,12 +498,12 @@ SetPrecision[
 	If[ Re[\[Lambda][initialR]-1] >.5*10^(-1)&&switchMessage, 
 		Message[FindInitialRadius::noSolution];
 		Return[$Failed,Module]
-	];
-	
+	];	
+];	
 	{R,v,b} = Rvb[initialR];
 	{V1,T1} = {Potential[initialR],Kinetic[initialR]};   
 , setPrecision];
-	Clear[Rvb,RComplexity,\[Lambda],Potential,Kinetic]; 	
+	Clear[Rvb,RComplexity,\[Lambda],Potential,Kinetic,RW]; 	
 			
 	Re@{initialR,R,v,b,V1,T1}
 ]; 
