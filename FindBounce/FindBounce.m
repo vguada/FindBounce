@@ -275,9 +275,9 @@ If[VL3[[1]]!= VL3[[3]] ,
 	];
 
 	If[potentialPoints===None&&Not[bottomless],
-		If[Not[gradient === False &&noFields==1],
+		If[Not[gradient === None &&noFields==1],
 	{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
-	If[Ns>3,
+	If[Ns>3&&Not[gradient === None],
 		improvePB = True
 	];
 		];
@@ -787,8 +787,8 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_]:=
-Module[{v,a,b,path=\[Phi]},
+ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,dAction_]:=
+Module[{v,a,b,path=\[Phi],switchPath},
 	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
 	b = Table[eL[[s]]*bs[[s]],{s,Ns}]; 
@@ -797,7 +797,11 @@ Module[{v,a,b,path=\[Phi]},
 		path[[1]] = v[[1]]+b[[1]]
 	];
 	
-	{v,a,b,path}
+	If[Abs[(actionOld-actionNew)/actionNew] < dAction,
+		switchPath = True
+	];
+	
+	{v,a,b,path,actionNew,switchPath}
 ];
 
 
@@ -1066,6 +1070,7 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
 	"TolerancePath" -> .01,
+	"ToleranceAction" -> .01,
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
@@ -1093,14 +1098,15 @@ FindBounce[Points_/;Length[Points]>2 && ArrayQ[Points,2,(Head[#]===Integer||Head
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,initialR,accuracyRadius,
 	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,potentialPoints=None,
-	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,Action,Action\[Xi],vM,aM,bM,posM,
-	ddVL,setPrecision,dPath,switchPath=False,iter=0,bottomless,p},
+	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
+	ddVL,setPrecision,dPath,switchPath=False,iter=0,bottomless,p,dAction},
 	
 	(*OptionValues*)
 	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
 	bottomless = OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"];
 	dPath = N[OptionValue["TolerancePath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"TolerancePath",.01];.01)};
+	dAction = N[OptionValue["ToleranceAction"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"ToleranceAction",.01];.01)};
 	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
 	initialR = N[OptionValue["InitialRadius"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadius",None];None)};
 	maxIteR = OptionValue["MaxRadiusIterations"];
@@ -1149,7 +1155,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		];
 		
 		(*Single Field Bounce*)
-		{Action,VL,v,a,b,pos,R,initialR} = 
+		{actionP,VL,v,a,b,pos,R,initialR} = 
 			If[Not[bottomless],
 				SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
 					accuracyRadius,ansatzInitialR,initialR,rule,iter,
@@ -1161,12 +1167,13 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 					iter,fields,setPrecision
 					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
 			];
-				
-		{Action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
-			improvePB&&(iter==maxItePath||switchPath)&&path===None];
-
+		
+		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
+			improvePB&&path===None];
+			
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
-		{v,a,b,\[Phi]} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,bottomless];
+		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
+			bottomless,action,actionP+action\[Xi],dAction];
 	
 		(*Breaks the interations of path deformation*)
 		If[switchPath||iter == maxItePath||bottomless, 
@@ -1184,7 +1191,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	];
 	
 	BounceFunction@Association[
-		"Action"->SetPrecision[Action+Action\[Xi],MachinePrecision],
+		"Action"->SetPrecision[action,MachinePrecision],
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields,bottomless}],
 		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
 		"Coefficients"->{v,a,b}[[All,p;;-1]],
