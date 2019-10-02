@@ -1070,8 +1070,8 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
-	"TolerancePath" -> .01,
-	"ToleranceAction" -> .01,
+	"PathTolerance" -> .01,
+	"ActionTolerance" -> .01,
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
@@ -1106,8 +1106,8 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
 	bottomless = OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"];
-	dPath = N[OptionValue["TolerancePath"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"TolerancePath",.01];.01)};
-	dAction = N[OptionValue["ToleranceAction"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"ToleranceAction",.01];.01)};
+	dPath = N[OptionValue["PathTolerance"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"PathTolerance",.01];.01)};
+	dAction = N[OptionValue["ActionTolerance"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"ActionTolerance",.01];.01)};
 	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
 	initialR = N[OptionValue["InitialRadius"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadius",None];None)};
 	maxIteR = OptionValue["MaxRadiusIterations"];
