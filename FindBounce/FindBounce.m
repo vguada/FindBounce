@@ -249,7 +249,7 @@ If[point === None,
 If[VL3[[1]]!= VL3[[3]] ,
 	c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
 	\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
-	If[Re@\[CurlyPhi]0>=0&&Im@\[CurlyPhi]0<0,
+	If[Re@\[CurlyPhi]0>=0&&Im@\[CurlyPhi]0==0,
 		Sqrt[dim/4(\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
 				,
 				1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])])
