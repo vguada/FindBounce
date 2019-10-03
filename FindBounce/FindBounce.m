@@ -389,28 +389,33 @@ FindInitialRadius::noSolution = "Large error solving the boundaries conditions. 
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadius_,ansatzInitialR_,aRinitial_,pos_,switchMessage_,setPrecision_]:= 
-Module[{R,v,b,Radii,initialR,ite,Rcomplex,Rreal,switch,k,initialR0,RComplexity,rw,RW,\[Lambda],Rvb,Kinetic,Potential,V1,T1},
+Module[{R,v,b,Radii,initialR,ite,Rcomplex,Rreal,switch,k,initialR0,RComplexity,rw,RW,\[Lambda],Lambda,Rvb,Kinetic,Potential},
 (*The initial Radius can be found simply with FindRoot[R[x],{x,x0}]. However, this is not always the case since FindRoot
 use Newton's Method and it fails if it hits a singularity. Thereby, in order to have a robust mechanism one check the output
 of FindRoot after each iterations and use the bisection method in case FindRoot fails.*)
 SetPrecision[
 	(*Definitios of internal functions*)
 	(*Saves values of BounceParameter,Kinetic and Potentail energy and simplifies the notation*)
-	Rvb[Rinitial_?NumericQ] := Rvb[Rinitial] = BounceParameterRvb[Rinitial,\[Phi]L,a,d,Ns,True,pos,setPrecision];
-	Kinetic[Rinitial_]:= Kinetic[Rinitial] = \[ScriptCapitalT][Sequence@@Rvb[Rinitial],a,d,Ns,pos,setPrecision];
-	Potential[Rinitial_]:= Potential[Rinitial] = \[ScriptCapitalV][Sequence@@Rvb[Rinitial],a,d,VL,\[Phi]L,Ns,setPrecision];
+	
 	(*Defines \[Lambda] of eq. 26*)
-	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Sqrt[(2-d)*Kinetic[initialR]/(d*Potential[initialR])];
-	(*Discriminates between undershooting and overshooting*)
-	RComplexity[initialR_] := RComplexity[initialR] = Abs@Im@Chop@Rvb[initialR][[1,1]];
-	RW[initialR_]:=
-		Quiet[Abs[rw/.FindRoot[Abs[Re@\[Lambda][rw]-1],{rw,initialR}, 
+	Lambda[initialR_?NumericQ] := Lambda[initialR] = (
+		Rvb = BounceParameterRvb[initialR,\[Phi]L,a,d,Ns,True,pos,setPrecision];
+		Kinetic = \[ScriptCapitalT][Sequence@@Rvb,a,d,Ns,pos,setPrecision];
+		Potential = \[ScriptCapitalV][Sequence@@Rvb,a,d,VL,\[Phi]L,Ns,setPrecision];
+		(*RComplexity: Discriminates between undershooting and overshooting*)
+		RComplexity = Abs@Im@Chop@Rvb[[1,1]];
+		
+		\[Lambda] = Sqrt[(2-d)*Kinetic/(d*Potential)]
+	);
+	
+	(*Looks for the initial radius*)
+	RW[initialR_]:= 
+		Quiet[Abs[rw/.FindRoot[Abs[Re@Lambda[rw]-1],{rw,initialR}, 
 					MaxIterations->1,
 					PrecisionGoal->0,
 					AccuracyGoal->accuracyRadius]
 				],
 		{FindRoot::lstol,FindRoot::cvmit}];   
-	
 	
 If[Ns==2&&Not[d==3],
 	initialR = ansatzInitialR
@@ -435,9 +440,10 @@ If[Ns==2&&Not[d==3],
 		Rcomplex = Infinity;
 		Rreal = 0;
 		switch = False;
-		If[ RComplexity[initialR] > 0,
+		Lambda[initialR]; (*Lambda[initialR] also re-evaluates the values of Rvb,kinetic,Potential and RComplexity.*)
+		If[ RComplexity > 0,
 			(*Overshooting*)
-			While[ RComplexity[initialR] > 0 &&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0,
+			While[ RComplexity > 0 &&ite <= maxIteR&&Abs[\[Lambda] - 1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0,
 				If[initialR < Rcomplex,
 					Rcomplex = initialR;
 					initialR = RW[initialR];
@@ -445,26 +451,27 @@ If[Ns==2&&Not[d==3],
 					(*Perturbs 10% down the ansatz since initialR>Rcomplex*) 
 					initialR = .9*Rcomplex
 				];
+				Lambda[initialR];
 				ite++
 			]; 
-			Rreal = initialR;,
-			(*Undershooting*)
-			(*----else----------*)
-			While[ RComplexity[initialR] == 0&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0.,
+			Rreal = initialR;
+			,(*Undershooting*)
+			While[ RComplexity == 0&&ite <= maxIteR&&Abs[\[Lambda]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0.,
 				If[initialR > Rreal,
 					Rreal = initialR;  
 					initialR = RW[initialR],
 					(*Perturbs 10% up the ansatz since initialR<Rreal*)  
 					initialR = 1.1*Rreal
 				];
+				Lambda[initialR];
 				ite++
 			]; 
 			Rcomplex = initialR;    
 		];  
 		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda][initialR]]!=0., 
+		While[ite <= maxIteR&&Abs[\[Lambda]-1]>.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0., 
 			
-			If[ RComplexity[initialR]>0,
+			If[ RComplexity >0,
 				If[ (*Overshooting*)
 					initialR < Rcomplex,
 					Rcomplex = initialR;
@@ -481,10 +488,11 @@ If[Ns==2&&Not[d==3],
 					initialR = Abs[Rcomplex+Rreal]/2.;
 				];
 			];
+			Lambda[initialR];
 			ite++   
 		];
 	   
-		If[ Chop[Re@\[Lambda][initialR]] == 0.,
+		If[ Chop[Re@\[Lambda]] == 0.,
 			k++;
 			switch=True;
 			initialR = (1+k)*Abs[initialR0]  
@@ -495,17 +503,16 @@ If[Ns==2&&Not[d==3],
 		Message[FindInitialRadius::cvmit,maxIteR] 
 	];
 
-	If[ Re[\[Lambda][initialR]-1] >.5*10^(-1)&&switchMessage, 
+	If[ Re[\[Lambda]-1] >.5*10^(-1)&&switchMessage, 
 		Message[FindInitialRadius::noSolution];
 		Return[$Failed,Module]
 	];	
 ];	
-	{R,v,b} = Rvb[initialR];
-	{V1,T1} = {Potential[initialR],Kinetic[initialR]};   
+	Clear[Lambda];
+
 , setPrecision];
-	Clear[Rvb,RComplexity,\[Lambda],Potential,Kinetic,RW]; 	
 			
-	Re@{initialR,R,v,b,V1,T1}
+	Re@{initialR,Sequence@@Rvb,Potential,Kinetic}
 ]; 
 
 
