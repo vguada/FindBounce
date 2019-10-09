@@ -1064,8 +1064,8 @@ Module[{\[CurlyPhi]0,MultiFieldPiecewise},
 
 FindBounce::usage = "FindBounce[potential,fields,{min1, min2}] computes false vacuum decay in potential with multiple scalar fields.";
 FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
-FindBounce::iter = "Maximum number of iterations should be a positive integer, default value `1` was taken.";
-FindBounce::optionValue = "Wrong \"`1`\", default value `2` was taken.";
+FindBounce::posreal = "Value of option \"`1`\" should be a positive real number.";
+FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 
 Options[FindBounce] = {
@@ -1102,20 +1102,23 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
 	ddVL,setPrecision,dPath,switchPath=False,iter=0,bottomless,p,dAction},
 	
-	(*OptionValues*)
+	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed. *)
+	(* TODO (Victor): I think this option "SetPrecision" should be removed. *)
 	setPrecision = OptionValue["SetPrecision"]/.{Except[_Integer?Positive|MachinePrecision]:>(Message[FindBounce::optionValue,"SetPrecision",20];20)};
-	bottomless = OptionValue["BottomlessPotential"];
-	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"];
-	dPath = N[OptionValue["PathTolerance"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"PathTolerance",.01];.01)};
-	dAction = N[OptionValue["ActionTolerance"],setPrecision]/.{Except[_Real?Positive]:>(Message[FindBounce::optionValue,"ActionTolerance",.01];.01)};
-	dim = OptionValue["Dimension"]/.{Except[3|4]:>(Message[FindBounce::dim];4)};
-	initialR = N[OptionValue["InitialRadius"],setPrecision]/.{Except[_Real?Positive|None]:>(Message[FindBounce::optionValue,"InitialRadius",None];None)};
-	maxIteR = OptionValue["MaxRadiusIterations"];
-	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::iter,3];3);
+	bottomless = TrueQ@OptionValue["BottomlessPotential"];
+	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"InitialRadiusAccuracyGoal"];Return[$Failed,Module]);
+	dPath = OptionValue["PathTolerance"]/.Except[_Real?Positive]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	dAction = OptionValue["ActionTolerance"]/.Except[_Real?Positive]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
+	initialR = OptionValue["InitialRadius"]/.Except[_Real?Positive|None]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
+	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
+	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxPathIterations"];Return[$Failed,Module]);
+	point = OptionValue["MidFieldPoint"];
+	(* TODO: Move here value checking for field points. *)
+	fieldpoints = OptionValue["FieldPoints"];
+	
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
-	point = OptionValue["MidFieldPoint"];
-	fieldpoints = OptionValue["FieldPoints"];
 	
 	If[fields[[1]]===True,
 		{fieldpoints,potentialPoints} = Transpose@V

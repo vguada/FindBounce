@@ -204,13 +204,71 @@ VerificationTest[
 
 
 (* Both minima of potential have the same value. This is degenerated case. *)
-(* TODO: Message should be probably appended to public function (e.g. FindBounce).
-Is this result the most appropriate or should we rather return "Action" as Infinity? *)
 VerificationTest[
 	FindBounce[x^4-x^2,{x},{-0.707107,0.707107}]["Action"],
 	\[Infinity],
 	{FindBounce::degeneracy},
 	TestID->"FindBounce - Error: degenerated minima"
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*Fail checks - wrong option values*)
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"InitialRadiusAccuracyGoal"->0],
+	$Failed,
+	{FindBounce::posint},
+	TestID->"FindBounce - wrong InitialRadiusAccuracyGoal"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"PathTolerance"->-0.1],
+	$Failed,
+	{FindBounce::posreal},
+	TestID->"FindBounce - wrong PathTolerance"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"ActionTolerance"->"string"],
+	$Failed,
+	{FindBounce::posreal},
+	TestID->"FindBounce - wrong ActionTolerance"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"Dimension"->2],
+	$Failed,
+	{FindBounce::dim},
+	TestID->"FindBounce - wrong Dimension"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"InitialRadius"->0],
+	$Failed,
+	{FindBounce::posreal},
+	TestID->"FindBounce - wrong InitialRadius"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"MaxRadiusIterations"->0],
+	$Failed,
+	{FindBounce::posint},
+	TestID->"FindBounce - wrong MaxRadiusIterations"
+];
+
+
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"MaxPathIterations"->0],
+	$Failed,
+	{FindBounce::posint},
+	TestID->"FindBounce - wrong MaxPathIterations"
 ];
 
 
