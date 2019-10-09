@@ -1210,44 +1210,32 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 (*Visualization: BouncePlot*)
 
 
-BouncePlot::usage="BouncePlot[bf] plots the content of BounceFunction bf.";
-BouncePlot::bfs="Argument should be a list of function(s).";
+BouncePlot::usage="BouncePlot[bf] plots the content of BounceFunction bf.\n"<>
+"BouncePlot[{bf1,bf2}] plots several functions bfi.";
 
 BouncePlot//Options=Options@Plot;
 
 BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 
-BouncePlot[bf__BounceFunction,opts:OptionsPattern[]]:=
-	BouncePlot[{bf},opts];
+BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= BouncePlot[{bf},opts];
 	
-BouncePlot[bf_List,opts:OptionsPattern[]]:= Module[
-	{bounce,R,markers,plotRange},
-	
-	(* Check if bf is a BounceFunction*)
-	If[
-		Not@ArrayQ[bf,1,(Head[#]===BounceFunction&)],
-		Message[BouncePlot::bfs];Return[$Failed,Module]
-	];
-	
-	bounce = #["Bounce"]&/@bf;
-	(* This helps to draw discrete radii R. *)
-	R = #["Radii"]&/@bf;
-	
-	plotRange = Clip[
-			MinMax[R,Scaled[0.25]],
-			{0,10^100}
-	];	
+BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
+	{bounce,radii,plotRange},
+	(* Piecewise bounces of consecutive BounceFunction(s) are effectively flattened. *)
+	bounce = Through[{bf}["Bounce"]];
+	(* This helps to draw discrete radii. *)
+	radii = Through[{bf}["Radii"]];
+	(* Clip plot range to non-negative values. *)
+	plotRange = Ramp@MinMax[radii,Scaled[0.25]];
 	
 	Plot[
-		Evaluate[#[\[Rho]]&/@bounce],
-		{\[Rho],Sequence@@plotRange},
-		opts,
+		Evaluate@Through[bounce[r]],
+		{r,Sequence@@plotRange},
+		Evaluate@FilterRules[{opts},Options@Plot],
 		(* Default options come here. Keep them as short as possible, for flexibiltiy.
 		Explicitly given options (above) have precedence. *)
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
-		Axes->False,
-		LabelStyle->Directive[Black,FontSize->17, FontFamily->"Times New Roman",FontSlant->Plain],
 		GridLines->Automatic
 	]
 ];

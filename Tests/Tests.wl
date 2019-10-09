@@ -219,15 +219,57 @@ VerificationTest[
 
 
 (* We just check if plot (Graphics expression) is produced without messages. 
-Only BouncePlot is inside VerificationTest for relevant timing. *)
+Only BouncePlot is inside VerificationTest for relevant timing. We also check
+preventing wrong options to reach Plot. *)
 With[{
 	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"FieldPoints"->11]
 	},
 	VerificationTest[
-		BouncePlot[bf,PerformanceGoal->"Speed"],
+		BouncePlot[bf,PerformanceGoal->"Speed","BadOption"->1],
 		_Graphics,
 		SameTest->MatchQ,
 		TestID->"BouncePlot - 1F default"
+	]
+];
+
+
+(* Check that function returns unevaluated if the argument is not BounceFunction or a list of them. *)
+VerificationTest[
+	BouncePlot["badValue"],
+	_BouncePlot,
+	SameTest->MatchQ,
+	TestID->"BouncePlot - returns unevaluated"
+];
+
+
+(* Check that BounceFunction of 2 fields is plotted with 2 colors by default. *)
+With[{
+	bf2=FindBounce[0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2,{x,y},{{0.,12.91},{20.,0.}},"FieldPoints"->11]
+	},
+	VerificationTest[
+		Length@Cases[
+			BouncePlot[bf2,PerformanceGoal->"Speed"],
+			_RGBColor,
+			Infinity
+		],
+		2,
+		TestID->"BouncePlot - 2F default"
+	]
+];
+
+
+(* Check if two BounceFunctions are plotted with specified colors. *)
+With[{
+	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"FieldPoints"->11]
+	},
+	VerificationTest[
+		Cases[
+			BouncePlot[{bf,bf},PlotStyle->{Red,Directive[Dashed,Blue]},PerformanceGoal->"Speed"],
+			_RGBColor,
+			Infinity
+		],
+		{Red,Blue},
+		TestID->"BouncePlot - 2 functions"
 	]
 ];
 
