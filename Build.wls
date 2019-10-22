@@ -214,22 +214,26 @@ Module[
 
 
 Module[
-	{pacletPath,newPaclet},
-	
+	{pacletPath,newPaclet,buildNo},
 	Needs["PacletManager`"];
 	(* Change into the build directory and create the paclet. *)	
-	SetDirectory[FileNameJoin[{$root,"build"}]];
+	SetDirectory@FileNameJoin[{$root,"build"}];
 	pacletPath=PackPaclet[$name];
 	ResetDirectory[];
-	
+
 	(* Uninstall older versions first. *)
 	If[PacletFind[$name]=!={},PacletUninstall[$name]];
 	newPaclet=PacletInstall[pacletPath];
 	RebuildPacletData[];
-	
+
 	If[
-		Length@PacletFind["HeatTrans"]===1,
-		Print["  ",FileNameTake[pacletPath]," built and installed succesfully."];Quit[0],
-		Print["  Paclet build failed!"];Quit[1]
+		Length@PacletFind[$name]===1
+		,
+		buildNo=getGitCommitCount[$root];
+		Print["  ",FileNameTake[pacletPath]," (",buildNo,") built and installed succesfully."];
+		Quit[0]
+		,
+		Print["  Paclet build failed!"];
+		Quit[1]
 	]
 ];
