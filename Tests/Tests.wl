@@ -187,7 +187,7 @@ VerificationTest[
 	275.521,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 3F default"
-]
+];
 
 
 (* ::Subsubsection::Closed:: *)
