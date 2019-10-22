@@ -39,12 +39,12 @@ BeginPackage["FindBounce`"];
 (*Available public functions*)
 
 
+(* The main function of the package. *)
 FindBounce;
+(* Symbol which acts as a container for results of FindBounce. *)
 BounceFunction;
+(* A handy function for plotting the contents of BounceFunction. *)
 BouncePlot;
-SingleFieldBounce;
-SingleFieldBounceImprovement;
-MultiFieldBounce;
 
 
 (* ::Section::Closed:: *)
@@ -120,7 +120,6 @@ Module[{l,\[Phi]L,eL},
 (*DerivativePotential*)
 
 
-(* ::Input::Initialization:: *)
 DerivativePotential::gradient = "\"Gradient\" is not a vector, default value was taken.";
 DerivativePotential::hessian = "\"Hessian\" is not a matrix, default value was taken."; 
 
@@ -153,7 +152,6 @@ Module[{dV,d2V},
 (*InitialValue*)
 
 
-(* ::Input::Initialization:: *)
 InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
@@ -514,7 +512,6 @@ If[Ns==2&&Not[d==3],(*initialR = exact radius from the close form solution N=3*)
 (*\[ScriptCapitalT]*)
 
 
-(* ::Input::Initialization:: *)
 (*See eqs. 10*)
 \[ScriptCapitalT][R_,v_,b_,a_,d_,Ns_,pos_]:= 
 Module[{p,T},
