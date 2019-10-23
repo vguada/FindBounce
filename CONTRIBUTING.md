@@ -6,16 +6,9 @@ First you need to install [Git](https://git-scm.com/) and
 [clone](https://help.github.com/articles/cloning-a-repository/) the project
 from its GitHub homepage to your local computer.
 
-## Prerequisites
-
-Essential:
-
-* [Mathematica](https://www.wolfram.com/mathematica/) version 11.1 or later
-
-Recommended:
-
-* [WolframScript](https://www.wolfram.com/wolframscript/) for easier running of testing suite from command line.
- On most systems it already comes bundled with Mathematica installation.
+You will also need [Mathematica](https://www.wolfram.com/mathematica/) version 11.1 or later.
+[WolframScript](https://www.wolfram.com/wolframscript/) is recommended for easier running of testing suite from command line.
+On most systems it already comes bundled with Mathematica installation.
 
 ## Testing code
 
@@ -24,7 +17,7 @@ A bunch of them is collected in `Tests/Tests.wl` file, using the Mathematica tes
 [framework](https://reference.wolfram.com/language/guide/SystematicTestingAndVerification.html).
 It is recommended that you run them periodically during development and especially before every commit.
 This can be done by calling script file `Tests/RunTests.wls` in command line
-(first change directory to project root directory) or by evaluating whole notebook `Tests/RunTests.nb`.
+(from repository root directory) or by evaluating whole notebook `Tests/RunTests.nb`.
 
 ### Integration of tests in Git hook
 
@@ -37,8 +30,44 @@ Minimal example of `pre-commit` file content is:
     #!/bin/sh
     ./Tests/RunTests.wls
 
-## How to build the package
+## Building the package
 
-Open terminal window (command line) in _FindBounce_ root directory and run file `wolfram -script Build.wls`.
-This will automatically create a `FindBounce-X.Y.Z.paclet` file in the "build" folder and also install it to `$UserBasePacletsDirectory`.
-Command line option `--docs` also processes documentation notebooks and should be used for proper releases.
+Package building covers procedures to convert contents of repository to `.paclet` file which can be installed by the users.
+This is done by the build script included in the repository, which can be run from command line (terminal) with `wolfram -script Build.wls` .
+Use option `--help` to see all available script options.
+See also [console interface](https://reference.wolfram.com/language/ref/program/wolfram.html) documentation page for more information.
+
+### Documentation
+
+The package documentation comes in a form of a notebook with textual  explanation and executable examples.
+This approach with a single notebook ensures maximal backward compatibility between versions on Mathematica.
+Development version of documentation notebook contains only `"Text"` and `"Input"` cells.
+`"Output"` cells are produced when the whole notebook is evaluated during documentation build procedure.
+This is started with build script option `--docs` .
+
+### Creating a .paclet file
+
+Running the build script in command line from repository root directory
+will automatically create a `FindBounce-X.Y.Z.paclet` file in the "build"
+folder and also install it to `$UserBasePacletsDirectory`.
+Script option `--release` additionally processes documentation notebooks and should be used for proper public releases.
+
+### Release checklist
+
+The following tasks should be performed for successful release of a new public version of the package.
+
+- Check if all known bugs have been fixed.
+- Check if all changes in functionality since the previous release have been documented (use `git log --oneline` to refresh memory).
+- Run a full suite of automated tests.
+- Build the package along with documentation and test if installed version works ok (e.g. documentation examples).
+You can send this version to other test users for additional feedback.
+- Update [PacletInfo.m]( PacletInfo.m ) with a new version number.
+It should be determined according to [semantic versioning](https://semver.org/) principles.
+- Update [README.md]( README.md ) and [CHANGELOG.md]( CHANGELOG.md ) with relevant changes.
+- Make a new [`git tag`](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
+with corresponding version number and push it to remote repository.
+- Build a public version with `--release` option of build script.
+- Create a new release on GitHub [releases](https://github.com/vguada/FindBounce/releases)
+page and attach there resulting `.paclet` file.
+- Inform users about a new version (email, website, etc).
+- Celebrate.
