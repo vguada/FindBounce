@@ -1,14 +1,51 @@
 Notebook[{
 
 Cell[CellGroupData[{
-Cell[TextData[StyleBox["FindBounce",
- FontSize->36,
- FontWeight->"SemiBold",
- FontColor->GrayLevel[0]]], "Title",
- CellChangeTimes->{{3.762696929264085*^9, 3.762696964823374*^9}, 
-   3.7721772644870567`*^9, {3.7721776174665422`*^9, 3.7721776540589523`*^9}, {
-   3.780831892966846*^9, 3.780831968918778*^9}, {3.780832838540141*^9, 
-   3.780832842775733*^9}},
+Cell[TextData[{
+ Cell[BoxData[
+  GraphicsBox[
+   TagBox[RasterBox[CompressedData["
+1:eJzNmM9PE0EUxxu9ePRfMPGiJh68qDc9aOLBg/jjoIkJ1Uq4VC3GxkQTm4Ae
+1ENjNGIlRE1NUPEHPyJgICIhbQQDlaRoacFS6G9pa6WUUqzf+nRCunTpzra7
+vDya6XaZ/ey8N2++M1u056vObdBoNHWb8FFVbdxvMFRfOboZX47r62pr9Lqz
+h/SXdDU6wx7tRlzc+e8v387lctfXgRFGTm1jJKHOUwUe7bsQ/2z+6XyWiXmU
+JPE+2irisy37EmPNypDg9YUe7tL6Xx5kPPj6O5uuNInIPYhOzF7PYFQkIUu6
+WgmmQmGSNHfmBq+BZMa6N5sKq0uCJAEGYJBC3E/0R5LjU1HybtskfPRbEG2p
+9QShoWEpMXVtY7OWtw5T0+BpU6e4SyVZXkxMN+8AzPz3HvE73b6Y8V7/mgDc
+JDBUPJDgU+Qex0T4TMM7esT91pEu2ySFI7O0XOxfOEh+edpBgpEpFiBkAmFc
+bRxAu8RuOUgAQAFK+fpXveHmYzswEJr5hUzp3fKtgJH3tSD58dEo/Gl4PEhB
+QSwk9clHQlUOi5HwJ5om5pZhSR1ykywlZ6jeorHyOrKCBsQbSChDAsOAgASD
+s/Li896vlKhSe5NDgiQRzmWDuQ8k7QNuJUkoVXxPdrErLDSRWEpJEpYqi1En
+XcFQ0OTlwJBDkvufKkwkUBlBqihPQiIBihdtlHGqq1LLSFlIsAiysg8AYABG
+ZGWpHAkAKFXSoRGavwgQH4ZMEliw7RgJJ9QQkLz64FKLBAx54fTiAN9aU0YS
+TGEKkL7hqZwkkU8CC7w+DBLLnYu3rZ+4OykLSXzoFkgcjbshzNQlCQenPZZt
++Wz50qYuSe+Qt+PuCZAgTOqSQBRdvvFwqml7fjqPPlCLhBV5V4+J6m2BYlGM
+BBsrVuSxeWe7eOj/AjlXaRKEhnY0ub/Fn+RTgaMOC4+JyCFv4IE3R9CWQxJP
+poWldcFvh5BD/+JHQ0KXQ2LtdopIo2wqDCpyBGvVk6JQx0n4nK0ebW4SSETK
+VcxijrcQGh8J8pN231iC5aw1MkmgnGl7hTHh2NesScJOV4o5lhXIIXYSAgzH
+RDlPlhhJ6QcdpM3cvlgZMUonwQjg6XCosrIzFJCsB6vEC3LbHxgePks=
+     "], {{0, 46}, {46, 0}}, {0, 255},
+     ColorFunction->RGBColor],
+    BoxForm`ImageTag[
+    "Byte", ColorSpace -> "RGB", Interleaving -> True, MetaInformation -> 
+     Association[
+      "Exif" -> Association[
+        "Software" -> "Created with the Wolfram Language : www.wolfram.com"], 
+       "Comments" -> 
+       Association[
+        "Software" -> "Created with the Wolfram Language : www.wolfram.com", 
+         "Creation Time" -> 
+         DateObject[{2019, 6, 7, 12, 35, 51.}, "Instant", "Gregorian", 2.]]]],
+    Selectable->False],
+   DefaultBaseStyle->"ImageGraphics",
+   ImageSizeRaw->{46, 46},
+   PlotRange->{{0, 46}, {0, 46}}]], "Input",
+  ExpressionUUID -> "5009e9d8-4af2-4e2c-9c01-2fb314d35fc4"],
+ StyleBox["FindBounce",
+  FontSize->36,
+  FontWeight->"SemiBold",
+  FontColor->GrayLevel[0]]
+}], "Title",
  ExpressionUUID -> "720612f3-f543-4e23-8cae-ae39cd089c4e"],
 
 Cell[CellGroupData[{
@@ -66,13 +103,12 @@ Cell[BoxData[
      "automatically", " ", "at", " ", "kernel", " ", 
      RowBox[{"startup", "."}]}]}], "*)"}], "\[IndentingNewLine]", 
   RowBox[{
-   RowBox[{"Needs", "[", "\"\<PacletManager`\>\"", "]"}], 
-   "\[IndentingNewLine]", 
+   RowBox[{"Needs", "[", "\"\<PacletManager`\>\"", "]"}], "\n", 
    RowBox[{"(*", 
     RowBox[{"Path", " ", 
      RowBox[{"to", ".", "paclet"}], " ", "file", " ", "downloaded", " ", 
      "from", " ", "repository", " ", "\"\<releases\>\"", " ", 
-     RowBox[{"page", "."}]}], "*)"}], "\n", 
+     RowBox[{"page", "."}]}], "*)"}], "\[IndentingNewLine]", 
    RowBox[{
    "PacletInstall", "[", "\"\<full/path/to/FindBounce-X.Y.Z.paclet\>\"", 
     "]"}]}]}]], "Input",
@@ -429,54 +465,7 @@ specifies whether the combination of polygonal and quartic should be used \
 
 Cell[CellGroupData[{
 
-Cell[TextData[{
- Cell[BoxData[
-  GraphicsBox[
-   TagBox[RasterBox[CompressedData["
-1:eJzNmM9PE0EUxxu9ePRfMPGiJh68qDc9aOLBg/jjoIkJ1Uq4VC3GxkQTm4Ae
-1ENjNGIlRE1NUPEHPyJgICIhbQQDlaRoacFS6G9pa6WUUqzf+nRCunTpzra7
-vDya6XaZ/ey8N2++M1u056vObdBoNHWb8FFVbdxvMFRfOboZX47r62pr9Lqz
-h/SXdDU6wx7tRlzc+e8v387lctfXgRFGTm1jJKHOUwUe7bsQ/2z+6XyWiXmU
-JPE+2irisy37EmPNypDg9YUe7tL6Xx5kPPj6O5uuNInIPYhOzF7PYFQkIUu6
-WgmmQmGSNHfmBq+BZMa6N5sKq0uCJAEGYJBC3E/0R5LjU1HybtskfPRbEG2p
-9QShoWEpMXVtY7OWtw5T0+BpU6e4SyVZXkxMN+8AzPz3HvE73b6Y8V7/mgDc
-JDBUPJDgU+Qex0T4TMM7esT91pEu2ySFI7O0XOxfOEh+edpBgpEpFiBkAmFc
-bRxAu8RuOUgAQAFK+fpXveHmYzswEJr5hUzp3fKtgJH3tSD58dEo/Gl4PEhB
-QSwk9clHQlUOi5HwJ5om5pZhSR1ykywlZ6jeorHyOrKCBsQbSChDAsOAgASD
-s/Li896vlKhSe5NDgiQRzmWDuQ8k7QNuJUkoVXxPdrErLDSRWEpJEpYqi1En
-XcFQ0OTlwJBDkvufKkwkUBlBqihPQiIBihdtlHGqq1LLSFlIsAiysg8AYABG
-ZGWpHAkAKFXSoRGavwgQH4ZMEliw7RgJJ9QQkLz64FKLBAx54fTiAN9aU0YS
-TGEKkL7hqZwkkU8CC7w+DBLLnYu3rZ+4OykLSXzoFkgcjbshzNQlCQenPZZt
-+Wz50qYuSe+Qt+PuCZAgTOqSQBRdvvFwqml7fjqPPlCLhBV5V4+J6m2BYlGM
-BBsrVuSxeWe7eOj/AjlXaRKEhnY0ub/Fn+RTgaMOC4+JyCFv4IE3R9CWQxJP
-poWldcFvh5BD/+JHQ0KXQ2LtdopIo2wqDCpyBGvVk6JQx0n4nK0ebW4SSETK
-VcxijrcQGh8J8pN231iC5aw1MkmgnGl7hTHh2NesScJOV4o5lhXIIXYSAgzH
-RDlPlhhJ6QcdpM3cvlgZMUonwQjg6XCosrIzFJCsB6vEC3LbHxgePks=
-     "], {{0, 46}, {46, 0}}, {0, 255},
-     ColorFunction->RGBColor],
-    BoxForm`ImageTag[
-    "Byte", ColorSpace -> "RGB", Interleaving -> True, MetaInformation -> 
-     Association[
-      "Exif" -> Association[
-        "Software" -> "Created with the Wolfram Language : www.wolfram.com"], 
-       "Comments" -> 
-       Association[
-        "Software" -> "Created with the Wolfram Language : www.wolfram.com", 
-         "Creation Time" -> 
-         DateObject[{2019, 6, 7, 12, 35, 51.}, "Instant", "Gregorian", 2.]]]],
-    Selectable->False],
-   DefaultBaseStyle->"ImageGraphics",
-   ImageSizeRaw->{46, 46},
-   PlotRange->{{0, 46}, {0, 46}}]], "Input",
-  ExpressionUUID -> "5009e9d8-4af2-4e2c-9c01-2fb314d35fc4"],
- "Examples (4)"
-}], "Chapter",
- CellChangeTimes->{{3.759139662455357*^9, 3.759139666510619*^9}, {
-   3.762519097700601*^9, 3.7625191168602467`*^9}, {3.762528682726491*^9, 
-   3.762528684020207*^9}, 3.7626965161132812`*^9, 3.7679551027589293`*^9, {
-   3.772219642385723*^9, 3.772219647673396*^9}, 3.780831674414506*^9, {
-   3.780832025098024*^9, 3.780832027198626*^9}, {3.780832112262684*^9, 
-   3.780832117478777*^9}, 3.7808328568806677`*^9},
+Cell["Examples (4)", "Chapter",
  ExpressionUUID -> "ce0b1df0-70bb-4600-bd88-9a4e57ade34c"],
 
 Cell[CellGroupData[{
@@ -512,22 +501,21 @@ Cell[BoxData[{
     RowBox[{".1", " ", 
      RowBox[{"x", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"Extrema", "=", 
-    RowBox[{"Block", "[", 
-     RowBox[{
-      RowBox[{"{", "x", "}"}], ",", 
-      RowBox[{"x", "/.", 
-       RowBox[{"Sort", "@", 
-        RowBox[{"NSolve", "[", 
+  RowBox[{"Extrema", "=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "x", "}"}], ",", 
+     RowBox[{"x", "/.", 
+      RowBox[{"Sort", "@", 
+       RowBox[{"NSolve", "[", 
+        RowBox[{
          RowBox[{
-          RowBox[{
-           RowBox[{"(", 
-            RowBox[{"D", "[", 
-             RowBox[{
-              RowBox[{"U", "[", "x", "]"}], ",", "x"}], "]"}], ")"}], "==", 
-           "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+          RowBox[{"(", 
+           RowBox[{"D", "[", 
+            RowBox[{
+             RowBox[{"U", "[", "x", "]"}], ",", "x"}], "]"}], ")"}], "==", 
+          "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"bf", " ", "=", "  ", 
   RowBox[{"FindBounce", "[", " ", 
    RowBox[{
@@ -548,21 +536,9 @@ Cell[BoxData[{
       RowBox[{"\"\<Action: \>\"", ",", 
        RowBox[{"bf", "[", "\"\<Action\>\"", "]"}]}], "}"}], "]"}]}]}], 
   "]"}]}], "Input",
- CellChangeTimes->{{3.7660833209002547`*^9, 3.766083453544429*^9}, {
-   3.7660835614145784`*^9, 3.766083685302271*^9}, {3.7660837178331895`*^9, 
-   3.7660838498206596`*^9}, {3.76608406631161*^9, 3.766084140723426*^9}, {
-   3.766084190124697*^9, 3.7660842578292804`*^9}, {3.7660842939031553`*^9, 
-   3.7660843703230195`*^9}, 3.7661344744631367`*^9, {3.76866232646393*^9, 
-   3.7686623338389883`*^9}, {3.768662421880314*^9, 3.76866247912717*^9}, {
-   3.768662560008391*^9, 3.7686625834075336`*^9}, {3.768663420576529*^9, 
-   3.76866342555938*^9}, {3.7722203272182913`*^9, 3.772220352877264*^9}, 
-   3.7722711252185707`*^9, {3.772278216204157*^9, 3.77227824073738*^9}, {
-   3.780833217935594*^9, 3.78083322906429*^9}, {3.7808693782066*^9, 
-   3.7808693849106336`*^9}},
  ExpressionUUID -> "53774bcd-ef38-4215-88ee-15086f8a0586"],
 
-Cell["Extract the properties and output of the BounceFunction", "Text",
- CellChangeTimes->{{3.780868716619875*^9, 3.7808687448793445`*^9}}],
+Cell["Extract the properties and output of the BounceFunction", "Text"],
 
 Cell[BoxData[
  RowBox[{"bf", "[", "\"\<Properties\>\"", "]"}]], "Input",
@@ -2722,7 +2698,7 @@ Cell[BoxData[
  CellChangeTimes->{{3.780837812823254*^9, 3.780837863854968*^9}},
  ExpressionUUID -> "da749db2-3ef4-4a69-b30d-fe9c194faf66"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -3451,7 +3427,7 @@ Cell[BoxData[
    3.780833250235632*^9}},
  ExpressionUUID -> "c3abe31a-7de3-4163-9510-d234a771f450"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -4168,8 +4144,8 @@ b/6MBdJ6phq/QLQRy1fmOCB9justG4h2OWgiCKIZZrwVB9EAkS+XMw==
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1126, 1048},
-WindowMargins->{{Automatic, 269}, {Automatic, 54}},
+WindowSize->{1536, 781},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 TrackCellChangeTimes->False,
 FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (September 21, 2016)",
