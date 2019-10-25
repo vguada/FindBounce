@@ -124,6 +124,55 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
+(*1 field - potential defined by points*)
+
+
+(* Basic working example *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2},{3,1},{4,2},{5,1}}]["Action"],
+	82767.,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - polygonal potential"
+];
+
+
+(* Function returns unevaluated for single wrong argument. *)
+VerificationTest[
+	FindBounce["totalyWrongArgument"],
+	_FindBounce,
+	SameTest->MatchQ,
+	TestID->"FindBounce - single wrong argument"
+];
+
+
+(* Not enough points to define the potential. *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2}}],
+	$Failed,
+	{FindBounce::points},
+	TestID->"FindBounce - polygonal, not enough points"
+];
+
+
+(* Wrong dimensions of the array defining the potential. *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2},{3,1},{4,2},{5,1,100}}],
+	$Failed,
+	{FindBounce::points},
+	TestID->"FindBounce - polygonal, wrong array dimensions"
+];
+
+
+(* Array of points should not include Complex or non-numerical values. *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2},{3,1},{4,2},{5,1+I}}],
+	$Failed,
+	{FindBounce::points},
+	TestID->"FindBounce - polygonal, non-numerical values"
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*2 fields*)
 
 

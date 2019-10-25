@@ -1070,11 +1070,15 @@ Module[{\[CurlyPhi]0,MultiFieldPiecewise},
 (*FindBounce*)
 
 
-FindBounce::usage = "FindBounce[potential,fields,{min1, min2}] computes false vacuum decay in potential with multiple scalar fields.";
+FindBounce::usage = 
+	"FindBounce[V[x],x,{min1, min2}] computes false vacuum decay for potential V[x] for field x.\n"<>
+	"FindBounce[V[x,y,...],{x,y,...},{min1, min2}] works with multiple scalar fields.\n"<>
+	"FindBounce[{{x1,y1},{x2,y1},...}] works with single field potential given as a list of points.";
 FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
 FindBounce::posreal = "Value of option \"`1`\" should be a positive real number.";
 FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
+FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1092,7 +1096,7 @@ Options[FindBounce] = {
 };
 
 FindBounce//SyntaxInformation={
-	"ArgumentsPattern"->{_,OptionsPattern[]},
+	"ArgumentsPattern"->{_,_.,_.,OptionsPattern[]},
 	"LocalVariables"->{"Solve",{2,2}}
 };
 
@@ -1100,8 +1104,17 @@ FindBounce//SyntaxInformation={
 FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 	FindBounce[V,{fields},{min1,min2},opts];	
 
-FindBounce[Points_/;Length[Points]>2 && ArrayQ[Points,2,(Head[#]===Integer||Head[#]===Real)&],opts:OptionsPattern[]]:=
-	FindBounce[Points,{True},Points[[1,{1,-1}]],opts];		
+(* Definition for a potential defined by a list of points. *)
+FindBounce[points_List,opts:OptionsPattern[]]:=(
+	If[
+		Not@And[
+			ArrayQ[points,2,(MatchQ[#,_Integer|_Rational|_Real]&)],
+			MatchQ[Dimensions[points],{x_/;x>=3,2}]
+		],
+		Message[FindBounce::points];Return[$Failed]
+	];
+	FindBounce[points,{True},points[[1,{1,-1}]],opts]
+);	
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
 Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,initialR,accuracyRadius,
