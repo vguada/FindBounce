@@ -6,8 +6,9 @@ First you need to install [Git](https://git-scm.com/) and
 [clone](https://help.github.com/articles/cloning-a-repository/) the project
 from its GitHub homepage to your local computer.
 
-You will also need [Mathematica](https://www.wolfram.com/mathematica/) version 11.1 or later.
-[WolframScript](https://www.wolfram.com/wolframscript/) is recommended for easier running of testing suite from command line.
+You will need [Mathematica](https://www.wolfram.com/mathematica/) version 11.1 or later.
+You will also need command line tool [WolframScript](https://www.wolfram.com/wolframscript/)
+for running the test suite and building the package.
 On most systems it already comes bundled with Mathematica installation.
 
 ## Testing code
@@ -33,9 +34,9 @@ Minimal example of `pre-commit` file content is:
 ## Building the package
 
 Package building covers procedures to convert contents of repository to `.paclet` file which can be installed by the users.
-This is done by the build script included in the repository, which can be run from command line (terminal) with `wolfram -script Build.wls` .
+This is done by the build script included in the repository, which can be run from command line (terminal) with `wolframscript -script Build.wls [options]` .
 Use option `--help` to see all available script options.
-See also [console interface](https://reference.wolfram.com/language/ref/program/wolfram.html) documentation page for more information.
+See also `wolframscript` [documentation](https://reference.wolfram.com/language/ref/program/wolframscript.html) for more information.
 
 ### Documentation
 
