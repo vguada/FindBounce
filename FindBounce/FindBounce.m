@@ -47,6 +47,10 @@ BounceFunction;
 BouncePlot;
 
 
+(* Clear definitions from package symbols in public and private context. *)
+ClearAll["`*","`*`*"];
+
+
 (* ::Section::Closed:: *)
 (*Begin Private*)
 
