@@ -81,11 +81,8 @@ Cell["      It requires:", "ExampleText",
  CellID->296412305,ExpressionUUID->"0da13d34-f500-4e24-8128-48fc6cb8b12f"],
 
 Cell[BoxData[
- RowBox[{
-  RowBox[{"Needs", "[", "\"\<FindBounce`\>\"", "]"}], ";"}]], "Input",
- Background->RGBColor[
-  0.9363851377126726, 0.9363546196688792, 
-   0.9363698786907759],ExpressionUUID->"c2798ea1-1e09-4fbe-b5d7-ac1505ec6420"],
+ RowBox[{"Needs", "[", "\"\<FindBounce`\>\"", 
+  "]"}]], "Code",ExpressionUUID->"135e80bd-cad4-4d56-a1e2-ab152285f76f"],
 
 Cell[BoxData[GridBox[{
    {"", Cell[TextData[{
