@@ -243,6 +243,15 @@ VerificationTest[
 (*Fail checks*)
 
 
+(* Field symbols have some value, which they should't have. *)
+VerificationTest[
+	Block[{x=1},FindBounce[x^4-x^2+x/4,{x},{-0.762,0.633}]],
+	$Failed,
+	{FindBounce::syms},
+	TestID->"FindBounce - error: field symbol value"
+];
+
+
 (* Slightly moved minima. *)
 VerificationTest[
 	FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518}+0.1],

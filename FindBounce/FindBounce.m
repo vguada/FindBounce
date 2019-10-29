@@ -159,7 +159,6 @@ Module[{dV,d2V},
 InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
-InitialValue::syms = "Field symbols should not have any value.";
 
 InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,bottomless_,fieldpoints_]:=
@@ -182,13 +181,6 @@ If[point === None,
 		path = None,
 		Ns = Length[fieldpoints]-1;
 		path = fieldpoints
-	];
-
-	(*Checks if field variables do not have any values.*)
-	If[
-		Not@ArrayQ[fields,1,(Head[#]===Symbol&)],
-		Message[InitialValue::syms];
-		Return[$Failed,Module]
 	];
 
 	If[path === None, 
@@ -1072,6 +1064,7 @@ FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>3) or array of numbers longer than 3.";
+FindBounce::syms = "Field symbols should not have any value.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1114,6 +1107,9 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,potentialPoints=None,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
 	ddVL,dPath,switchPath=False,iter=0,bottomless,p,dAction},
+	
+	(*Checks if field variables do not have any values. *)
+	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
 	
 	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed. *)
 	bottomless = TrueQ@OptionValue["BottomlessPotential"];
