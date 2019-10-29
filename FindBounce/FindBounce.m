@@ -160,7 +160,6 @@ InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
 InitialValue::syms = "Field symbols should not have any value.";
-InitialValue::fpts = "\"FieldPoints\" should be an integer or a list of length larger than 2.";
 
 InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,bottomless_,fieldpoints_]:=
@@ -178,18 +177,11 @@ If[point === None,
 		methodSeg = "2H"
 	];
 
-	(*Checks if field points is a integer or a vector.*)
 	If[ Head[fieldpoints] === Integer,
-		Ns = fieldpoints-1/.x_/;x<2:>(Message[FindBounce::optionValue,"FieldPoints",31];30);
-		path = None
-		,
-		If[Length[fieldpoints]>2 && ArrayQ[fieldpoints,noFields,(Head[#]===Integer||Head[#]===Real)&],
-			path = fieldpoints;
-			Ns = Length[fieldpoints]-1
-			,
-			Message[InitialValue::fpts];
-			Return[$Failed,Module]
-		]
+		Ns = fieldpoints-1;
+		path = None,
+		Ns = Length[fieldpoints]-1;
+		path = fieldpoints
 	];
 
 	(*Checks if field variables do not have any values.*)
@@ -1079,6 +1071,7 @@ FindBounce::posreal = "Value of option \"`1`\" should be a positive real number.
 FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
+FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>3) or array of numbers longer than 3.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1132,8 +1125,14 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
-	(* TODO: Move here value checking for field points. *)
 	fieldpoints = OptionValue["FieldPoints"];
+	If[
+		And[
+			Not[IntegerQ[fieldpoints]&&fieldpoints>3],
+			Not[ArrayQ[fieldpoints,Length[fields],(MatchQ[#,_Real|_Integer]&)]&&Length[fieldpoints]>3]
+		],
+		Message[FindBounce::fieldpts];Return[$Failed,Module]
+	];
 	
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
