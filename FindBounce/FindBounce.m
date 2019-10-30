@@ -1238,6 +1238,20 @@ BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= BouncePlot[{bf},opts];
 	
 BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 	{bounce,radii,plotRange},
+	(* In case of degenerated vacua, "Action" is Infinity and empty plot is returned. 
+	This is suitable form for FindBounce summary box plot.*)
+	If[
+		Not@AllTrue[Flatten@Through[{bf}["Action"]],NumberQ],
+		Return[
+			Graphics[
+				{Text[Style["n/a",Large,Gray]]},
+				AspectRatio->1/GoldenRatio,
+				Frame->True,
+				Evaluate@FilterRules[{opts},Options@Graphics]
+			],
+			Module
+		]
+	];
 	(* Piecewise bounces of consecutive BounceFunction(s) are effectively flattened. *)
 	bounce = Through[{bf}["Bounce"]];
 	(* This helps to draw discrete radii. *)

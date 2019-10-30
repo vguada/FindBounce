@@ -414,6 +414,22 @@ With[{
 ];
 
 
+(* Test for case of degenerated vacua. *)
+With[{
+	bf=Quiet[
+			FindBounce[-1/2*x^2+1/8*x^4 ,{x},{-1.414,1.414}],
+			FindBounce::degeneracy
+		]
+	},
+	VerificationTest[
+		BouncePlot[bf],
+		_Graphics,
+		SameTest->MatchQ,
+		TestID->"BouncePlot - degenerated vacua"
+	]
+];
+
+
 (* ::Subsection::Closed:: *)
 (*End Test Section*)
 
