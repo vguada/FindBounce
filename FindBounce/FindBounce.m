@@ -1061,6 +1061,7 @@ FindBounce::usage =
 FindBounce::dim = "Only supported \"Dimension\"s are 3 and 4, default value was taken.";
 FindBounce::posreal = "Value of option \"`1`\" should be a positive real number.";
 FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
+FindBounce::nonnegint = "Value of option \"`1`\" should be a non-negative integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>3) or array of numbers longer than 3.";
@@ -1119,7 +1120,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
 	initialR = OptionValue["InitialRadius"]/.Except[_Real?Positive|None]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
-	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxPathIterations"];Return[$Failed,Module]);
+	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
 	fieldpoints = OptionValue["FieldPoints"];
 	If[

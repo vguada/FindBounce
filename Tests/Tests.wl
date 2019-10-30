@@ -323,9 +323,9 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"MaxPathIterations"->0],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"MaxPathIterations"->0.1],
 	$Failed,
-	{FindBounce::posint},
+	{FindBounce::nonnegint},
 	TestID->"FindBounce - wrong MaxPathIterations"
 ];
 
