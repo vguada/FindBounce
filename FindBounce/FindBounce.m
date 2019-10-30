@@ -400,7 +400,8 @@ of FindRoot after each iterations and use the bisection method in case FindRoot 
 		{FindRoot::lstol,FindRoot::cvmit}];   
 	
 If[Ns==2&&Not[d==3],(*initialR = exact radius from the close form solution N=3*)
-	initialR = ansatzInitialR
+	initialR = ansatzInitialR;
+	lambda[initialR]
 	,	
 	(*Picks up the best estimate*)
 	If[NumericQ[aRinitial],
@@ -781,8 +782,8 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,dAction_]:=
-Module[{v,a,b,path=\[Phi],switchPath},
+ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,dAction_,switchPathOld_]:=
+Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
 	b = Table[eL[[s]]*bs[[s]],{s,Ns}]; 
@@ -1115,17 +1116,17 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed. *)
 	bottomless = TrueQ@OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"InitialRadiusAccuracyGoal"];Return[$Failed,Module]);
-	dPath = OptionValue["PathTolerance"]/.Except[_Real?Positive]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
-	dAction = OptionValue["ActionTolerance"]/.Except[_Real?Positive]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	dPath = OptionValue["PathTolerance"]/.Except[_Real?Positive|_Integer?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	dAction = OptionValue["ActionTolerance"]/.Except[_Real?Positive|_Integer?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
-	initialR = OptionValue["InitialRadius"]/.Except[_Real?Positive|None]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
+	initialR = OptionValue["InitialRadius"]/.Except[_Real?Positive|None|_Integer?Positive]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
 	fieldpoints = OptionValue["FieldPoints"];
 	If[
 		And[
-			Not[IntegerQ[fieldpoints]&&fieldpoints>3],
+			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
 			Not[ArrayQ[fieldpoints,Length[fields],(MatchQ[#,_Real|_Integer]&)]&&Length[fieldpoints]>3]
 		],
 		Message[FindBounce::fieldpts];Return[$Failed,Module]
@@ -1191,7 +1192,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
-			bottomless,action,actionP+action\[Xi],dAction];
+			bottomless,action,actionP+action\[Xi],dAction,switchPath];
 	
 		(*Breaks the interations of path deformation*)
 		If[switchPath||iter == maxItePath||bottomless, 
