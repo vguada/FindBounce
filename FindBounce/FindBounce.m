@@ -482,11 +482,11 @@ If[Ns==2&&Not[d==3],(*initialR = exact radius from the close form solution N=3*)
 		];   
 	];    
 	
-	If[ ite > maxIteR&&switchMessage,
+	If[ ite > maxIteR&&switchMessage&& Abs[\[Lambda]-1]> 0.5*10^(-accuracyRadius*0.9),
 		Message[FindInitialRadius::cvmit,maxIteR] 
 	];
 
-	If[ Re[\[Lambda]-1] > 0.5*10^(-1)&&switchMessage, 
+	If[ Re[\[Lambda]-1] > 0.5*10^(-accuracyRadius*0.1)&&switchMessage, 
 		Message[FindInitialRadius::noSolution];
 		Return[$Failed,Module]
 	];	
@@ -1268,6 +1268,7 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 		Explicitly given options (above) have precedence. *)
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
+		LabelStyle->Directive[Black, FontSize->17,FontFamily->"Times New Roman",FontSlant->Plain],
 		GridLines->Automatic
 	]
 ];

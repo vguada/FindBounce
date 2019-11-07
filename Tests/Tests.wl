@@ -331,14 +331,6 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762,0.633},"FieldPoints"->3],
-	$Failed,
-	{FindBounce::fieldpts},
-	TestID->"FindBounce - wrong integer FieldPoints"
-];
-
-
-VerificationTest[
 	FindBounce[x^4-x^2+x/4,x,{-0.762,0.633},"FieldPoints"->Subdivide[-0.762,0.633,2]],
 	$Failed,
 	{FindBounce::fieldpts},
