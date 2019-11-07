@@ -5,12 +5,12 @@ Cell[TextData[StyleBox["FindBounce",
  FontSize->36,
  FontWeight->"SemiBold",
  FontColor->GrayLevel[
-  0]]], "Title",ExpressionUUID->"720612f3-f543-4e23-8cae-ae39cd089c4e"],
+  0]]], "Title",ExpressionUUID->"db7dacd2-cc63-49a8-8541-b5511f64c594"],
 
 Cell[CellGroupData[{
 
 Cell["Introduction", \
-"Section",ExpressionUUID->"3925dc3d-b31b-4ac2-ba6a-ba7066f5ad22"],
+"Section",ExpressionUUID->"2319839e-6271-440a-8625-6efc265fe50c"],
 
 Cell[TextData[{
  "FindBounce is a Mathematica package that computes the bounce configuration \
@@ -26,39 +26,39 @@ The physics background is described in the \npaper by ",
    ButtonData->{
      URL["https://arxiv.org/abs/1803.02227"], None},
    ButtonNote->"https://arxiv.org/abs/1803.02227"]],ExpressionUUID->
-  "db1257a8-6348-4249-b4d4-286277fa7a84"],
+  "6839a07c-8268-4786-adc3-824c6f6d9be8"],
  ". In this tutorial, we present examples of false \nvacuum decays in \
 potential with multiple scalar fields.\n\nThe notebook cannot be saved, so it \
 can be edited freely. \nContributions are welcome! "
 }], "Text", \
-"ApplicationNotes",ExpressionUUID->"b4c990ac-e483-4a37-aade-b78176e68ca6"],
+"ApplicationNotes",ExpressionUUID->"cb225f75-dd99-49ad-ad1f-35fc18dd4662"],
 
 Cell[CellGroupData[{
 
 Cell["Description", \
-"Subsection",ExpressionUUID->"555b8682-2d3d-4927-a7f6-6b2f5b43e495"],
+"Subsection",ExpressionUUID->"bf292e74-bc2a-45c0-860e-fe70f9f2f905"],
 
 Cell["The package can be loaded with", "Text", "ApplicationNotes",
- CellID->296412305,ExpressionUUID->"0da13d34-f500-4e24-8128-48fc6cb8b12f"],
+ CellID->296412305,ExpressionUUID->"f1ca7f94-04b6-42b2-8d39-f160a670bd8e"],
 
 Cell[BoxData[
  RowBox[{"Needs", "[", "\"\<FindBounce`\>\"", "]"}]], "Code",
- CellLabel->"In[24]:=",ExpressionUUID->"135e80bd-cad4-4d56-a1e2-ab152285f76f"],
+ CellLabel->"In[24]:=",ExpressionUUID->"a2d174a8-cf78-45b7-bce6-fe415111571c"],
 
 Cell["\<\
 The list of included functions can be queried with the command\
-\>", "Text",ExpressionUUID->"0d1050b7-48f6-4051-9812-ace93f1c770f"],
+\>", "Text",ExpressionUUID->"162ad4f1-0238-499c-b534-a3df54ff91e1"],
 
 Cell[BoxData[
  RowBox[{"?", "FindBounce`*"}]], "Input",
- CellLabel->"In[15]:=",ExpressionUUID->"aefd636b-2fc4-4551-bb8c-6db434cd4a14"],
+ CellLabel->"In[15]:=",ExpressionUUID->"c7f48ddd-35fd-485d-a8e2-797b1a3e71f2"],
 
 Cell[BoxData[GridBox[{
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "84f22adc-eeab-4636-8d44-b0f7292d24f7"], "[", 
+        "29af95d3-7f23-42dc-bd1e-9c9aeeafbfef"], "[", 
        RowBox[{
         StyleBox["V", "TI"], ",", "\[CurlyPhi]", ",", 
         RowBox[{"{", 
@@ -70,32 +70,32 @@ Cell[BoxData[GridBox[{
            StyleBox["min", "TI"], 
            StyleBox["2", "TR"]]}], "}"}]}], "]"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "a2673407-b208-40ce-b748-ddb65dace766"],
+      "d09a9514-5bd7-43dd-a0c8-5a5fd619fb33"],
      " \[LineSeparator]computes the bounce configuration of a single field \
 potential ",
      Cell[BoxData[
       StyleBox["V", "TI"]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "e7a56919-d4b7-4b05-8dfb-a32593ac7043"],
+      "883c6b38-baa3-4ddb-97ae-ac261aa7acd6"],
      Cell[BoxData[
       RowBox[{"(", "\[CurlyPhi]", ")"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "c1e6e121-e534-4a9a-bca7-25de15d86442"],
+      "310c8575-8057-4791-bfb4-a3a8cde5d1cf"],
      " and minima ",
      Cell[BoxData[
       SubscriptBox[
        StyleBox["min", "TI"], 
        StyleBox["i", "TI"]]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "f485383b-19e1-40eb-a157-95deb5de16f0"],
+      "e9fc2e72-c150-4108-b6e9-640793e579fe"],
      "."
     }],
-     Editable->True,ExpressionUUID->"426a2c7a-a863-4923-ba8c-5a1187b56d27"]},
+     Editable->True,ExpressionUUID->"20987b09-d04d-4d28-bb33-d1f30fca7016"]},
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "39c7f6ab-a423-4f73-8b8b-edf92b8b8f7f"], "[", 
+        "7d76b831-2eab-49ae-9589-677b46f03318"], "[", 
        RowBox[{
         StyleBox["V", "TI"], ",", 
         RowBox[{"{", 
@@ -116,36 +116,36 @@ potential ",
       "InlineFormula",
       Editable->True,
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "47db81e8-9c72-4a0b-96c6-81ee83a59c8c"],
+      "9106fab3-859b-4b64-a65d-f7c05c5aded8"],
      StyleBox[
      " \[LineSeparator]computes the bounce configuration of a multi-field \
 potential ",
       Editable->True],
      Cell[BoxData[
       StyleBox["V", "TI"]], "InlineFormula",
-      Editable->True,ExpressionUUID->"b3df0cf3-31d0-4071-81de-885e68a149d7"],
+      Editable->True,ExpressionUUID->"e3956fc4-dbf2-467c-92b8-39087f059f62"],
      StyleBox["(",
       Editable->True],
      Cell[BoxData[
       SubscriptBox["\[CurlyPhi]", 
        StyleBox["i", "TI"]]], "InlineFormula",
-      Editable->True,ExpressionUUID->"866f2f65-388e-4b79-bfc0-f464c5522153"],
+      Editable->True,ExpressionUUID->"3e8d44b6-77d8-432d-a5e2-1d0df28780ea"],
      StyleBox[") and minima ",
       Editable->True],
      Cell[BoxData[
       SubscriptBox[
        StyleBox["min", "TI"], 
        StyleBox["i", "TI"]]], "InlineFormula",
-      Editable->True,ExpressionUUID->"81ab5b1e-e2fc-4209-a22a-b3dcdadca05d"],
+      Editable->True,ExpressionUUID->"caba19a2-0b62-46b9-8519-db8f384651aa"],
      StyleBox[".",
       Editable->True]
     }],
-     Editable->True,ExpressionUUID->"475427a8-37e0-4a3e-a977-a45946b87d78"]},
+     Editable->True,ExpressionUUID->"4a4f4294-0110-4085-a1e4-85e15ffe5789"]},
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "629794ab-507c-48ad-8ac0-3e96dba3af06"], "[", 
+        "e4c6aa0e-f3a5-4f61-9300-fa00003d7298"], "[", 
        RowBox[{"{", 
         RowBox[{
          RowBox[{"{", 
@@ -170,51 +170,51 @@ potential ",
       "InlineFormula",
       Editable->False,
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "3ee39bb6-f684-4034-a284-ad390f6539f1"],
+      "feab5e9a-68c5-4fca-91db-651ad0425df7"],
      StyleBox[
      " \[LineSeparator]computes the bounce configuration given a list of \
 points.",
       Editable->False]
-    }],ExpressionUUID->"a8dc2783-c8cb-4a6b-bef4-adc2c47e1210"]}
+    }],ExpressionUUID->"b2eaa290-b5b8-4abe-a814-eef56208e32e"]}
   }]], "Usage",
  GridBoxOptions->{
  GridBoxBackground->{
   "Columns" -> {{None}}, 
    "Rows" -> {
     None, None, None, {
-     None}}}},ExpressionUUID->"ce05f712-0ac7-4398-9d51-59f3ee1f451c"]
+     None}}}},ExpressionUUID->"2347ae3e-afda-4026-b37d-b51fd1e23dfb"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Details and options", \
-"Subsection",ExpressionUUID->"2e90889d-091c-44ee-a44e-d0112d06a61a"],
+"Subsection",ExpressionUUID->"aa3f1825-f8d9-4ba9-8776-47f0b4aaca28"],
 
 Cell[TextData[StyleBox["The following options can be given:",
  Editable->True]], "Notes",
- CellID->22045,ExpressionUUID->"f2f32592-ed85-4713-9aa0-b6238baa52a4"],
+ CellID->22045,ExpressionUUID->"9b26990c-ab8e-4558-891d-c3f0728aecde"],
 
 Cell[BoxData[GridBox[{
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "02d396ad-d7c6-4742-9cfc-ffcfd982b4e4"], "\"\<ActionTolerance\>\"", 
+     "7b4c9d34-67be-493e-ae67-9773e83de0c8"], "\"\<ActionTolerance\>\"", 
     "0.01", Cell[
     "the tolerance of the action after a path deformation", "TableText",
-     ExpressionUUID->"9799729c-f17a-44ad-a533-87dc1790cfa2"]},
+     ExpressionUUID->"1d120643-25b6-4aa7-bbf1-b304561e08f7"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "afa22234-e853-41ae-b7d8-8ad1aa991a93"], "\"\<BottomlessPotential\>\"", 
+     "5a0ead75-97e7-4458-b24d-66c596dea417"], "\"\<BottomlessPotential\>\"", 
     "False", Cell["\<\
 specifies whether the combination of polygonal plus quartic should be used \
-\>", "TableText",ExpressionUUID->"49d5f0e1-049f-4a91-8305-d71689bb3ff7"]},
+\>", "TableText",ExpressionUUID->"5a5d3c7b-43ab-4a09-8c3e-fad506284538"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "6f905dd5-0ca0-42de-bc7b-9d3059884ca3"], "\"\<Dimension\>\"", "4", Cell[
+     "4b7693aa-7ed0-43ce-90bb-5ea55c2704af"], "\"\<Dimension\>\"", "4", Cell[
     "number of space-time dimensions to be used", "TableText",ExpressionUUID->
-     "2a8a15ed-fa83-4b4f-b071-7edb662cb1e2"]},
+     "47b7d9e8-e5ae-4ea4-94c7-f6ce26c7080c"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "6b8e069c-54c5-41e9-87ce-ed16fe8ec262"], "\"\<FieldPoints\>\"", "31", 
+     "f159bb22-20a0-4626-ae4a-cb9501ef4605"], "\"\<FieldPoints\>\"", "31", 
     RowBox[{
     "the", " ", "segmentation", " ", "in", " ", "field", " ", "space"}]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "7bb77c7e-7452-4c01-97ef-91227581501a"], "Gradient", "Automatic", Cell[
+     "e60ca5d5-ef63-4e29-b703-76fbda75d866"], "Gradient", "Automatic", Cell[
     TextData[{
      "the list of gradient functions ",
      Cell[BoxData[
@@ -230,10 +230,10 @@ specifies whether the combination of polygonal plus quartic should be used \
           StyleBox["y", "TI"]}], "]"}], ",", 
         StyleBox["\[Ellipsis]", "TR"]}], "}"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "b7fe1375-5c2c-48de-ad88-0a5061dcc215"]
-    }], "TableText",ExpressionUUID->"7a9620a8-4560-42ac-86db-de5260445913"]},
+      "cef8e63c-f526-4f8e-a87a-7b31261c40a1"]
+    }], "TableText",ExpressionUUID->"0941ab31-e631-4c0b-8433-933c4cb7b7fc"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "ab3256cb-e8e3-40b5-aeb0-bc93a04c9378"], "Hessian", "Automatic", Cell[
+     "84732942-9b87-4361-81ff-5a399c36f3c7"], "Hessian", "Automatic", Cell[
     TextData[{
      "the hessian matrix of functions ",
      Cell[BoxData[
@@ -268,27 +268,27 @@ specifies whether the combination of polygonal plus quartic should be used \
           StyleBox["\[Ellipsis]", "TR"]}], "}"}], ",", 
         StyleBox["\[Ellipsis]", "TR"]}], "}"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "5fc305c5-8a55-40ef-82b9-185d87c6264e"]
-    }], "TableText",ExpressionUUID->"563ced96-161e-438f-9680-7a36464f3427"]},
+      "b40cdaab-38a3-4845-9b0e-288da8518183"]
+    }], "TableText",ExpressionUUID->"ca373d78-8362-4476-8ad2-b553f1b85ea7"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "ae87fc76-ff21-4c2f-ad7f-dc8ff75d0c60"], "\"\<InitialRadius\>\"", "None",
+     "556de3df-2826-48e0-a2b4-3e47f830911f"], "\"\<InitialRadius\>\"", "None",
      Cell["specifies the value or the initial ansatz of the radius.", 
-     "TableText",ExpressionUUID->"ffbb81b7-8f7f-48e6-8b46-802c55880b43"]},
+     "TableText",ExpressionUUID->"e6e831f5-e23b-44c3-ad37-978b3bd23494"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "76d82352-eb53-453e-97b8-7132c009df64"], 
+     "8fc1bc08-607e-46c0-89d3-66ab7d9b697a"], 
     "\"\<InitialRadiusAccuracyGoal\>\"", "100", Cell[
     "the accuracy sought of the initial radius", "TableText",ExpressionUUID->
-     "4bb0f266-4fc3-4f52-a2bb-30c78f0dc9fe"]},
+     "4f705ae0-814c-4853-85a1-41512979610e"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "afcce3af-c844-42bb-9a53-693f1a66c9bb"], "\"\<MaxPathIterations\>\"", 
+     "8ffbdf63-1fdb-4354-ab99-51533d5f6678"], "\"\<MaxPathIterations\>\"", 
     "3", Cell[
     "maximum number of iterations of the path in field space", "TableText",
-     ExpressionUUID->"f974c400-3179-4f9e-bd65-9c9af21101cf"]},
+     ExpressionUUID->"28260961-e9ff-4c18-9dbf-0ed9f72c5dcf"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "a35bd916-e822-4e47-8375-ad304aa18dda"], "\"\<MaxRadiusIterations\>\"", 
+     "95eaef8a-cbce-4bb7-bf2a-fd9e882334ec"], "\"\<MaxRadiusIterations\>\"", 
     "100", Cell[TextData[Cell[BoxData[
     Cell["maximum number of iterations of the initial radius", "TableText",
-      ExpressionUUID->"89f2815e-c0f6-45e3-844f-98d015aeb1b3"]],
+      ExpressionUUID->"4e9f7e53-2c80-4ef7-b0f8-14bfab95ff66"]],
      CellChangeTimes->{{3.780842842381516*^9, 3.780842863724539*^9}, {
       3.78084290005335*^9, 3.7808429727241488`*^9}, {3.780843004976894*^9, 
       3.780843136188416*^9}, {3.780843169132473*^9, 3.780843262203529*^9}, {
@@ -305,16 +305,16 @@ specifies whether the combination of polygonal plus quartic should be used \
        "Rows" -> {None, None, None, None, None, None, None, {None}}},
      GridBoxDividers->{
       "Rows" -> {{True, True, True, True, True, True, True, True, True}}}},
-     ExpressionUUID->"55062d28-d102-420c-8742-b237fc4fbc0f"]], "TableText",
-     ExpressionUUID->"242edff1-3e0b-4ecb-bd24-6c89025f7a2f"]},
+     ExpressionUUID->"a29a7afa-d768-420e-afd0-93e87039c330"]], "TableText",
+     ExpressionUUID->"b2c5ad02-bf9a-4015-8bfd-42ef249d5fea"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "c5212106-7eaf-4c64-9fc1-cba672552dd6"], "\"\<MidFieldPoint\>\"", "None",
+     "4d5d4d84-d2b4-4017-be01-c605a09c1e15"], "\"\<MidFieldPoint\>\"", "None",
      Cell["inserts an intermediate field point between the two minima", 
-     "TableText",ExpressionUUID->"82ab4d93-6912-4204-85f0-34797df84f79"]},
+     "TableText",ExpressionUUID->"7d90ae9d-7d5e-4046-86dd-2f130a0c2bbb"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "67f5d3c0-6e63-470c-b6bf-841c67f98669"], "\"\<PathTolerance\>\"", "0.01",
+     "131fd83d-bccc-48db-bd9d-c5c0c38948db"], "\"\<PathTolerance\>\"", "0.01",
      Cell["the tolerance of the path deformation", "TableText",ExpressionUUID->
-     "0cc64e79-b6c5-4697-bfcf-2600bfd24b82"]}
+     "ff7a5599-c9a1-47ba-8786-61146f4ba122"]}
   },
   GridBoxAlignment->{
    "Columns" -> {Left, Left, {Left}}, "ColumnsIndexed" -> {}, 
@@ -325,23 +325,23 @@ specifies whether the combination of polygonal plus quartic should be used \
    "Rows" -> {None, None, None, None, None, None, None, {None}}},
  GridBoxDividers->{
   "Rows" -> {{True, True, True, True, True, True, True, True, True}}}},
- CellID->1680388746,ExpressionUUID->"8a8aaad7-6449-43e7-8b02-ff650b1c4b2d"]
+ CellID->1680388746,ExpressionUUID->"42710e61-4d78-4485-9664-826d98b0c4e6"]
 }, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Single field potentials", \
-"Section",ExpressionUUID->"1acdda15-8715-4268-8059-16e2e264e088"],
+"Section",ExpressionUUID->"d117fd07-0421-4d7f-9ed0-688dbee9204e"],
 
 Cell[CellGroupData[{
 
 Cell["Basic example", \
-"Subsection",ExpressionUUID->"3010339a-5181-46fd-990b-2fe230d939f9"],
+"Subsection",ExpressionUUID->"2be6e236-d697-481c-b3c5-e47ba6419552"],
 
 Cell["Find the bounce configuration of a single potential U(\[CurlyPhi]):", \
 "Text", "ApplicationNotes",
- CellID->436901123,ExpressionUUID->"254a2e61-3473-456d-a30a-0462309267b8"],
+ CellID->436901123,ExpressionUUID->"38e891cd-9498-4ec3-96e0-4c1d1106953d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -387,22 +387,27 @@ Cell[BoxData[{
    RowBox[{"PlotStyle", "\[Rule]", 
     RowBox[{"Darker", "[", 
      RowBox[{"Yellow", ",", "0.2"}], "]"}]}]}], "]"}]}], "Input",
- CellLabel->"",ExpressionUUID->"53774bcd-ef38-4215-88ee-15086f8a0586"],
+ CellChangeTimes->{{3.7821260331366463`*^9, 3.782126045136462*^9}, {
+  3.782126759160615*^9, 3.782126826744855*^9}, {3.78214713633694*^9, 
+  3.782147152102788*^9}},
+ CellLabel->"In[86]:=",ExpressionUUID->"4fc847db-652d-45c1-8fbd-9c60aa9859d4"],
 
 Cell["List the properties of the BounceFunction:", "Text", "ApplicationNotes",
- CellID->26471464,ExpressionUUID->"c0e05ef4-0b13-45b4-af8f-103d42a837e2"],
+ 
+ CellID->26471464,ExpressionUUID->"976f2d2d-b537-4261-864b-2d5949365a9a"],
 
 Cell[BoxData[
- RowBox[{"bf", "[", "\"\<Properties\>\"", 
-  "]"}]], "Input",ExpressionUUID->"1910c900-2ad5-43e3-9585-c806499c6c46"],
+ RowBox[{"bf", "[", "\"\<Properties\>\"", "]"}]], "Input",
+ CellLabel->
+  "In[159]:=",ExpressionUUID->"0d66897a-fa76-43b7-8e57-6dc1ed6d3ca4"],
 
 Cell["  Extract the solution from the BounceFunction:", "Text", \
 "ApplicationNotes",
- CellID->181313677,ExpressionUUID->"0325108f-f38d-4a08-a523-cef79c65f55b"],
+ CellID->181313677,ExpressionUUID->"a4e26ee4-b0c9-4e3d-8645-6f9394b7757f"],
 
 Cell[BoxData[
- RowBox[{"bf", "[", "\"\<Dimension\>\"", 
-  "]"}]], "Input",ExpressionUUID->"7b67f1a0-5559-40aa-9616-93ddd27ac1c5"]
+ RowBox[{"bf", "[", "\"\<Dimension\>\"", "]"}]], "Input",
+ CellLabel->"In[160]:=",ExpressionUUID->"bb52e13b-ada8-42a7-8604-32bd0611e199"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -410,12 +415,12 @@ Cell[CellGroupData[{
 Cell[TextData[{
  Cell[BoxData[
   FormBox["Quartic", TraditionalForm]],ExpressionUUID->
-  "e063ddd5-f5f5-4252-9600-9b4d0c4cd833"],
+  "5046eb98-765c-42e1-8816-fe681886743e"],
  " potential: exact solution"
-}], "Subsection",ExpressionUUID->"f48d0271-d4e6-438c-bde1-b5c0a96ec987"],
+}], "Subsection",ExpressionUUID->"ce64951b-544a-48ea-ace6-d2b9399967f6"],
 
 Cell["Compute the potential, extrema and the exact bounce action:", "Text", \
-"ApplicationNotes",ExpressionUUID->"94908a66-dad1-4e0f-8c3e-878f2828b6a3"],
+"ApplicationNotes",ExpressionUUID->"ce9cd0f0-fa82-4932-97ab-9e552c57c77a"],
 
 Cell[BoxData[
  RowBox[{"Module", "[", 
@@ -530,6 +535,7 @@ Cell[BoxData[
          SuperscriptBox["\[Alpha]", "3"]}], " ", "+", " ", 
         RowBox[{"6", 
          SuperscriptBox["\[Alpha]", "2"], "\[CapitalDelta]"}], " ", "+", " ", 
+        
         RowBox[{"4", "\[Alpha]", " ", 
          SuperscriptBox["\[CapitalDelta]", "2"]}], "+", 
         SuperscriptBox["\[CapitalDelta]", "3"], "+", 
@@ -543,13 +549,14 @@ Cell[BoxData[
        SuperscriptBox[
         RowBox[{"(", 
          RowBox[{"1", " ", "-", " ", "\[CapitalDelta]"}], ")"}], "3"]]}]}], 
-    ";"}]}], "\[IndentingNewLine]", 
-  "]"}]], "Input",ExpressionUUID->"395a3345-6afa-451c-aea4-99983b4f82f1"],
+    ";"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->
+  "In[161]:=",ExpressionUUID->"e9ae16d5-6793-4f91-b7d2-9fc33f560288"],
 
 Cell["\<\
 Find the bounce configuration for two different number of field points:\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"05da7d71-3236-4e55-808a-4f47c0cbef0c"],
+"ApplicationNotes",ExpressionUUID->"8063397a-fd47-4c5a-ad0a-6d56fd0ee67f"],
 
 Cell[BoxData[{
  RowBox[{
@@ -593,7 +600,9 @@ Cell[BoxData[{
       RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "200"}]}], "]"}]}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{"BouncePlot", "[", 
-  RowBox[{"bf", ",", "bf200", ",", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"bf", ",", "bf200"}], "}"}], ",", 
    RowBox[{"PlotLabel", "->", 
     RowBox[{"Row", "[", 
      RowBox[{"{", 
@@ -610,18 +619,18 @@ Cell[BoxData[{
        RowBox[{"{", 
         RowBox[{"\"\<\!\(\*SubscriptBox[\(S\), \(N = 200\)]\) = \>\"", ",", 
          RowBox[{"bf200", "[", "\"\<Action\>\"", "]"}]}], "}"}]}]}], 
-     "}"}]}]}], 
-  "]"}], "\[IndentingNewLine]"}], \
-"Input",ExpressionUUID->"2e93185c-f59e-494b-814c-5bee1e780fd9"]
+     "}"}]}]}], "]"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.7814442026655617`*^9, 3.7814442045029984`*^9}},
+ CellLabel->"In[165]:=",ExpressionUUID->"0923297a-3532-4493-88ac-1e43a9f49f67"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Quasi-flat potential", \
-"Subsection",ExpressionUUID->"9121d244-bd38-4026-80d8-b47ce5d6071b"],
+"Subsection",ExpressionUUID->"65737905-587f-486b-a498-780700ae9aaa"],
 
 Cell["Find the bounce configuration for a quasi flat potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"84864a4a-368a-481a-9cc4-a1117dae8f76"],
+"ApplicationNotes",ExpressionUUID->"cd1423cb-7d8e-4f76-ac0a-53758e0761c8"],
 
 Cell[BoxData[{
  RowBox[{
@@ -729,17 +738,17 @@ Cell[BoxData[{
     "\[IndentingNewLine]", "\t", 
     RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", 
      RowBox[{"extrema", "[", 
-      RowBox[{"[", "2", "]"}], "]"}]}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"fd630e5d-e707-4216-8167-1150ab617aae"]
+      RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]}], "Input",
+ CellLabel->"In[168]:=",ExpressionUUID->"603ba0d0-c2ba-4b08-808d-ee0c52ab8776"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Bottomless potential", \
-"Subsection",ExpressionUUID->"4d170bc3-741f-44b5-bee0-b2149995c4a2"],
+"Subsection",ExpressionUUID->"7009b4c7-960e-45da-9f42-4945aefe234e"],
 
 Cell["Find the bounce of a unbounded from below potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"952f582d-4a62-4d6a-99d2-1e63a776c806"],
+"ApplicationNotes",ExpressionUUID->"4fadcc4e-1203-4254-9704-456e4d85fccc"],
 
 Cell[BoxData[{
  RowBox[{
@@ -837,10 +846,12 @@ Cell[BoxData[{
       SuperscriptBox["\[Pi]", "2"], " ", "/", 
       RowBox[{"(", 
        RowBox[{"3", " ", "\[Lambda]"}], ")"}]}], "/", "4"}]}]}], 
-  ";"}]}], "Input",ExpressionUUID->"1450bb4c-9e42-4dfe-9654-fdd5a13adf39"],
+  ";"}]}], "Input",
+ CellLabel->
+  "In[174]:=",ExpressionUUID->"0a9e3749-6432-4f7c-84c7-40d04d8bfaf8"],
 
 Cell["Plot the quartic, the real and the polygonal potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"6c873b6b-ce97-4ea4-a7b0-60917f514265"],
+"ApplicationNotes",ExpressionUUID->"b9513528-6de6-45f6-af37-ab235ce447f2"],
 
 Cell[BoxData[{
  RowBox[{
@@ -905,6 +916,7 @@ Cell[BoxData[{
             RowBox[{"-", "1"}]}], "]"}], "]"}], "]"}]}], "}"}]}], ",", 
      "\[IndentingNewLine]", "\t", 
      RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", "\t", 
+     
      RowBox[{"PlotStyle", "\[Rule]", "Green"}]}], "]"}], ",", 
    "\[IndentingNewLine]", 
    RowBox[{"Plot", "[", 
@@ -918,17 +930,18 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
            RowBox[{"[", "2", "]"}], "]"}], ",", "7"}], "}"}]}]}], "}"}], ",", 
-     RowBox[{"PlotStyle", "\[Rule]", "Green"}]}], "]"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"3dd9b4a9-0d4c-4c45-b315-174c002c085a"]
+     
+     RowBox[{"PlotStyle", "\[Rule]", "Green"}]}], "]"}]}], "]"}]}], "Input",
+ CellLabel->"In[181]:=",ExpressionUUID->"f4236eb9-480f-4047-9ded-5281faa9ddf8"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Intermediate minima & disappearing of instanton", \
-"Subsection",ExpressionUUID->"148826b8-7e10-4aef-a97c-5eebdf483b50"],
+"Subsection",ExpressionUUID->"bfcdd131-b46e-43e7-bcd1-49049e69c944"],
 
 Cell["Plot the potential with V3 as dynamical variable", "Text", \
-"ApplicationNotes",ExpressionUUID->"3df8fa4b-8388-451b-bed4-705491380683"],
+"ApplicationNotes",ExpressionUUID->"ba50ae4b-3249-4691-937c-5ce67d7f83e4"],
 
 Cell[BoxData[
  RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
@@ -950,6 +963,7 @@ Cell[BoxData[
          RowBox[{"0", ",", "4"}], "}"}], ",", "Automatic"}], "}"}]}], ",", 
      "\[IndentingNewLine]", "\t", 
      RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", "\t", 
+     
      RowBox[{"Mesh", "->", "All"}], ",", "\[IndentingNewLine]", "\t", 
      RowBox[{"AxesLabel", "\[Rule]", 
       RowBox[{"{", 
@@ -959,13 +973,15 @@ Cell[BoxData[
     RowBox[{
      RowBox[{"{", 
       RowBox[{"V3", ",", ".5"}], "}"}], ",", "0", ",", "1"}], "}"}]}], 
-  "]"}]], "Input",ExpressionUUID->"eca46e57-6945-4c7d-a0c5-4b91cb185c5f"],
+  "]"}]], "Input",
+ CellLabel->
+  "In[290]:=",ExpressionUUID->"02ba0895-5c71-4087-9129-5cd4d7907524"],
 
 Cell["\<\
 Find the decay rate of a potential with multiple minima as a function of V3 \
 (see above):\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"d3b8befb-e181-4f69-93db-3bbf61539ef9"],
+"ApplicationNotes",ExpressionUUID->"980da30b-2bb0-44ca-8a6b-f47b78f98859"],
 
 Cell[BoxData[{
  RowBox[{
@@ -986,7 +1002,7 @@ Cell[BoxData[{
       RowBox[{"PlotLegends", "\[Rule]", 
        RowBox[{"{", 
         RowBox[{
-        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(ABC\)]\)\>\"", ",", 
+        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AC\)]\)\>\"", ",", 
          "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AB\)]\)\>\"", ",", 
          "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(BC\)]\)\>\"", ",", 
          "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(Total\)]\)\>\""}], 
@@ -1002,54 +1018,56 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{
    RowBox[{
-    RowBox[{"DecayRates", "[", "V3_", "]"}], ":=", 
-    RowBox[{"Module", "[", " ", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{
-       "ABC", ",", "AB", ",", "BC", ",", "total", ",", "fieldPoints"}], "}"}],
-       ",", " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{"DecayRates", "[", 
+     RowBox[{"V3_", "?", "NumericQ"}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"DecayRates", "[", "V3", "]"}], "=", 
+     RowBox[{"Module", "[", " ", 
       RowBox[{
-       RowBox[{"fieldPoints", " ", "=", " ", 
-        RowBox[{"{", 
-         RowBox[{
-          RowBox[{"{", 
-           RowBox[{"0", ",", "0"}], "}"}], ",", 
-          RowBox[{"{", 
-           RowBox[{"1", ",", "2"}], "}"}], ",", 
-          RowBox[{"{", 
-           RowBox[{"2", ",", "V3"}], "}"}], ",", 
-          RowBox[{"{", 
-           RowBox[{"3", ",", "2"}], "}"}], ",", 
-          RowBox[{"{", 
-           RowBox[{"4", ",", "1"}], "}"}]}], "}"}]}], ";", 
-       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{
+        "ABC", ",", "AB", ",", "BC", ",", "total", ",", "fieldPoints"}], 
+        "}"}], ",", " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
        RowBox[{
-        RowBox[{"{", 
-         RowBox[{"ABC", ",", "AB", ",", "BC"}], "}"}], " ", "=", 
-        RowBox[{"IntegerPart", "@", " ", 
-         RowBox[{"{", "\[IndentingNewLine]", "\t", 
+        RowBox[{"fieldPoints", " ", "=", " ", 
+         RowBox[{"{", 
           RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", "2"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"2", ",", "V3"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"3", ",", "2"}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"4", ",", "1"}], "}"}]}], "}"}]}], ";", 
+        "\[IndentingNewLine]", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"ABC", ",", "AB", ",", "BC"}], "}"}], " ", "=", 
+         RowBox[{"IntegerPart", "@", " ", 
+          RowBox[{"{", "\[IndentingNewLine]", "\t", 
            RowBox[{
-            RowBox[{"FindBounce", "[", "fieldPoints", "]"}], "[", 
-            "\"\<Action\>\"", "]"}], "\[IndentingNewLine]", "\t", ",", 
-           "\[IndentingNewLine]", "\t", 
-           RowBox[{
-            RowBox[{"FindBounce", "[", 
-             RowBox[{"fieldPoints", "[", 
-              RowBox[{"[", 
-               RowBox[{"1", ";;", "3"}], "]"}], "]"}], "   ", "]"}], "[", 
-            "\"\<Action\>\"", "]"}], "\[IndentingNewLine]", "\t", ",", 
-           "\[IndentingNewLine]", "\t", 
-           RowBox[{
-            RowBox[{"FindBounce", "[", 
-             RowBox[{"fieldPoints", "[", 
-              RowBox[{"[", 
-               RowBox[{"3", ";;", "5"}], "]"}], "]"}], " ", "]"}], "[", 
-            "\"\<Action\>\"", "]"}]}], "\[IndentingNewLine]", "}"}]}]}], ";", 
-       "\[IndentingNewLine]", "\[IndentingNewLine]", 
-       RowBox[{"total", " ", "=", " ", 
-        RowBox[{"{", 
+            RowBox[{
+             RowBox[{"FindBounce", "[", "fieldPoints", "]"}], "[", 
+             "\"\<Action\>\"", "]"}], "\[IndentingNewLine]", "\t", ",", 
+            "\[IndentingNewLine]", "\t", 
+            RowBox[{
+             RowBox[{"FindBounce", "[", 
+              RowBox[{"fieldPoints", "[", 
+               RowBox[{"[", 
+                RowBox[{"1", ";;", "3"}], "]"}], "]"}], " ", "]"}], "[", 
+             "\"\<Action\>\"", "]"}], "\[IndentingNewLine]", "\t", ",", 
+            "\[IndentingNewLine]", "\t", 
+            RowBox[{
+             RowBox[{"FindBounce", "[", 
+              RowBox[{"fieldPoints", "[", 
+               RowBox[{"[", 
+                RowBox[{"3", ";;", "5"}], "]"}], "]"}], " ", "]"}], "[", 
+             "\"\<Action\>\"", "]"}]}], "\[IndentingNewLine]", "}"}]}]}], ";",
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+        RowBox[{"total", " ", "=", " ", 
          RowBox[{
           RowBox[{
            RowBox[{"Exp", "[", 
@@ -1067,49 +1085,90 @@ Cell[BoxData[{
            RowBox[{
             RowBox[{"NumericQ", "[", "ABC", "]"}], ",", 
             RowBox[{"Exp", "[", 
-             RowBox[{"-", "ABC"}], "]"}], ",", "0"}], "]"}]}], "}"}]}], ";", 
-       "\[IndentingNewLine]", "\[IndentingNewLine]", 
-       RowBox[{"Join", "[", 
-        RowBox[{
-         RowBox[{"Exp", "@", 
+             RowBox[{"-", "ABC"}], "]"}], ",", "0"}], "]"}]}]}], ";", 
+        "\[IndentingNewLine]", "\[IndentingNewLine]", 
+        RowBox[{"Join", "[", 
+         RowBox[{
           RowBox[{"{", 
-           RowBox[{
-            RowBox[{"-", "AB"}], ",", 
-            RowBox[{"-", "BC"}], ",", 
-            RowBox[{"-", "ABC"}]}], "}"}]}], ",", 
-         RowBox[{"{", "total", "}"}]}], "]"}]}]}], " ", "]"}]}], ";"}], 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"NumericQ", "[", "ABC", "]"}], ",", 
+             RowBox[{"Exp", "[", 
+              RowBox[{"-", "ABC"}], "]"}], ",", "0"}], "]"}], "}"}], ",", 
+          RowBox[{"Exp", "@", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "AB"}], ",", 
+             RowBox[{"-", "BC"}]}], "}"}]}], ",", 
+          RowBox[{"{", "total", "}"}]}], "]"}]}]}], " ", "]"}]}]}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"LogPlot", "[", 
    RowBox[{
-    RowBox[{"Evaluate", "@", 
-     RowBox[{"DecayRates", "[", "V3", "]"}]}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+       RowBox[{"[", "1", "]"}], "]"}], ",", 
+      RowBox[{
+       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+       RowBox[{"[", "2", "]"}], "]"}], ",", 
+      RowBox[{
+       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+       RowBox[{"[", "3", "]"}], "]"}], ",", 
+      RowBox[{
+       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+       RowBox[{"[", "4", "]"}], "]"}]}], "}"}], ",", 
     RowBox[{"{", 
      RowBox[{"V3", ",", ".5", ",", ".7"}], "}"}], ",", 
     RowBox[{"Evaluate", "@", "OptionPlot"}]}], "]"}], "//", 
-  "Quiet"}]}], "Input",ExpressionUUID->"c56ef9ef-bc38-44e6-9bc5-225bf0bda52f"]
+  "Quiet"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Clear", "[", "DecayRates", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{
+  3.7814442894759617`*^9, {3.781444461089333*^9, 3.7814445355826893`*^9}, {
+   3.7814445901208344`*^9, 3.781444649015394*^9}, {3.7814446819289417`*^9, 
+   3.781444712302785*^9}, {3.781444750985113*^9, 3.7814447721512823`*^9}, {
+   3.781445016209096*^9, 3.7814450189933863`*^9}, {3.7814453637240763`*^9, 
+   3.7814454026335506`*^9}, {3.782122924653179*^9, 3.782123011390678*^9}, {
+   3.7821230449446363`*^9, 3.782123051710784*^9}, 3.7821230838997707`*^9, {
+   3.782123126233132*^9, 3.7821231735587378`*^9}, {3.782123214320464*^9, 
+   3.78212324691098*^9}, {3.782123288152422*^9, 3.7821232948153048`*^9}, {
+   3.782123348167054*^9, 3.782123385248667*^9}, {3.782123421776587*^9, 
+   3.782123421854694*^9}, {3.7821235154893217`*^9, 3.7821235169589033`*^9}, {
+   3.782123703529449*^9, 3.782123735310742*^9}, {3.7821243982573547`*^9, 
+   3.782124466639213*^9}, {3.7821245118167973`*^9, 3.7821245425514507`*^9}, {
+   3.7821245824333878`*^9, 3.782124627415246*^9}, {3.782124800553083*^9, 
+   3.7821248007028637`*^9}, {3.78212485804114*^9, 3.782124899318861*^9}, {
+   3.782124957920385*^9, 3.782124963078919*^9}, {3.78212500794531*^9, 
+   3.7821250701907997`*^9}, 3.782125107287953*^9, 3.782125200561027*^9, {
+   3.782125250273335*^9, 3.782125250695345*^9}, {3.782125284129696*^9, 
+   3.782125327631587*^9}, {3.7821253704653587`*^9, 3.782125409695496*^9}, {
+   3.782125441859405*^9, 3.782125457671639*^9}, {3.782125773465172*^9, 
+   3.782125842503841*^9}},
+ CellLabel->"In[286]:=",ExpressionUUID->"aa55855e-f0c2-433e-9e98-289085a834fc"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Multi-field potentials", \
-"Section",ExpressionUUID->"2273a431-44e1-46d8-9558-838d34b3cf20"],
+"Section",ExpressionUUID->"242781aa-14ac-40c9-8e8a-402e8958a1d2"],
 
 Cell[CellGroupData[{
 
 Cell["Two field potential", \
-"Subsection",ExpressionUUID->"430c6321-009a-45e6-a11e-c3578df0aaaa"],
+"Subsection",ExpressionUUID->"31a8cea8-8edb-43d3-81aa-adaf9c53e730"],
 
 Cell[CellGroupData[{
 
 Cell["Thin wall potentials", \
-"Subsubsection",ExpressionUUID->"d566d914-c1cc-47f8-8ec1-9288eb89404a"],
+"Subsubsection",ExpressionUUID->"77380a12-26d7-40b6-aa1a-b6364875afe5"],
 
 Cell["\<\
 Find the bounce configuration of a two fields thin wall potential:\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"7007283a-c259-4379-845a-ad3e2c158b1a"],
+"ApplicationNotes",ExpressionUUID->"2251b7c7-bca5-4c16-85a5-c7caae3bdc1a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1253,18 +1312,19 @@ Cell[BoxData[{
       RowBox[{"\[Rho]", ",", "0", ",", 
        RowBox[{"Max", "@", 
         RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}]}]}], "}"}]}], "]"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"e28698cb-196e-483d-a6ca-b58381b505dc"]
+  "]"}]}], "Input",
+ CellLabel->"In[237]:=",ExpressionUUID->"34cf8c18-d076-4da3-83b9-0cb8147c5be1"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Thick wall potentials", \
-"Subsubsection",ExpressionUUID->"37b28e7d-79c4-4363-9183-dd412997d553"],
+"Subsubsection",ExpressionUUID->"0b3785cd-ebe5-4939-960f-5ee4edc986bc"],
 
 Cell["\<\
 Find the bounce configuration of a two fields thick wall potential:\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"a72d85c6-b3c5-49b5-a3df-12721e351f67"],
+"ApplicationNotes",ExpressionUUID->"a6ffa392-6050-45cd-b359-9cb1a7cc381f"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1408,22 +1468,23 @@ Cell[BoxData[{
       RowBox[{"\[Rho]", ",", "0", ",", 
        RowBox[{"Max", "@", 
         RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}]}]}], "}"}]}], "]"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"7bbec2d2-3bb9-4df1-b7fe-b74d39897c9c"]
+  "]"}]}], "Input",
+ CellLabel->"In[243]:=",ExpressionUUID->"fc030f89-3e04-4e09-9329-38696f751493"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Three field potential", \
-"Subsection",ExpressionUUID->"15222797-f73d-43e8-95b4-97f601e8e77f"],
+"Subsection",ExpressionUUID->"502917f9-24cb-49c2-b7d4-f5c6ccd62624"],
 
 Cell[CellGroupData[{
 
 Cell["Potential", \
-"Subsubsection",ExpressionUUID->"e7945a98-a0ae-40d0-a9e4-6018dcf7a307"],
+"Subsubsection",ExpressionUUID->"d909bbb5-e575-4235-b096-bb9b764230b3"],
 
 Cell["Plot the multi-field potential:", "Text", "ApplicationNotes",
- CellID->1862495724,ExpressionUUID->"ba340c08-cd92-4f39-91b7-2b8dcf9ada95"],
+ CellID->1862495724,ExpressionUUID->"c94bfc9a-8cdb-4d84-bfb7-bcd2d696ca7b"],
 
 Cell[BoxData[
  RowBox[{
@@ -1525,17 +1586,17 @@ Cell[BoxData[
     RowBox[{"\[CurlyPhi]s", " ", "=", " ", 
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2", ",", "\[CurlyPhi]3"}], 
-      "}"}]}], ";"}]}]}]], \
-"Input",ExpressionUUID->"de4261c7-ee59-4f93-9e1e-998d0b48af15"]
+      "}"}]}], ";"}]}]}]], "Input",
+ CellLabel->"In[249]:=",ExpressionUUID->"06555611-89e4-4f52-9d37-8998797dce57"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Find & classify the minima", \
-"Subsubsection",ExpressionUUID->"1ae21da9-6636-4760-b23d-c068dfcd8173"],
+"Subsubsection",ExpressionUUID->"15e07c83-7a3a-402f-b605-58fe8c09f919"],
 
 Cell["Find and classifies the minima:", "Text", "ApplicationNotes",
- CellID->1017313013,ExpressionUUID->"c6a4b6ad-7972-48ef-805e-ca6705f6f3e5"],
+ CellID->1017313013,ExpressionUUID->"24b3602a-9fb1-4eac-8999-3630dc5bac8a"],
 
 Cell[BoxData[
  RowBox[{
@@ -1704,16 +1765,17 @@ Cell[BoxData[
    RowBox[{"Row", "[", 
     RowBox[{"{", 
      RowBox[{"\"\<type of Minima: \>\"", ",", "typeV"}], "}"}], 
-    "]"}]}]}]], "Input",ExpressionUUID->"c28b833c-5d52-493c-b248-68b853718864"]
+    "]"}]}]}]], "Input",
+ CellLabel->"In[251]:=",ExpressionUUID->"999c06f7-fb0c-45ba-9f07-52275fc0633d"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Tools for 3D", \
-"Subsubsection",ExpressionUUID->"a59cf84a-e7cd-46f8-9f01-dbd1ceecd758"],
+"Subsubsection",ExpressionUUID->"e37d6930-56e0-4f88-b3f1-f1fd494cafbc"],
 
 Cell["Define the option values for plotting in 3D:", "Text", \
-"ApplicationNotes",ExpressionUUID->"4b90035e-5214-49e0-a428-bfe2380083db"],
+"ApplicationNotes",ExpressionUUID->"c89b1031-cf78-4ba3-bace-2f4546392664"],
 
 Cell[BoxData[
  RowBox[{
@@ -1914,19 +1976,19 @@ Cell[BoxData[
             RowBox[{"{", 
              RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}]}], ",", 
          RowBox[{"PlotStyle", "\[Rule]", "Orange"}]}], "]"}]}], 
-      "\[IndentingNewLine]", "]"}]}], 
-    ";"}]}]}]], "Input",ExpressionUUID->"7bddff42-6478-41c9-82e0-7855f31b67f0"]
+      "\[IndentingNewLine]", "]"}]}], ";"}]}]}]], "Input",
+ CellLabel->"In[253]:=",ExpressionUUID->"42547f34-9e0d-4316-9be1-3572d4b62ffa"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Bounce", \
-"Subsubsection",ExpressionUUID->"364debdc-805a-4c33-ac30-e006e9f3f046"],
+"Subsubsection",ExpressionUUID->"34bdaf76-8cd7-43b0-a907-7f88e41b071b"],
 
 Cell["\<\
 Find and plot the bounce configuration for three fields potential:\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"44d28fc6-3c3c-4d35-a72b-664dd054c36c"],
+"ApplicationNotes",ExpressionUUID->"875a1542-60be-43be-bfb5-eb2df1201be3"],
 
 Cell[BoxData[{
  RowBox[{"bf", " ", "=", " ", 
@@ -1969,6 +2031,7 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{
        RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], "[", 
+      
       RowBox[{"[", 
        RowBox[{"{", 
         RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}], ",", 
@@ -1984,20 +2047,21 @@ Cell[BoxData[{
     RowBox[{"contourZ", "[", 
      RowBox[{"Show", "[", 
       RowBox[{"plotZ", ",", "Bounce2DProjection"}], "]"}], "]"}]}], "}"}], 
-  "]"}]}], "Input",ExpressionUUID->"b997432c-7dc5-4643-a730-5e0aa932ee70"]
+  "]"}]}], "Input",
+ CellLabel->"In[258]:=",ExpressionUUID->"d2921be3-9b35-4809-a00c-57c7200b6730"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["N-Fields Potential", \
-"Subsection",ExpressionUUID->"f206a06c-7c44-49a6-b67c-a5e30539ea98"],
+"Subsection",ExpressionUUID->"75c09dc9-d839-4724-8857-31320f554670"],
 
 Cell["\<\
 Defines the N-fields potential, where N is arbitrary and discriminate the \
 typo of extrema computed with FindRoot:\
 \>", "Text", "ApplicationNotes",
- CellID->1442606652,ExpressionUUID->"fa1cb97f-3b2a-4d1b-8a82-421df4da7ce8"],
+ CellID->1442606652,ExpressionUUID->"95c62a5e-6a54-4e3d-b663-0a501a4cee37"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2130,22 +2194,24 @@ Cell[BoxData[{
            RowBox[{"i", ",", "1"}], "]"}], "]"}], " ", ">", "0"}], ",", 
         "\"\<Minimum\>\"", ",", "\"\<Maximum\>\""}], "]"}]}], "]"}], ",", 
     RowBox[{"{", 
-     RowBox[{"i", ",", "2"}], "}"}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"8217d5d2-b3a2-4486-a7f5-bd4e69b7a0a2"],
+     RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "Input",
+ CellLabel->
+  "In[263]:=",ExpressionUUID->"99929f96-3f9b-4940-a205-16a8eb670fd1"],
 
 Cell["\<\
 Find the bounce configuration for the N-fields potential (if its extrema are \
 minima):\
 \>", "Text", "ApplicationNotes",
- CellID->1243994596,ExpressionUUID->"7ef5ad35-ddea-422e-9edc-8d80cd13fc31"],
+ CellID->1243994596,ExpressionUUID->"603eef2c-059d-42ff-8b74-2c2a9de67fed"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", " ", 
   RowBox[{"FindBounce", "[", 
    RowBox[{
     RowBox[{"V", "[", "\[CapitalPhi]", "]"}], ",", "\[CapitalPhi]", ",", 
-    "minima"}], 
-   "]"}]}]], "Input",ExpressionUUID->"c7e63819-1ebb-419c-877e-1466ffd508bc"],
+    "minima"}], "]"}]}]], "Input",
+ CellLabel->
+  "In[271]:=",ExpressionUUID->"8935bbdf-0b0d-4cd9-afad-69c4f81386ab"],
 
 Cell[BoxData[
  RowBox[{"Plot", "[", 
@@ -2167,24 +2233,25 @@ Cell[BoxData[
         RowBox[{"{", 
          RowBox[{"1", ",", 
           RowBox[{"-", "1"}]}], "}"}], "]"}], "]"}]}]}], "}"}]}], 
-  "]"}]], "Input",ExpressionUUID->"da749db2-3ef4-4a69-b30d-fe9c194faf66"]
+  "]"}]], "Input",
+ CellLabel->"In[272]:=",ExpressionUUID->"97019850-9342-46da-a5b9-69766d00e32a"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Dynamical examples", \
-"Section",ExpressionUUID->"71cee1dc-6957-4aa2-a5cb-e6d74b0c358d"],
+"Section",ExpressionUUID->"5e003193-395f-4797-acca-3a17bf954807"],
 
 Cell[CellGroupData[{
 
 Cell["Single field potential", \
-"Subsection",ExpressionUUID->"76630c99-9330-4ed1-b234-b82be4b3e900"],
+"Subsection",ExpressionUUID->"f243884b-9de7-49de-8f23-7264b437d751"],
 
 Cell["\<\
 Find the bounce configuration of a arbitrary dynamical potential:\
 \>", "Text", \
-"ApplicationNotes",ExpressionUUID->"246c7bcc-af38-4016-b771-ea0d7d54b57b"],
+"ApplicationNotes",ExpressionUUID->"9fc0878e-602e-41e7-8db1-47919113e6fb"],
 
 Cell[BoxData[
  RowBox[{"DynamicModule", "[", "\[IndentingNewLine]", 
@@ -2195,7 +2262,8 @@ Cell[BoxData[
       RowBox[{"{", 
        RowBox[{
         RowBox[{"{", 
-         RowBox[{"1", ",", "0"}], "}"}], ",", 
+         RowBox[{".5", ",", 
+          RowBox[{"-", ".5"}]}], "}"}], ",", 
         RowBox[{"{", 
          RowBox[{"2", ",", "2"}], "}"}], ",", 
         RowBox[{"{", 
@@ -2220,6 +2288,7 @@ Cell[BoxData[
               RowBox[{"Line", "[", "pts", "]"}]}], "}"}], ",", 
             "\[IndentingNewLine]", 
             RowBox[{"Frame", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", 
+            
             RowBox[{"PlotRange", "\[Rule]", 
              RowBox[{"{", 
               RowBox[{
@@ -2234,6 +2303,13 @@ Cell[BoxData[
              RowBox[{"{", 
               RowBox[{"\"\<\[CurlyPhi]\>\"", ",", "\"\<V(\[CurlyPhi])\>\""}], 
               "}"}]}], ",", "\[IndentingNewLine]", 
+            RowBox[{"LabelStyle", "->", 
+             RowBox[{"Directive", "[", 
+              RowBox[{"Black", ",", 
+               RowBox[{"FontSize", "->", "14"}], ",", " ", 
+               RowBox[{"FontFamily", "->", "\"\<Times New Roman\>\""}], ",", 
+               RowBox[{"FontSlant", "->", "Plain"}]}], "]"}]}], ",", 
+            "\[IndentingNewLine]", 
             RowBox[{"ImageSize", "\[Rule]", 
              RowBox[{"{", 
               RowBox[{"Automatic", ",", "200"}], "}"}]}], ",", 
@@ -2267,8 +2343,74 @@ Cell[BoxData[
               RowBox[{"{", 
                RowBox[{"Automatic", ",", "200"}], "}"}]}], ",", 
              "\[IndentingNewLine]", 
-             RowBox[{"LabelStyle", "\[Rule]", "12"}]}], "\[IndentingNewLine]",
-             "]"}], ",", "\[IndentingNewLine]", 
+             RowBox[{"LabelStyle", "->", 
+              RowBox[{"Directive", "[", 
+               RowBox[{"Black", ",", 
+                RowBox[{"FontSize", "->", "14"}], ",", " ", 
+                RowBox[{"FontFamily", "->", "\"\<Times New Roman\>\""}], ",", 
+                
+                RowBox[{"FontSlant", "->", "Plain"}]}], "]"}]}], ",", 
+             "\[IndentingNewLine]", 
+             RowBox[{"GridLines", "\[Rule]", "None"}], ",", 
+             "\[IndentingNewLine]", 
+             RowBox[{"PlotRange", "\[Rule]", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"0", ",", "30"}], "}"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"-", "1"}], ",", "7"}], "}"}]}], "}"}]}], ",", 
+             "\[IndentingNewLine]", 
+             RowBox[{"PlotStyle", "\[Rule]", 
+              RowBox[{"Darker", "[", 
+               RowBox[{"Yellow", ",", ".2"}], "]"}]}], ",", 
+             "\[IndentingNewLine]", 
+             RowBox[{"Epilog", "\[Rule]", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"Darker", "[", 
+                 RowBox[{"Yellow", ",", ".2"}], "]"}], ",", 
+                RowBox[{"AbsoluteThickness", "[", "1.6", "]"}], ",", 
+                "\[IndentingNewLine]", 
+                RowBox[{"Line", "[", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}], "}"}], "]"}], 
+                ",", "\[IndentingNewLine]", 
+                RowBox[{"Line", "[", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
+                    RowBox[{"[", 
+                    RowBox[{"-", "1"}], "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
+                    RowBox[{"[", 
+                    RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], ",", 
+                   RowBox[{"{", 
+                    RowBox[{"30", ",", 
+                    RowBox[{
+                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
+                    RowBox[{"[", 
+                    RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}]}], "}"}], 
+                 "]"}]}], "}"}]}]}], "\[IndentingNewLine]", "]"}], ",", 
+           "\[IndentingNewLine]", 
            RowBox[{"Graphics", "[", 
             RowBox[{
              RowBox[{"{", "}"}], ",", 
@@ -2276,18 +2418,31 @@ Cell[BoxData[
              RowBox[{"FrameTicks", "\[Rule]", "None"}]}], "]"}]}], 
           "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}], 
       "\[IndentingNewLine]", "}"}], "]"}]}]}], "\[IndentingNewLine]", 
-  "]"}]], "Input",ExpressionUUID->"cd1a3d3f-7fd6-451f-b122-c20c30c837d6"]
+  "]"}]], "Input",
+ CellChangeTimes->{{3.78212622835367*^9, 3.782126237888193*^9}, {
+   3.782126272096113*^9, 3.782126307647579*^9}, {3.7821264040571003`*^9, 
+   3.782126440527866*^9}, {3.782126645937208*^9, 3.782126647680183*^9}, {
+   3.782126918386445*^9, 3.782127001447858*^9}, {3.782127199257955*^9, 
+   3.7821272416558933`*^9}, {3.7821272734981537`*^9, 3.782127276407872*^9}, {
+   3.782127428841155*^9, 3.782127457672166*^9}, {3.78212750529828*^9, 
+   3.7821275319602757`*^9}, {3.782127591274506*^9, 3.782127703256322*^9}, {
+   3.782127843634446*^9, 3.7821278521844177`*^9}, {3.7821279931622066`*^9, 
+   3.782128033394977*^9}, {3.7821280744912977`*^9, 3.7821281124187927`*^9}, 
+   3.782128152268249*^9, {3.782128243338311*^9, 3.7821283565536747`*^9}, {
+   3.7821284337548323`*^9, 3.782128439792232*^9}, {3.7821284939859457`*^9, 
+   3.782128516896534*^9}},
+ CellLabel->"In[507]:=",ExpressionUUID->"4f5557e6-9b71-4fea-8d97-bdc01ed1d063"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Two field potential ", \
-"Subsection",ExpressionUUID->"aaddd4a4-d4c3-4225-a269-2e40f34dedb0"],
+"Subsection",ExpressionUUID->"0fdefa4a-26a8-4bba-ac7d-fd1e4a7c6013"],
 
 Cell["\<\
 Find the bounce configuration for two field dynamical potential\
 \>", "Text", "ApplicationNotes",
- CellID->1331207245,ExpressionUUID->"85192974-f4ea-444d-876a-9a0a7e9e0d3a"],
+ CellID->1331207245,ExpressionUUID->"ac179540-abd5-447d-8e54-f4dd76574265"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2297,7 +2452,7 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"Clear", "[", 
     RowBox[{"potential", ",", "gradient", ",", "hessian"}], "]"}], ";"}], 
-  "\n"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"potential", "[", 
@@ -2392,12 +2547,13 @@ Cell[BoxData[{
             ",", 
            RowBox[{"{", 
             RowBox[{"\[Epsilon]1", ",", "\[Epsilon]2"}], "}"}]}], "}"}], ",", 
+         
          RowBox[{"{", 
           RowBox[{"\[Phi]1", ",", "\[Phi]2"}], "}"}]}], "]"}], ",", 
        "\[IndentingNewLine]", 
        RowBox[{"{", 
         RowBox[{"\[Phi]1", ",", "\[Phi]2"}], "}"}]}], "\[IndentingNewLine]", 
-      "]"}]}]}], ";"}], "\n"}], "\[IndentingNewLine]", 
+      "]"}]}]}], ";"}], "\[IndentingNewLine]"}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"initialExtrema", "=", 
@@ -2409,7 +2565,7 @@ Cell[BoxData[{
        RowBox[{"6.259", ",", "6.007"}], "}"}], ",", 
       RowBox[{"{", 
        RowBox[{"20.", ",", "0."}], "}"}]}], "}"}]}], ";"}], 
-  "\n"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\n", 
  RowBox[{"Manipulate", "[", " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
@@ -2461,6 +2617,7 @@ Cell[BoxData[{
             ",", 
            RowBox[{"{", 
             RowBox[{"\[Epsilon]1", ",", "\[Epsilon]2"}], "}"}]}], "}"}], ",", 
+         
          RowBox[{"{", 
           RowBox[{"\[Phi]1", ",", "\[Phi]2"}], "}"}]}], "]"}], ",", 
        RowBox[{"{", 
@@ -2534,6 +2691,7 @@ Cell[BoxData[{
         RowBox[{"{", 
          RowBox[{"\[Phi]2", ",", 
           RowBox[{"-", "5"}], ",", "25"}], "}"}], ",", "\[IndentingNewLine]", 
+        
         RowBox[{"Epilog", "\[Rule]", 
          RowBox[{"{", 
           RowBox[{
@@ -2627,24 +2785,27 @@ Cell[BoxData[{
       ",", "1", ",", 
      RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}]}], 
   "\[IndentingNewLine]", " ", "]"}]}], "Input",
- CellLabel->"In[32]:=",ExpressionUUID->"28c49cdc-25b1-4f0d-ac7c-df89b20fdcbc"]
+ CellLabel->"In[508]:=",ExpressionUUID->"8297fe09-8d9c-4468-a250-9db61621e0b7"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Options", \
-"Section",ExpressionUUID->"f40bcba1-aa9f-4840-bb1c-79d8fbd2a31f"],
+"Section",ExpressionUUID->"71cb7ad5-8128-4b80-8b0c-60835ede6bcc"],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]ActionTolerance\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"d20b634a-0879-46fc-bc3b-3662e1a1a3a6"],
+"Subsection",
+ CellChangeTimes->{{3.782126059886305*^9, 
+  3.7821260752143793`*^9}},ExpressionUUID->"dfcdf500-e43d-41c6-97ce-\
+e5ab3a581f1e"],
 
 Cell["\<\
 Find the bounce configuration for different tolerance of the action:\
 \>", "Text",
- CellID->1837602838,ExpressionUUID->"a1d61a69-fcd8-4fe9-bc30-d8643a179f34"],
+ CellID->1837602838,ExpressionUUID->"dde33640-3073-470f-9bcb-86fd6394fc5c"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2758,19 +2919,21 @@ Cell[BoxData[{
       RowBox[{
       "\"\<ActionTolerance\>\"", ",", "\"\<Action\>\"", ",", 
        "\"\<PathIterations\>\""}], "}"}], "}"}], ",", "bf"}], 
-   "]"}]}]}], "Input",ExpressionUUID->"dacde2d7-94da-4e4e-bb31-feab180f8720"]
+   "]"}]}]}], "Input",
+ CellLabel->
+  "In[90]:=",ExpressionUUID->"87e5daef-fd59-474f-8da8-09ac17273df2"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]BottomlessPotential\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"b2166cc8-9fcc-4430-a17d-60eba2f6edd3"],
+"Subsection",ExpressionUUID->"a7b4b0ac-214a-4501-9880-c24a24dc7b38"],
 
 Cell["\<\
 Find the bounce configuration for a single field unbounded from below \
 potential:\
 \>", "Text",
- CellID->380837463,ExpressionUUID->"2c3467d6-1ec2-47b9-b283-fe0729ba2e78"],
+ CellID->380837463,ExpressionUUID->"42a3401b-ba7f-49c0-b9be-633bd18e323d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2822,10 +2985,11 @@ Cell[BoxData[{
        RowBox[{"[", "2", "]"}], "]"}], ",", "3"}], "}"}], ",", 
     "\[IndentingNewLine]", "\t\t", 
     RowBox[{"\"\<BottomlessPotential\>\"", "\[Rule]", "True"}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"42881e38-2c9e-4708-9beb-0d316b9b5923"],
+   "]"}]}]}], "Input",
+ CellLabel->"In[85]:=",ExpressionUUID->"93a6f974-c6fd-410e-897c-626dc5df8ec0"],
 
 Cell[" Plot quartic, quartic-Polygonal,Polygonal bounce:", "Text",
- CellID->140808809,ExpressionUUID->"f503a077-d559-4c4f-90ee-35e2228230d6"],
+ CellID->140808809,ExpressionUUID->"68dc30fa-669f-43b4-ab5e-25361d8aed16"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2934,21 +3098,23 @@ Cell[BoxData[{
      RowBox[{"PlotStyle", "\[Rule]", "Purple"}], ",", "\[IndentingNewLine]", 
      "\t", 
      RowBox[{"PlotLegends", "\[Rule]", 
-      RowBox[{"{", "\"\<Polygnal-Quartic\>\"", "}"}]}]}], "]"}], ",", 
+      RowBox[{"{", "\"\<Polygnal+Quartic\>\"", "}"}]}]}], "]"}], ",", 
    "\[IndentingNewLine]", 
-   RowBox[{"PlotRange", "->", "All"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"6aba37ac-7814-431a-b1e1-4a0f8bdbb67d"]
+   RowBox[{"PlotRange", "->", "All"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.7821459592602053`*^9, 3.782145959519103*^9}},
+ CellLabel->
+  "In[93]:=",ExpressionUUID->"660a7525-c6f3-4276-b64f-91004394d04a"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]Dimension\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"b1b75194-8c8a-453a-aaba-013bdc7ed139"],
+"Subsection",ExpressionUUID->"b5ac0fd0-7da3-4790-b006-ee4afebfed13"],
 
 Cell["\<\
 Find the bounce field configuration for different space-time dimensions:\
 \>", "Text",
- CellID->1333572201,ExpressionUUID->"27b76d86-b6a6-4ae3-b76b-89c9ffd92ef8"],
+ CellID->1333572201,ExpressionUUID->"fc0e7305-e7c7-4a5c-9340-c47d0d3e8cad"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3004,21 +3170,23 @@ Cell[BoxData[{
    RowBox[{"PlotLegends", "\[Rule]", 
     RowBox[{"{", 
      RowBox[{"\"\<D = 3\>\"", ",", "\"\<D = 4\>\""}], "}"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"a6f7de93-3545-4ce0-aeb6-e7fda5af6d3c"]
+  "]"}]}], "Input",
+ CellLabel->
+  "In[97]:=",ExpressionUUID->"b39c2c97-e62d-4233-884c-ad3e4e7e7b23"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]FieldPoints\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"8da1b007-1c7d-434d-927a-76a6248a25be"],
+"Subsection",ExpressionUUID->"7922877d-c56b-493f-8610-461d6d961514"],
 
 Cell[CellGroupData[{
 
 Cell["Changing the number of fields points", \
-"Subsubsection",ExpressionUUID->"8c188acb-83cb-4bbd-9ee1-fd9cf5254fa8"],
+"Subsubsection",ExpressionUUID->"7a118d85-89b3-4f49-b280-1deb538b511b"],
 
 Cell["Find the bounce configuration for different field points:", "Text",
- CellID->1611372145,ExpressionUUID->"49e8eefd-7066-4381-9fda-c55f60688c24"],
+ CellID->1611372145,ExpressionUUID->"0c614104-3bb9-49fe-bb36-86981c6eecc5"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3083,20 +3251,20 @@ Cell[BoxData[{
           RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Action\>\"", "]"}], 
         "]"}]}], ",", 
       RowBox[{"{", 
-       RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"1e48bde9-bb8b-45a9-9c25-9cfe4e2ba661"]
+       RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellLabel->"In[101]:=",ExpressionUUID->"82e5b0a1-b0af-4bf8-b2fa-12b795c203d6"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Adding the initial path by hand", \
-"Subsubsection",ExpressionUUID->"5f51d172-cc04-4aa7-ab90-1cc9c31a519c"],
+"Subsubsection",ExpressionUUID->"bffaf1eb-480e-4cbd-b5db-35f0563423e1"],
 
 Cell["\<\
 Find the bounce configuration given the ansatz of trajectory in field space, \
 where the number of deformation are taken to be zero and one:\
 \>", "Text",
- CellID->415368698,ExpressionUUID->"324358c4-876b-4d6f-893c-f8d506b0fbcf"],
+ CellID->415368698,ExpressionUUID->"95006961-73d7-4273-99b6-e2846fcd8af6"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3235,13 +3403,14 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{"i", ",", 
        RowBox[{"{", 
-        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
-  ";"}]}], "Input",ExpressionUUID->"25b135a2-e370-4b30-9b98-088c7f1311d5"],
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], ";"}]}], "Input",
+ CellLabel->
+  "In[105]:=",ExpressionUUID->"8a36f1a4-2acb-4ce0-a6ea-855b3b3229f1"],
 
 Cell["\<\
 Plot both bounce field configurations and the ansatz of the path:\
 \>", "Text",
- CellID->1779854536,ExpressionUUID->"01478f1e-3ab6-4f41-b3de-7842529a9955"],
+ CellID->1779854536,ExpressionUUID->"74b51b2a-2538-4dfd-99f4-2d99470510c7"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3319,26 +3488,26 @@ Cell[BoxData[{
           RowBox[{"Black", ",", 
            RowBox[{"PointSize", "[", ".015", "]"}]}], "}"}]}]}], "]"}]}], 
      "}"}]}], "\[IndentingNewLine]", ",", 
-   RowBox[{"PlotRange", "->", "All"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"5db64a4e-d556-4670-815b-eab56a2d23f4"]
+   RowBox[{"PlotRange", "->", "All"}]}], "]"}]}], "Input",
+ CellLabel->"In[109]:=",ExpressionUUID->"8d1ca623-f0a4-47b1-ae31-fa61e2bf0659"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Gradient", \
-"Subsection",ExpressionUUID->"1234510f-01ab-4c42-bebf-625f921050c3"],
+"Subsection",ExpressionUUID->"ae58d386-0549-4c9e-ba92-516c314dde6d"],
 
 Cell[CellGroupData[{
 
 Cell["\<\
 Turning off and on of the 2nd order approximation of the potential\
-\>", "Subsubsection",ExpressionUUID->"76cdb704-1647-4973-8594-5690d8078dd4"],
+\>", "Subsubsection",ExpressionUUID->"11a5da3c-5300-45fd-92ea-c09ae932f2c7"],
 
 Cell["\<\
       Find the bounce action for different options value of Gradient:\
 \>", "ExampleText",
- CellID->1326729068,ExpressionUUID->"1e0ce609-fc85-4065-946f-7260bccfff78"],
+ CellID->1326729068,ExpressionUUID->"60cf6a24-b9b9-4538-827c-fd5a5fae1b01"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3400,19 +3569,20 @@ Cell[BoxData[{
     RowBox[{"Join", "[", 
      RowBox[{
       RowBox[{"{", "\"\< Action = \>\"", "}"}], ",", "bfAction"}], "]"}]}], 
-   "}"}]}]}], "Input",ExpressionUUID->"245c338e-d1ea-45d9-984d-17550cdcd336"]
+   "}"}]}]}], "Input",
+ CellLabel->"In[111]:=",ExpressionUUID->"9385bfa4-d6b5-4828-8089-f50e83370e13"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Providing the first derivative of the potential by hand", \
-"Subsubsection",ExpressionUUID->"813133aa-3265-4f76-8958-cb6e8898be63"],
+"Subsubsection",ExpressionUUID->"6dcc6b87-ffab-40ef-9138-d20e8df26792"],
 
 Cell["\<\
 Find the bounce configuration given first derivative of the potential as a \
 function of the field by hand:\
 \>", "Text",
- CellID->1994222503,ExpressionUUID->"fc9668e5-19cf-4a6b-85c5-f68081524934"],
+ CellID->1994222503,ExpressionUUID->"42a4ace8-c731-4bba-9d19-01aa5e3e5a65"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3572,20 +3742,21 @@ Cell[BoxData[{
     RowBox[{"dU", "[", 
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"e28698cb-196e-483d-a6ca-b58381b505dc"]
+  "]"}]}], "Input",
+ CellLabel->"In[115]:=",ExpressionUUID->"eeddcf04-d138-422a-ab8b-c887e811c187"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Hessian", \
-"Subsection",ExpressionUUID->"d48c5125-6695-4664-8f21-51730bd63d58"],
+"Subsection",ExpressionUUID->"734a56d6-12f2-4a72-8aad-e8c681e67385"],
 
 Cell["\<\
 Find the bounce configuration given the second derivative of the potential as \
 a matrix of functions of the field by hand:\
 \>", "Text",
- CellID->1499301392,ExpressionUUID->"5b194c2e-a402-4b7d-acc5-3f8bdb479315"],
+ CellID->1499301392,ExpressionUUID->"425f4928-64c1-443d-91b3-dd7f1e7c056d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3746,16 +3917,17 @@ Cell[BoxData[{
     RowBox[{"d2U", "[", 
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"c4a16a0d-10b7-4f23-9624-d60457369877"]
+  "]"}]}], "Input",
+ CellLabel->"In[119]:=",ExpressionUUID->"3109fb88-45bd-45fb-afe8-0916b8ebcd87"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]InitialRadius\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"6f741011-5280-4689-8d3f-9b5b33c8ef6a"],
+"Subsection",ExpressionUUID->"4689fdfb-74d4-45ab-b3fa-1222cce5333e"],
 
 Cell["Find the bounce configuration for a given initial radius:", "Text",
- CellID->1758766572,ExpressionUUID->"8f6a6640-ef3f-46f1-b0c6-04d6d027a7ce"],
+ CellID->1758766572,ExpressionUUID->"fb5e7234-a4d5-456c-b66a-d9a00bd2ac76"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3799,14 +3971,15 @@ Cell[BoxData[{
        RowBox[{"[", "1", "]"}], "]"}], ",", 
       RowBox[{"extrema", "[", 
        RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
-    RowBox[{"\"\<InitialRadius\>\"", "\[Rule]", "10"}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"1f1af359-66c5-40b9-85ed-97302ecc0d67"],
+    RowBox[{"\"\<InitialRadius\>\"", "\[Rule]", "10"}]}], "]"}]}]}], "Input",
+ CellLabel->
+  "In[123]:=",ExpressionUUID->"516134de-b428-40c1-bb24-b551cbceacb3"],
 
 Cell["\<\
 Can be used to speed up the computation of the bounce for a slightly \
 different potential:\
 \>", "Text",
- CellID->1872332047,ExpressionUUID->"d5f97105-0aa5-4e7b-a210-f4979dbdcc66"],
+ CellID->1872332047,ExpressionUUID->"1dcbc450-bca8-433f-b13f-ff4cc6c77d86"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3842,20 +4015,20 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
       RowBox[{"[", 
-       RowBox[{"-", "2"}], "]"}], "]"}]}]}], "  ", 
-   "]"}]}]}], "Input",ExpressionUUID->"04515d9f-659f-46c7-9cbc-46af6fb13429"]
+       RowBox[{"-", "2"}], "]"}], "]"}]}]}], "  ", "]"}]}]}], "Input",
+ CellLabel->"In[126]:=",ExpressionUUID->"2e775d09-83f9-4527-9b4c-fd8af54c33f4"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]InitialRadiusAccuracyGoal\[CloseCurlyDoubleQuote]\
-", "Subsection",ExpressionUUID->"97c50674-7368-4172-8047-3e7bfa8b674e"],
+", "Subsection",ExpressionUUID->"610ba925-fc4a-4fc0-ac80-5617c4bfce3a"],
 
 Cell["\<\
 Find the bounce configuration for different accuracy goal of the initial \
 radius:\
 \>", "Text",
- CellID->1624858296,ExpressionUUID->"e7420749-3264-4d6a-a470-1b88c6a51167"],
+ CellID->1624858296,ExpressionUUID->"c9fecf2b-4ddb-400b-9474-d03ec65653e7"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3923,26 +4096,27 @@ Cell[BoxData[{
           RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Action\>\"", "]"}], 
         "]"}]}], ",", 
       RowBox[{"{", 
-       RowBox[{"i", ",", "3"}], "}"}]}], "]"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"9cd58642-ebcc-484e-893a-bf2b2c5457f8"],
+       RowBox[{"i", ",", "3"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellLabel->
+  "In[128]:=",ExpressionUUID->"6228aadb-1bd8-4f32-b33e-fc08c4b21bed"],
 
 Cell["\<\
 Note that low accuracy of the bounce field configuration might have small \
 error of the action.\
 \>", "Text",
- CellID->1490726436,ExpressionUUID->"ae849689-0d9d-4cb9-9d55-0df0065c66d6"]
+ CellID->1490726436,ExpressionUUID->"92948819-b440-4d0f-a00e-bdf4c678cdc8"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MaxPathIterations\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"d43b2dc8-f86b-416e-8ebc-771d42375fb0"],
+"Subsection",ExpressionUUID->"51b446ec-f7f9-445f-bebc-62c1b7f1c46f"],
 
 Cell["\<\
 Find the bounce field configuration for different limits of the number of \
 iterations to compute the path in field space:\
 \>", "Text",
- CellID->1591325620,ExpressionUUID->"067b1bc4-bb86-4981-982b-4d4f986fe90e"],
+ CellID->1591325620,ExpressionUUID->"ea7ff69a-e4c1-44ee-ba04-8948ae3de21a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4109,19 +4283,19 @@ Cell[BoxData[{
          RowBox[{"i", ",", 
           RowBox[{"{", 
            RowBox[{"0", ",", "1", ",", "2"}], "}"}]}], "}"}]}], "]"}]}]}], 
-    "]"}]}], "]"}]}], \
-"Input",ExpressionUUID->"e28698cb-196e-483d-a6ca-b58381b505dc"]
+    "]"}]}], "]"}]}], "Input",
+ CellLabel->"In[132]:=",ExpressionUUID->"173035c7-29c7-4976-9ddc-c93f2ff70be3"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MaxRadiusIterations\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"020394c8-3ff5-4e05-b8a0-9483fc551430"],
+"Subsection",ExpressionUUID->"5ed5c159-3e2b-4130-8bd7-118c801aeaaf"],
 
 Cell["\<\
 Find the bounce configuration for different maximum number of iterations:\
 \>", "Text",
- CellID->1172879825,ExpressionUUID->"1e0eea07-0cd8-4ccd-8756-63740d12b011"],
+ CellID->1172879825,ExpressionUUID->"1d1a1093-71de-4753-a5ab-a84ae1914c9a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4165,6 +4339,7 @@ Cell[BoxData[{
          RowBox[{"extrema", "[", 
           RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
        RowBox[{"\"\<MaxRadiusIterations\>\"", "\[Rule]", "i"}]}], "]"}], ",", 
+     
      RowBox[{"{", 
       RowBox[{"i", ",", 
        RowBox[{"{", 
@@ -4188,24 +4363,24 @@ Cell[BoxData[{
           RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Action\>\"", "]"}], 
         "]"}]}], ",", 
       RowBox[{"{", 
-       RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"86b9cb40-c80c-4b72-877f-4897c0cf11db"]
+       RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellLabel->"In[138]:=",ExpressionUUID->"ddbc51d8-5aa1-49bb-a002-eac3d66a9664"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MidFieldPoint\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"9a5ea3fb-8494-4009-b911-ecb2b84fb35d"],
+"Subsection",ExpressionUUID->"5b2c7772-827a-407d-9520-302598bd3117"],
 
 Cell[CellGroupData[{
 
 Cell["Intermediate point on a single field potential", \
-"Subsubsection",ExpressionUUID->"adb68960-4b5f-4fbc-8147-3e4de4bedf07"],
+"Subsubsection",ExpressionUUID->"9136b60f-4091-431d-b053-18640ab73444"],
 
 Cell["\<\
 Find the bounce configuration including an arbitrary point of the potential:\
 \>", "Text",
- CellID->580577936,ExpressionUUID->"e3da5213-ff78-4e21-9d3e-c0155eb89153"],
+ CellID->580577936,ExpressionUUID->"7ff1aea6-28be-4564-bbf2-fb1398e303d2"],
 
 Cell[BoxData[
  RowBox[{
@@ -4301,20 +4476,21 @@ Cell[BoxData[
        RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", 
        "\t\t", 
        RowBox[{"PlotStyle", "\[Rule]", "Purple"}]}], "]"}]}], 
-    "]"}]}]}]], "Input",ExpressionUUID->"9fcd756d-efba-4e10-aaeb-396b3f59a26b"]
+    "]"}]}]}]], "Input",
+ CellLabel->"In[142]:=",ExpressionUUID->"1da2c6be-178c-47a6-a016-a2bca6d38f12"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\<\
 Intermediate point and path in field space on a two fields potential\
-\>", "Subsubsection",ExpressionUUID->"23cc3c0e-214d-4044-8026-bd55a201bcff"],
+\>", "Subsubsection",ExpressionUUID->"cde6e43e-960b-40a8-8085-f296a58b01e1"],
 
 Cell["\<\
 Find the bounce configuration from an ansatz given by a single point in field \
 space:\
 \>", "Text",
- CellID->1755162031,ExpressionUUID->"1e0d6704-7319-4a2e-9014-6428bcc79d18"],
+ CellID->1755162031,ExpressionUUID->"cba2be2b-3d0b-400f-9e27-47a977e90791"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4339,7 +4515,11 @@ Cell[BoxData[{
         "\"\<\!\(\*SubscriptBox[\(\[CurlyPhi]\), \(1\)]\)\>\"", ",", 
          "\"\<\!\(\*SubscriptBox[\(\[CurlyPhi]\), \(2\)]\)\>\""}], "}"}]}], 
       ",", "\[IndentingNewLine]", "\t\t", 
-      RowBox[{"Contours", "\[Rule]", "50"}]}], "}"}]}], ";"}], 
+      RowBox[{"Contours", "\[Rule]", "50"}], ",", "\[IndentingNewLine]", 
+      "\t\t", 
+      RowBox[{
+      "PlotLabel", "\[Rule]", 
+       "\"\<Ansatz:  \\\"MaxPathIterations\\\"->0\>\""}]}], "}"}]}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"extrema", " ", "=", " ", 
@@ -4449,6 +4629,7 @@ Cell[BoxData[{
         RowBox[{"\"\<MaxPathIterations\>\"", "\[Rule]", "0"}], ",", 
         "\[IndentingNewLine]", "\t\t", 
         RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", " ", "m"}]}], "]"}], ",", 
+      
       RowBox[{"{", 
        RowBox[{"m", ",", 
         RowBox[{"{", 
@@ -4482,18 +4663,19 @@ Cell[BoxData[{
           RowBox[{"\"\<MidFieldPoint -> \>\"", ",", 
            RowBox[{"{", 
             RowBox[{"7", ",", "6"}], "}"}]}], "}"}]}]}], "}"}]}]}], "]"}]}], 
-  "\[IndentingNewLine]", 
-  "]"}]}], "Input",ExpressionUUID->"e28698cb-196e-483d-a6ca-b58381b505dc"]
+  "\[IndentingNewLine]", "]"}]}], "Input",
+ CellChangeTimes->{{3.7821461164254313`*^9, 3.7821461752486153`*^9}},
+ CellLabel->"In[165]:=",ExpressionUUID->"23af2801-3d45-4445-b319-2894d1b61c42"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]PathTolerance\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"7ecd1469-bd6c-4d63-a46b-79a321af7de6"],
+"Subsection",ExpressionUUID->"b627166e-3bd3-4a3f-bd6b-dd09e0830d85"],
 
 Cell["Find the bounce configuration for different path tolerance:", "Text",
- CellID->648355602,ExpressionUUID->"93a950f1-a2f2-485e-b906-29578053fff2"],
+ CellID->648355602,ExpressionUUID->"b66aab62-5005-475b-9853-f2ea42017f3c"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4590,6 +4772,7 @@ Cell[BoxData[{
             RowBox[{"\"\<ActionTolerance\>\"", "\[Rule]", "0"}], ",", 
             "\[IndentingNewLine]", "\t\t", 
             RowBox[{"\"\<PathTolerance\>\"", "\[Rule]", "pt"}]}], "]"}], "[", 
+          
           RowBox[{"{", 
            RowBox[{"\"\<Action\>\"", ",", "\"\<PathIterations\>\""}], "}"}], 
           "]"}]}], "}"}]}], ",", 
@@ -4606,24 +4789,25 @@ Cell[BoxData[{
       RowBox[{
       "\"\<PathTolerance\>\"", ",", "\"\<Action\>\"", ",", 
        "\"\<PathIterations\>\""}], "}"}], "}"}], ",", "bf"}], 
-   "]"}]}]}], "Input",ExpressionUUID->"dacde2d7-94da-4e4e-bb31-feab180f8720"]
+   "]"}]}]}], "Input",
+ CellLabel->"In[171]:=",ExpressionUUID->"eac1e3ba-bb8e-4754-b36e-f5497e3f2912"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Possible issues", \
-"Section",ExpressionUUID->"7d130048-cf17-4432-9dbb-943dba9e873f"],
+"Section",ExpressionUUID->"0b1ffa66-30db-4812-b3df-5b6f9f0cf6c0"],
 
 Cell[CellGroupData[{
 
 Cell["Accuracy of the bounce", \
-"Subsection",ExpressionUUID->"3654b079-4139-421e-8578-f68c66680aba"],
+"Subsection",ExpressionUUID->"d9189a1c-ee63-43dd-bf67-e878184d108e"],
 
 Cell["\<\
 The bounce field configuration computed with different accuracy:\
 \>", "Text",
- CellID->732734702,ExpressionUUID->"1177b762-0546-4b21-a481-a0f8b0ca16f4"],
+ CellID->732734702,ExpressionUUID->"fb91db1c-5a72-4792-b63f-4c97e4333c60"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4669,19 +4853,21 @@ Cell[BoxData[{
       RowBox[{"\"\<High Precision\\nAction = \>\"", "<>", 
        RowBox[{"ToString", "[", 
         RowBox[{"bf2", "[", "\"\<Action\>\"", "]"}], "]"}]}]}], "}"}]}]}], 
-  "]"}]}], "Input",ExpressionUUID->"ebe56f34-f3da-49f1-ad6a-5b5aa9d279e9"]
+  "]"}]}], "Input",
+ CellLabel->
+  "In[94]:=",ExpressionUUID->"9db3899f-6851-4bb2-88c1-a3eab064d1e3"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Degenerated vacua", \
-"Subsection",ExpressionUUID->"e3c9b211-4629-4683-b6d9-62d186c770f6"],
+"Subsection",ExpressionUUID->"850c41e1-036b-4c3c-92d7-3acea9c51ddf"],
 
 Cell["\<\
 Degenerated minima returns infinite action and constant bounce field \
 configuration:\
 \>", "Text",
- CellID->1400904616,ExpressionUUID->"801c686a-6d67-47b4-b959-9fc335e1c6e9"],
+ CellID->1400904616,ExpressionUUID->"80aad88c-dfd9-4c9b-9af7-f6ccf4bf590e"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4724,20 +4910,21 @@ Cell[BoxData[{
       RowBox[{"Extrema1", "[", 
        RowBox[{"[", "1", "]"}], "]"}], ",", 
       RowBox[{"Extrema1", "[", 
-       RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"b08c9746-743c-470d-abb7-290046c11e14"]
+       RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], "]"}]}]}], "Input",
+ CellLabel->
+  "In[97]:=",ExpressionUUID->"0d154235-2a16-404c-a76b-f265bb0e8ce2"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Local maximum & few number of field points", \
-"Subsection",ExpressionUUID->"7beae58a-fd44-4a65-a96a-54623912a6eb"],
+"Subsection",ExpressionUUID->"0f91e5b0-91c8-4608-bf75-48dd95db1404"],
 
 Cell["\<\
 Few field points might not contain the maximum of the potential, thereby \
 there is no solution:\
 \>", "Text",
- CellID->2140659051,ExpressionUUID->"e14c0648-a5bf-4c24-b7c3-1249a38495f4"],
+ CellID->2140659051,ExpressionUUID->"13dc21d3-6322-42b3-91e1-2c189b068b2b"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4779,11 +4966,12 @@ Cell[BoxData[{
      RowBox[{"extrema", "[", 
       RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
    "\t", 
-   RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "3"}]}], 
-  "]"}]}], "Input",ExpressionUUID->"afcf1fa7-5f4f-45df-911c-5533015f73eb"],
+   RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "3"}]}], "]"}]}], "Input",
+ CellLabel->
+  "In[100]:=",ExpressionUUID->"6916b191-99fd-4421-b599-dfa4a64103c2"],
 
 Cell["This can be solved by increasing the number of field points:", "Text",
- CellID->385184742,ExpressionUUID->"e1583dd3-15b5-4656-90c0-1b854493a536"],
+ CellID->385184742,ExpressionUUID->"49a25705-be05-4086-ad73-03df1152d0b0"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", 
@@ -4798,11 +4986,12 @@ Cell[BoxData[
       RowBox[{"extrema", "[", 
        RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
     "\t", 
-    RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "10"}]}], 
-   "]"}]}]], "Input",ExpressionUUID->"2bf992b2-6a5b-42c3-bc0c-48e07835845c"],
+    RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "10"}]}], "]"}]}]], "Input",
+ CellLabel->
+  "In[103]:=",ExpressionUUID->"eac1bf66-1e2c-409f-ba7e-ab526441dc0a"],
 
 Cell["Or by adding the maximum of the potential by hand:", "Text",
- CellID->1449664275,ExpressionUUID->"0cdd004b-e3a1-4b36-bb21-2782402cb49e"],
+ CellID->1449664275,ExpressionUUID->"7920e5b7-a7f3-484d-9fc8-76b46b4b59ff"],
 
 Cell[BoxData[
  RowBox[{"bf3", " ", "=", 
@@ -4819,11 +5008,12 @@ Cell[BoxData[
     "\t", 
     RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "3"}], ",", 
     "\[IndentingNewLine]", "\t", 
-    RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", "1"}]}], 
-   "]"}]}]], "Input",ExpressionUUID->"b382f64e-4577-40e1-b6e9-b39fbe2c887f"],
+    RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", "1"}]}], "]"}]}]], "Input",
+ CellLabel->
+  "In[104]:=",ExpressionUUID->"e5f4be6e-5c8e-42ff-8a9f-090dd5883ce1"],
 
 Cell["where the potential given by:", "Text",
- CellID->1049028256,ExpressionUUID->"ae014938-9539-4220-9f85-86a4b59aa161"],
+ CellID->1049028256,ExpressionUUID->"c2f6ec3d-910d-4542-97bf-1977106aedc4"],
 
 Cell[BoxData[
  RowBox[{
@@ -4883,17 +5073,17 @@ Cell[BoxData[
        RowBox[{"PlotLegends", "\[Rule]", 
         RowBox[{
         "{", "\"\<\\\"MidFieldPoint\\\" -> 1\\n\\\"FieldPoints\\\" -> 3\>\"", 
-         "}"}]}]}], "]"}]}], "\[IndentingNewLine]", 
-    "]"}]}]}]], "Input",ExpressionUUID->"da1007fc-5beb-4b9e-9fa9-1642e98de04d"]
+         "}"}]}]}], "]"}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input",
+ CellLabel->"In[105]:=",ExpressionUUID->"90a40ba6-fa28-406c-affb-4764c514fd19"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Sharp potential", \
-"Subsection",ExpressionUUID->"98eb729f-24ef-4933-bbfb-4b4dc94b1fde"],
+"Subsection",ExpressionUUID->"1911d5aa-1f1e-4011-9749-a3bfb51e16e2"],
 
 Cell["Find the extrema and the quartic potential:", "Text",
- CellID->1263131966,ExpressionUUID->"a9a88a67-f646-4e8b-b084-9608b6e47c51"],
+ CellID->1263131966,ExpressionUUID->"a31531a1-e9da-4da7-8604-62b86d72a07a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -5011,14 +5201,15 @@ Cell[BoxData[{
     RowBox[{"AxesLabel", "->", 
      RowBox[{"{", 
       RowBox[{"\"\<\[CurlyPhi]\>\"", ",", "\"\<V(\[CurlyPhi])\>\""}], 
-      "}"}]}]}], 
-   "]"}]}]}], "Input",ExpressionUUID->"ce0d637d-b0ef-40bb-abc5-3655bb2c86c4"],
+      "}"}]}]}], "]"}]}]}], "Input",
+ CellLabel->
+  "In[107]:=",ExpressionUUID->"36034ca4-a82e-4967-b901-72a326d038f6"],
 
 Cell["\<\
 Compute the bounce configuration taking into account the 2nd order \
 approximation of the potential:\
 \>", "Text",
- CellID->309829826,ExpressionUUID->"939cb9f8-587c-4edc-8b1b-b09fb0122fbe"],
+ CellID->309829826,ExpressionUUID->"3082387d-7599-4b8b-9b52-a383b103c23c"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", "  ", 
@@ -5035,14 +5226,15 @@ Cell[BoxData[
     "\t\t", 
     RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", 
      RowBox[{"Extrema", "[", 
-      RowBox[{"[", "2", "]"}], "]"}]}]}], 
-   "]"}]}]], "Input",ExpressionUUID->"2f972d9b-2d76-45f5-8039-7c6f4f9b3cdc"],
+      RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]], "Input",
+ CellLabel->
+  "In[109]:=",ExpressionUUID->"dc447ccf-5c0e-4b29-859a-4c89abdd626f"],
 
 Cell["\<\
 Compute the bounce configuration with only the poly-linear approximation of \
 the potential:\
 \>", "Text",
- CellID->478422709,ExpressionUUID->"3ab7f4b6-436e-45a6-aaf7-6a8023ea7bcf"],
+ CellID->478422709,ExpressionUUID->"831f8714-717c-4cdf-af1a-764bd4ff9ba3"],
 
 Cell[BoxData[
  RowBox[{
@@ -5062,20 +5254,20 @@ Cell[BoxData[
       RowBox[{"Extrema", "[", 
        RowBox[{"[", "2", "]"}], "]"}]}], ",", "\[IndentingNewLine]", "\t\t", 
      RowBox[{"Gradient", "\[Rule]", "None"}]}], "]"}]}], 
-  "\[IndentingNewLine]"}]], \
-"Input",ExpressionUUID->"a501b9b7-ee6b-4b7a-bae8-4223463c1443"]
+  "\[IndentingNewLine]"}]], "Input",
+ CellLabel->"In[110]:=",ExpressionUUID->"2af20e6e-e891-44f7-8571-aa4e96cb5e54"]
 }, Closed]]
 }, Closed]],
 
 Cell["Acknowledgment", \
-"Section",ExpressionUUID->"15225d55-01e4-42a9-9756-371a9e5e5dc8"]
+"Section",ExpressionUUID->"fdbe3998-f204-474d-891f-4c92a960599d"]
 }, Open  ]]
 },
 WindowSize->{958, 1086},
-WindowMargins->{{Automatic, -8}, {Automatic, 0}},
+WindowMargins->{{Automatic, 474}, {Automatic, 107}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 TrackCellChangeTimes->False,
-FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
+FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
 StyleDefinitions->"Default.nb"
 ]
 
