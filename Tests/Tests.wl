@@ -49,6 +49,14 @@ VerificationTest[
 
 
 VerificationTest[
+	FindBounce[x^4-x^2+x/2,x,{1/2,1/4 (-1-Sqrt[5])},"FieldPoints"->3,"MidFieldPoint"->1/4 (-1+Sqrt[5])]["Action"],
+	2.911,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F 2 segments"
+];
+
+
+VerificationTest[
 	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"FieldPoints"->11]["Action"],
 	486.801,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
@@ -331,7 +339,7 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762,0.633},"FieldPoints"->Subdivide[-0.762,0.633,2]],
+	FindBounce[x^4-x^2+x/4,x,{-0.762,0.633},"FieldPoints"->{0.762,0.633}],
 	$Failed,
 	{FindBounce::fieldpts},
 	TestID->"FindBounce - wrong array length FieldPoints"

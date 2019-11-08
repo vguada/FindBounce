@@ -169,7 +169,7 @@ If[point === None,
 		point = (min1+min2)/2;
 		methodSeg = "H"
 		,
-		If[Not[Length[point]===noFields||(noFields===1&&Length[point]===0)],
+		If[Not[Length[N@point]===noFields||(noFields===1&&Length[N@point]===0)],
 			Message[InitialValue::mpts];
 			Return[$Failed,Module]
 		];
@@ -184,8 +184,8 @@ If[point === None,
 	];
 
 	If[path === None, 
-		\[Phi] ={min1,point,min2},
-		\[Phi] = path
+		\[Phi] = N@{min1,point,min2},
+		\[Phi] = N@path
 	];
 	fieldPoints = Length[\[Phi]];
 
@@ -267,7 +267,7 @@ If[path === None,
 		];
 	];
 	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
-
+	
 	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path}
 ];
 
@@ -328,10 +328,10 @@ BounceParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_]:=
 Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
 	(*-------Backward--------------------*)
 	If[backward,
-		\[Alpha] = Join[a,{0.}]; 
-		R = RInitial[d,initialR,\[Alpha],\[Phi]L,pos,backward]; 
-		b = 0.;
-		v=\[Phi]L[[-1]];
+		\[Alpha] = Join[a,{0.}];
+		R = RInitial[d,initialR,\[Alpha],\[Phi]L,pos,backward];
+		b = 0.; 
+		v = \[Phi]L[[-1]];
 		Rvb = Reap[
 			Sow[b,x];Sow[v,y];Sow[R,z];
 			Do[ b +=-(4/d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
@@ -574,6 +574,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 		Message[SingleFieldBounce::noSolution];
 		Return[$Failed,Module]
 	];
+	
 	If[pos>1, R[[pos-1]]=0 ];
 	a = Join[a,{0}];	
 
@@ -957,6 +958,7 @@ summaryBoxGraphics[bf_BounceFunction]:= BouncePlot[
 	(* To avoid gray background before mouse-over. *)
 	Background->White,
 	GridLines->None,
+	Axes->None,
 	(* Set standard image size *)
 	ImageSize -> Dynamic[{Automatic,3.5*CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[Magnification]}]
 ];
@@ -1065,7 +1067,7 @@ FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::nonnegint = "Value of option \"`1`\" should be a non-negative integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
-FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>3) or array of numbers longer than 3.";
+FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of numbers longer than 2.";
 FindBounce::syms = "Field symbols should not have any value.";
 
 Options[FindBounce] = {
@@ -1127,7 +1129,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	If[
 		And[
 			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
-			Not[ArrayQ[fieldpoints,Length[fields],(MatchQ[#,_Real|_Integer]&)]&&Length[fieldpoints]>3]
+			Not[ArrayQ[fieldpoints,Length[fields],(MatchQ[N@#,_Real]&)]&&Length[fieldpoints]>2]
 		],
 		Message[FindBounce::fieldpts];Return[$Failed,Module]
 	];
@@ -1186,7 +1188,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 					iter,fields
 					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
 			];
-		
+
 		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
 			improvePB&&path===None];
 				
