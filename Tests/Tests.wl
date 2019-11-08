@@ -307,10 +307,10 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"InitialRadius"->0],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"FieldPoints"->2],
 	$Failed,
-	{FindBounce::posreal},
-	TestID->"FindBounce - wrong InitialRadius"
+	{FindBounce::fieldpts},
+	TestID->"FindBounce - wrong number of FieldPoints"
 ];
 
 

@@ -1116,10 +1116,10 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed. *)
 	bottomless = TrueQ@OptionValue["BottomlessPotential"];
 	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"InitialRadiusAccuracyGoal"];Return[$Failed,Module]);
-	dPath = OptionValue["PathTolerance"]/.Except[_Real?Positive|_Integer?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
-	dAction = OptionValue["ActionTolerance"]/.Except[_Real?Positive|_Integer?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	dPath = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	dAction = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
-	initialR = OptionValue["InitialRadius"]/.Except[_Real?Positive|None|_Integer?Positive]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
+	initialR = OptionValue["InitialRadius"]/.Except[_?NonNegative|None]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
@@ -1268,7 +1268,7 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 		Explicitly given options (above) have precedence. *)
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
-		LabelStyle->Directive[Black, FontSize->17,FontFamily->"Times New Roman",FontSlant->Plain],
+		LabelStyle->Directive[Black, FontSize->17,FontFamily->"Times New Roman"],
 		GridLines->Automatic
 	]
 ];
