@@ -202,6 +202,18 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
+(*1 field - potential unbounded from below*)
+
+
+VerificationTest[
+	FindBounce[0.5 x^2+0.05 x^3-0.125 x^4,x,{0,-5},"BottomlessPotential"->True]["Action"],
+	51.64,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - bottomles potential"
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*2 fields*)
 
 
