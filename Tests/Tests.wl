@@ -89,6 +89,30 @@ VerificationTest[
 
 
 (* ::Subsubsection::Closed:: *)
+(*1 field - thin vs. thick wall regime*)
+
+
+With[{a=0.5},
+	VerificationTest[
+		FindBounce[0.5*x^2+0.5*x^3+0.125*a*x^4,x,{-5.236,0.}]["Action"],
+		269.693,
+		SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+		TestID->"FindBounce - 1F thick wall"
+	]
+];
+
+
+With[{a=0.99},
+	VerificationTest[
+		FindBounce[0.5*x^2+0.5*x^3+0.125*a*x^4,x,{-2.04,0.}]["Action"],
+		3.6305*10^6,
+		SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+		TestID->"FindBounce - 1F thin wall"
+	]
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*1 field - bi-quartic potential*)
 
 
