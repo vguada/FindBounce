@@ -147,21 +147,30 @@ VerificationTest[
 (*1 field - potential defined by points*)
 
 
-(* Basic working example *)
+(* The simplest potential defined by points. *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2},{3,1}}]["Action"],
+	3576.28,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - simplest polygonal potential"
+];
+
+
+(* The simplest potential defined by points and D=3. *)
+VerificationTest[
+	FindBounce[{{1,0},{2,2},{3,1}},"Dimension"->3]["Action"],
+	196.262,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - simplest polygonal potential, D=3"
+]
+
+
+(* Polygonal potential with intermediate minima. *)
 VerificationTest[
 	FindBounce[{{1,0},{2,2},{3,1},{4,2},{5,1}}]["Action"],
 	82767.,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
-	TestID->"FindBounce - polygonal potential"
-];
-
-
-(* Function returns unevaluated for single wrong argument. *)
-VerificationTest[
-	FindBounce["totalyWrongArgument"],
-	_FindBounce,
-	SameTest->MatchQ,
-	TestID->"FindBounce - single wrong argument"
+	TestID->"FindBounce - intermediate minima polygonal potential"
 ];
 
 
@@ -261,6 +270,15 @@ VerificationTest[
 
 (* ::Subsubsection::Closed:: *)
 (*Fail checks*)
+
+
+(* Function returns unevaluated for single wrong argument. *)
+VerificationTest[
+	FindBounce["totalyWrongArgument"],
+	_FindBounce,
+	SameTest->MatchQ,
+	TestID->"FindBounce - single wrong argument"
+];
 
 
 (* Field symbols have some value, which they should't have. *)
