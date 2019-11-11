@@ -480,6 +480,24 @@ With[{
 ];
 
 
+(* Test for arbitrary plot range if flat parts of curve are ploted fully.
+Negative values are not plotted, becasue function is not supported there. *)
+With[{
+	bf=FindBounce[{{1,0},{2,2},{3,1}}]
+	},
+	VerificationTest[
+		(Join@@Cases[
+			BouncePlot[bf,PlotRange->{{-5,10},Automatic}],
+			Line[x_]:>x,
+			Infinity
+		])[[{1,-1},1]],
+		{0.,10.},
+		SameTest->(Norm[#1-#2]<10^-4&),
+		TestID->"BouncePlot - arbitrary plot range"
+	]
+];
+
+
 (* Test for case of degenerated vacua. *)
 With[{
 	bf=Quiet[

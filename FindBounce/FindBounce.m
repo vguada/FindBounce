@@ -1240,7 +1240,7 @@ BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= BouncePlot[{bf},opts];
 	
 BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
-	{bounce,radii,plotRange},
+	{bounce,radii,defaultPlotRange,plotRange},
 	(* In case of degenerated vacua, "Action" is Infinity and empty plot is returned. 
 	This is suitable form for FindBounce summary box plot.*)
 	If[
@@ -1259,9 +1259,19 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 	bounce = Through[{bf}["Bounce"]];
 	(* This helps to draw discrete radii. *)
 	radii = Through[{bf}["Radii"]];
-	(* Clip plot range to non-negative values. *)
-	plotRange = Ramp@MinMax[radii,Scaled[0.25]];
+	(* Clip estimated plot range to non-negative values. *)
+	defaultPlotRange = MinMax[radii,Scaled[0.25]];
+	(* With this flat parts of curve are ploted if explicit value for option PlotRange is given.*)
 	
+	plotRange=Quiet[
+		Ramp@If[
+			MatchQ[OptionValue[PlotRange],{{_?NumberQ,_?NumberQ},_}],
+			First@OptionValue[PlotRange],
+			defaultPlotRange
+		],
+		OptionValue::nodef
+	];
+
 	Plot[
 		Evaluate@Through[bounce[r]],
 		{r,Sequence@@plotRange},
