@@ -1005,51 +1005,53 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 (*Process results: piecewiseBounce*)
 
 
-(* Returns pure Function - could be something else in the future. *)
-piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,Ns_,noFields_,bottomless_}]:=
-Module[{\[CurlyPhi]0,MultiFieldPiecewise},
+piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottomless_}]:=Module[
+	{\[CurlyPhi]0},
 
 	If[bottomless,
-		\[CurlyPhi]0[\[Rho]_] := v[[1]] + b[[1]]/(1 + 1/2 Norm[a[[1]]]*Norm[b[[1]]]^2\[Rho]^2)
-		,
+		\[CurlyPhi]0[\[Rho]_] := v[[1]] + b[[1]]/(1 + 1/2 Norm[a[[1]]]*Norm[b[[1]]]^2\[Rho]^2),
 		If[
 			pos>1,
 			(*Case A*)
-			\[CurlyPhi]0[\[Rho]_] := v[[pos-1]]+ 4/dim*a[[pos-1]]*\[Rho]^2
-			,
+			\[CurlyPhi]0[\[Rho]_] := v[[pos-1]]+ 4/dim*a[[pos-1]]*\[Rho]^2,
 			(*Case B*)
 			\[CurlyPhi]0[\[Rho]_] := min1 
 		];
 	];
-	
+	(* System symbol FormalR (\[FormalR]) is used as Function argument, because it has attribute
+	Protected and cannot be assigned any value. Syntax with explicit Function is clearer than
+	using pure functions. *)
 	If[noFields==1,
-		Return[Evaluate@Piecewise[
-			Join[
-				{{\[CurlyPhi]0[#],#<R[[pos]]}},
-				Table[{
-					v[[s]]+ 4/dim*a[[s]]*#^2+2/(dim-2)*b[[s]]/#^(dim-2),
-					R[[s]]<=#<R[[s+1]]},
-					{s,pos,Ns}
-				]
-			],
-			min2 (* default value of Piecewise *)
-			]&
-		]
-	];
-	
-	Table[Piecewise[
-			Join[
-				{{\[CurlyPhi]0[#][[i]],#<R[[pos]]}},
-				Table[{
-					v[[s,i]]+ 4/dim*a[[s,i]]*#^2+2/(dim-2)*b[[s,i]]/#^(dim-2),
-					R[[s]]<=#<R[[s+1]]},
-					{s,pos,Ns}
-				]
-			],
-			min2[[i]] (* default value of Piecewise *)
+		Function[
+			Evaluate@\[FormalR],
+			Evaluate@Piecewise[
+				Join[
+					{{\[CurlyPhi]0[\[FormalR]],\[FormalR]<R[[pos]]}},
+					Table[{
+						v[[s]]+4/dim*a[[s]]*\[FormalR]^2+2/(dim-2)*b[[s]]/\[FormalR]^(dim-2),R[[s]]<=\[FormalR]<R[[s+1]]},
+						{s,pos,noSegs}
+					]
+				],
+				min2 (* default value of Piecewise *)
 			]
-	,{i,noFields}]&		
-	
+		],(* else (multifield case) *)
+		Table[
+		Function[
+			Evaluate@\[FormalR],
+			Evaluate@Piecewise[
+				Join[
+					{{\[CurlyPhi]0[\[FormalR]][[i]],\[FormalR]<R[[pos]]}},
+					Table[{
+						v[[s,i]]+4/dim*a[[s,i]]*\[FormalR]^2+2/(dim-2)*b[[s,i]]/\[FormalR]^(dim-2),R[[s]]<=\[FormalR]<R[[s+1]]},
+						{s,pos,noSegs}
+					]
+				],
+				min2[[i]] (* default value of Piecewise *)
+			]
+		],
+		{i,noFields}
+		]	
+	]
 ];
 
 
@@ -1256,7 +1258,7 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 		]
 	];
 	(* Piecewise bounces of consecutive BounceFunction(s) are effectively flattened. *)
-	bounce = Through[{bf}["Bounce"]];
+	bounce = Flatten@Through[{bf}["Bounce"]];
 	(* This helps to draw discrete radii. *)
 	radii = Through[{bf}["Radii"]];
 	(* Clip estimated plot range to non-negative values. *)
