@@ -1277,9 +1277,11 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 	Plot[
 		Evaluate@Through[bounce[r]],
 		{r,Sequence@@plotRange},
+		(* Exclusions->None is very important because it dramatically speeds up plotting. 
+		We know that function is continious and there is no need to search for discontinuities. *)
+		Exclusions->None,
 		Evaluate@FilterRules[{opts},Options@Plot],
-		(* Default options come here. Keep them as short as possible, for flexibiltiy.
-		Explicitly given options (above) have precedence. *)
+		(* Default options come here. They can be overridden by other options given explicitly. *)
 		Frame->True,
 		FrameLabel->{"\[Rho]","\[CurlyPhi](\[Rho])"},
 		LabelStyle->Directive[Black, FontSize->17,FontFamily->"Times New Roman"],

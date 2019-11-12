@@ -431,7 +431,7 @@ With[{
 	bf=FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518},"FieldPoints"->11]
 	},
 	VerificationTest[
-		BouncePlot[bf,PerformanceGoal->"Speed","BadOption"->1],
+		BouncePlot[bf,"BadOption"->1],
 		_Graphics,
 		SameTest->MatchQ,
 		TestID->"BouncePlot - 1F default"
