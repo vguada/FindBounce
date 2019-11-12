@@ -566,7 +566,7 @@ Module[{p,T},
 
 SingleFieldBounce::extrema = "Wrong position of the minima.";
 MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
-SingleFieldBounce::noSolution = "Solution not founded, increase the number of segments or accuracy.";
+SingleFieldBounce::noSolution = "Solution not found, increase the number of segments or accuracy.";
 
 SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
 	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_]:= 
@@ -998,7 +998,7 @@ BounceFunction::usage="BounceFunction object represents results from FindBounce 
 BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
 (* A message about missing property could be issued if neccesary (three argument Lookup).  *)
-BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property,"KeyAbsent, see \"Properties\": "<>ToString@Sort@Keys[asc]];
+BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property,Sort@Keys[asc]];
 	
 (* Nice styling of output, see https://mathematica.stackexchange.com/questions/77658 *)
 BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardForm|TraditionalForm)]:=Module[
@@ -1100,6 +1100,7 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of numbers longer than 2.";
 FindBounce::syms = "Field symbols should not have any value.";
+FindBounce::mins = "Minima should be consistent or not complex.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1129,7 +1130,7 @@ FindBounce[V_,fields_/;Length[fields]==0,{min1_,min2_},opts:OptionsPattern[]]:=
 FindBounce[points_List,opts:OptionsPattern[]]:=(
 	If[
 		Not@And[
-			ArrayQ[points,2,(MatchQ[#,_Integer|_Rational|_Real]&)],
+			ArrayQ[N@points,2,(MatchQ[#,_Real]&)],
 			MatchQ[Dimensions[points],{x_/;x>=3,2}]
 		],
 		Message[FindBounce::points];Return[$Failed]
@@ -1157,16 +1158,26 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
 	fieldpoints = OptionValue["FieldPoints"];
-	If[
-		And[
-			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
-			Not[ArrayQ[N@fieldpoints,Length[fields],(MatchQ[#,_Real]&)]&&Length[fieldpoints]>2]
-		],	
-		Message[FindBounce::fieldpts];Return[$Failed,Module]
-	];
 	
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
+	
+	(*Checks if the minima are real.*)
+	If[
+		Not@And[
+			ArrayQ[N@{min1,min2},1|2,(MatchQ[#,_Real]&)],
+			(noFields==1&&Length[N@min1]==0)|(noFields>1&&Length[N@min1]==noFields)
+		],
+		Message[FindBounce::mins];Return[$Failed,Module]
+	];
+	
+	If[
+		And[
+			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
+			Not[ArrayQ[N@fieldpoints,noFields,(MatchQ[#,_Real]&)]&&Length[N@fieldpoints]>2]
+		],	
+		Message[FindBounce::fieldpts];Return[$Failed,Module]
+	];
 	
 	If[fields[[1]]===True,
 		{fieldpoints,potentialPoints} = Transpose@V
