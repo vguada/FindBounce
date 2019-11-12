@@ -969,7 +969,7 @@ BounceFunction::usage="BounceFunction object represents results from FindBounce 
 BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
 (* A message about missing property could be issued if neccesary (three argument Lookup).  *)
-BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property];
+BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property,"KeyAbsent, see \"Properties\": "<>ToString@Sort@Keys[asc]];
 	
 (* Nice styling of output, see https://mathematica.stackexchange.com/questions/77658 *)
 BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardForm|TraditionalForm)]:=Module[
@@ -1131,8 +1131,8 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	If[
 		And[
 			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
-			Not[ArrayQ[fieldpoints,Length[fields],(MatchQ[N@#,_Real]&)]&&Length[fieldpoints]>2]
-		],
+			Not[ArrayQ[N@fieldpoints,Length[fields],(MatchQ[#,_Real]&)]&&Length[fieldpoints]>2]
+		],	
 		Message[FindBounce::fieldpts];Return[$Failed,Module]
 	];
 	
