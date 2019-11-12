@@ -5,12 +5,12 @@ Cell[TextData[StyleBox["FindBounce",
  FontSize->36,
  FontWeight->"SemiBold",
  FontColor->GrayLevel[
-  0]]], "Title",ExpressionUUID->"db7dacd2-cc63-49a8-8541-b5511f64c594"],
+  0]]], "Title",ExpressionUUID->"47dd36d8-f9ab-4986-9183-50684a062c7d"],
 
 Cell[CellGroupData[{
 
 Cell["Introduction", \
-"Section",ExpressionUUID->"2319839e-6271-440a-8625-6efc265fe50c"],
+"Section",ExpressionUUID->"9d751d1c-cbf8-4abc-bae9-0709e37774f3"],
 
 Cell[TextData[{
  "FindBounce is a Mathematica package that computes the bounce configuration \
@@ -26,39 +26,39 @@ The physics background is described in the \npaper by ",
    ButtonData->{
      URL["https://arxiv.org/abs/1803.02227"], None},
    ButtonNote->"https://arxiv.org/abs/1803.02227"]],ExpressionUUID->
-  "6839a07c-8268-4786-adc3-824c6f6d9be8"],
+  "d626c32a-3d8b-4d35-9003-62abaa054d19"],
  ". In this tutorial, we present examples of false \nvacuum decays in \
 potential with multiple scalar fields.\n\nThe notebook cannot be saved, so it \
 can be edited freely. \nContributions are welcome! "
 }], "Text", \
-"ApplicationNotes",ExpressionUUID->"cb225f75-dd99-49ad-ad1f-35fc18dd4662"],
+"ApplicationNotes",ExpressionUUID->"cbec3db0-2e66-43a2-843e-64a3a32ef1e1"],
 
 Cell[CellGroupData[{
 
 Cell["Description", \
-"Subsection",ExpressionUUID->"bf292e74-bc2a-45c0-860e-fe70f9f2f905"],
+"Subsection",ExpressionUUID->"f27a91c1-246a-4e42-bfcc-3b623792c879"],
 
 Cell["The package can be loaded with", "Text", "ApplicationNotes",
- CellID->296412305,ExpressionUUID->"f1ca7f94-04b6-42b2-8d39-f160a670bd8e"],
+ CellID->296412305,ExpressionUUID->"101dd5bf-45c2-493c-82c7-ff67cf478cdd"],
 
 Cell[BoxData[
  RowBox[{"Needs", "[", "\"\<FindBounce`\>\"", "]"}]], "Code",
- CellLabel->"In[24]:=",ExpressionUUID->"a2d174a8-cf78-45b7-bce6-fe415111571c"],
+ CellLabel->"In[78]:=",ExpressionUUID->"46ac2d0f-9de3-43f9-bbea-6644b6ded97c"],
 
 Cell["\<\
 The list of included functions can be queried with the command\
-\>", "Text",ExpressionUUID->"162ad4f1-0238-499c-b534-a3df54ff91e1"],
+\>", "Text",ExpressionUUID->"74a6dc72-f816-4d3d-b3a1-c8fd98a99b31"],
 
 Cell[BoxData[
  RowBox[{"?", "FindBounce`*"}]], "Input",
- CellLabel->"In[15]:=",ExpressionUUID->"c7f48ddd-35fd-485d-a8e2-797b1a3e71f2"],
+ CellLabel->"In[15]:=",ExpressionUUID->"7c6fe4da-ea1b-48cb-8694-e5fc6ca1ff42"],
 
 Cell[BoxData[GridBox[{
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "29af95d3-7f23-42dc-bd1e-9c9aeeafbfef"], "[", 
+        "bbc82692-b2e9-4134-bd5e-78d20195ac62"], "[", 
        RowBox[{
         StyleBox["V", "TI"], ",", "\[CurlyPhi]", ",", 
         RowBox[{"{", 
@@ -70,32 +70,32 @@ Cell[BoxData[GridBox[{
            StyleBox["min", "TI"], 
            StyleBox["2", "TR"]]}], "}"}]}], "]"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "d09a9514-5bd7-43dd-a0c8-5a5fd619fb33"],
+      "7d595d10-e01f-4ad6-aa5d-cfb675bfbd80"],
      " \[LineSeparator]computes the bounce configuration of a single field \
 potential ",
      Cell[BoxData[
       StyleBox["V", "TI"]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "883c6b38-baa3-4ddb-97ae-ac261aa7acd6"],
+      "6ae17ff7-8681-4e67-9e49-9b09ca0e3d63"],
      Cell[BoxData[
       RowBox[{"(", "\[CurlyPhi]", ")"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "310c8575-8057-4791-bfb4-a3a8cde5d1cf"],
+      "d3c1af31-d365-4498-b5a1-fa05d624860a"],
      " and minima ",
      Cell[BoxData[
       SubscriptBox[
        StyleBox["min", "TI"], 
        StyleBox["i", "TI"]]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "e9fc2e72-c150-4108-b6e9-640793e579fe"],
+      "ef4cd654-67cc-4b8b-9dc1-b074e88f4b77"],
      "."
     }],
-     Editable->True,ExpressionUUID->"20987b09-d04d-4d28-bb33-d1f30fca7016"]},
+     Editable->True,ExpressionUUID->"eb51b7fc-c7cd-4cce-a6db-f31a139967ae"]},
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "7d76b831-2eab-49ae-9589-677b46f03318"], "[", 
+        "8ab04cf0-3e0b-420f-9e4c-8500ac7c5b77"], "[", 
        RowBox[{
         StyleBox["V", "TI"], ",", 
         RowBox[{"{", 
@@ -116,36 +116,36 @@ potential ",
       "InlineFormula",
       Editable->True,
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "9106fab3-859b-4b64-a65d-f7c05c5aded8"],
+      "ad695747-139c-4e7c-8230-b9176c931c4e"],
      StyleBox[
      " \[LineSeparator]computes the bounce configuration of a multi-field \
 potential ",
       Editable->True],
      Cell[BoxData[
       StyleBox["V", "TI"]], "InlineFormula",
-      Editable->True,ExpressionUUID->"e3956fc4-dbf2-467c-92b8-39087f059f62"],
+      Editable->True,ExpressionUUID->"c701d2ed-e78b-47d9-a1e3-1cfa94f5be8f"],
      StyleBox["(",
       Editable->True],
      Cell[BoxData[
       SubscriptBox["\[CurlyPhi]", 
        StyleBox["i", "TI"]]], "InlineFormula",
-      Editable->True,ExpressionUUID->"3e8d44b6-77d8-432d-a5e2-1d0df28780ea"],
+      Editable->True,ExpressionUUID->"fd335f3d-33e7-4265-a75c-65d10ddb2ea2"],
      StyleBox[") and minima ",
       Editable->True],
      Cell[BoxData[
       SubscriptBox[
        StyleBox["min", "TI"], 
        StyleBox["i", "TI"]]], "InlineFormula",
-      Editable->True,ExpressionUUID->"caba19a2-0b62-46b9-8519-db8f384651aa"],
+      Editable->True,ExpressionUUID->"fa872b3b-f379-4d84-b708-2774d0ab1b35"],
      StyleBox[".",
       Editable->True]
     }],
-     Editable->True,ExpressionUUID->"4a4f4294-0110-4085-a1e4-85e15ffe5789"]},
+     Editable->True,ExpressionUUID->"b380d90b-2278-45b9-b433-49be4ddb596a"]},
    {"", Cell[TextData[{
      Cell[BoxData[
       RowBox[{
       Cell["FindBounce",ExpressionUUID->
-        "e4c6aa0e-f3a5-4f61-9300-fa00003d7298"], "[", 
+        "358670a2-61f2-4e80-b15c-2759a647e68f"], "[", 
        RowBox[{"{", 
         RowBox[{
          RowBox[{"{", 
@@ -170,51 +170,51 @@ potential ",
       "InlineFormula",
       Editable->False,
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "feab5e9a-68c5-4fca-91db-651ad0425df7"],
+      "aaf14a63-442a-406c-9c0c-7741af923def"],
      StyleBox[
      " \[LineSeparator]computes the bounce configuration given a list of \
 points.",
       Editable->False]
-    }],ExpressionUUID->"b2eaa290-b5b8-4abe-a814-eef56208e32e"]}
+    }],ExpressionUUID->"d8c6a98c-57de-49df-b445-b6a16d053638"]}
   }]], "Usage",
  GridBoxOptions->{
  GridBoxBackground->{
   "Columns" -> {{None}}, 
    "Rows" -> {
     None, None, None, {
-     None}}}},ExpressionUUID->"2347ae3e-afda-4026-b37d-b51fd1e23dfb"]
+     None}}}},ExpressionUUID->"01e21bb4-5451-4652-915e-f7a05408cd36"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Details and options", \
-"Subsection",ExpressionUUID->"aa3f1825-f8d9-4ba9-8776-47f0b4aaca28"],
+"Subsection",ExpressionUUID->"b2afc616-8b0f-4dd2-9a5f-8833e1b310bb"],
 
 Cell[TextData[StyleBox["The following options can be given:",
  Editable->True]], "Notes",
- CellID->22045,ExpressionUUID->"9b26990c-ab8e-4558-891d-c3f0728aecde"],
+ CellID->22045,ExpressionUUID->"90eb0e9d-2581-463d-ad5d-35a472eca25f"],
 
 Cell[BoxData[GridBox[{
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "7b4c9d34-67be-493e-ae67-9773e83de0c8"], "\"\<ActionTolerance\>\"", 
+     "a899cc56-a37f-4558-aea8-66f6dfa80971"], "\"\<ActionTolerance\>\"", 
     "0.01", Cell[
     "the tolerance of the action after a path deformation", "TableText",
-     ExpressionUUID->"1d120643-25b6-4aa7-bbf1-b304561e08f7"]},
+     ExpressionUUID->"6964aa53-0895-49cf-ab4e-def26c4b5624"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "5a0ead75-97e7-4458-b24d-66c596dea417"], "\"\<BottomlessPotential\>\"", 
+     "93f182a7-4ad3-4d4e-a004-963ac7973a1d"], "\"\<BottomlessPotential\>\"", 
     "False", Cell["\<\
 specifies whether the combination of polygonal plus quartic should be used \
-\>", "TableText",ExpressionUUID->"5a5d3c7b-43ab-4a09-8c3e-fad506284538"]},
+\>", "TableText",ExpressionUUID->"3baa6a8e-31f2-4e28-b7df-b83e17910d18"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "4b7693aa-7ed0-43ce-90bb-5ea55c2704af"], "\"\<Dimension\>\"", "4", Cell[
+     "22957013-b334-4618-b0e6-a71d12d24948"], "\"\<Dimension\>\"", "4", Cell[
     "number of space-time dimensions to be used", "TableText",ExpressionUUID->
-     "47b7d9e8-e5ae-4ea4-94c7-f6ce26c7080c"]},
+     "1f9f5128-9fe5-4f0f-a167-c551bf5b27bf"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "f159bb22-20a0-4626-ae4a-cb9501ef4605"], "\"\<FieldPoints\>\"", "31", 
+     "e81ba015-2db1-4673-8aa0-a75cbb247dfc"], "\"\<FieldPoints\>\"", "31", 
     RowBox[{
     "the", " ", "segmentation", " ", "in", " ", "field", " ", "space"}]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "e60ca5d5-ef63-4e29-b703-76fbda75d866"], "Gradient", "Automatic", Cell[
+     "4ed26f77-f06e-4913-88c9-2163e819d39f"], "Gradient", "Automatic", Cell[
     TextData[{
      "the list of gradient functions ",
      Cell[BoxData[
@@ -230,10 +230,10 @@ specifies whether the combination of polygonal plus quartic should be used \
           StyleBox["y", "TI"]}], "]"}], ",", 
         StyleBox["\[Ellipsis]", "TR"]}], "}"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "cef8e63c-f526-4f8e-a87a-7b31261c40a1"]
-    }], "TableText",ExpressionUUID->"0941ab31-e631-4c0b-8433-933c4cb7b7fc"]},
+      "3b730c81-7476-4de3-a888-3da3b67bde3e"]
+    }], "TableText",ExpressionUUID->"64781baf-3220-4ce6-a7cc-60029a968da4"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "84732942-9b87-4361-81ff-5a399c36f3c7"], "Hessian", "Automatic", Cell[
+     "bb7844f1-a4f0-402d-a58e-78e5b7007272"], "Hessian", "Automatic", Cell[
     TextData[{
      "the hessian matrix of functions ",
      Cell[BoxData[
@@ -268,27 +268,27 @@ specifies whether the combination of polygonal plus quartic should be used \
           StyleBox["\[Ellipsis]", "TR"]}], "}"}], ",", 
         StyleBox["\[Ellipsis]", "TR"]}], "}"}]], "InlineFormula",
       FontFamily->"Source Sans Pro",ExpressionUUID->
-      "b40cdaab-38a3-4845-9b0e-288da8518183"]
-    }], "TableText",ExpressionUUID->"ca373d78-8362-4476-8ad2-b553f1b85ea7"]},
+      "55a9bf7f-0a4c-4f2d-916a-4259d74b5fa7"]
+    }], "TableText",ExpressionUUID->"344562d8-10f8-4062-993a-70659450ce46"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "556de3df-2826-48e0-a2b4-3e47f830911f"], "\"\<InitialRadius\>\"", "None",
+     "e28924af-1bb0-451d-b475-2b600500a464"], "\"\<InitialRadius\>\"", "None",
      Cell["specifies the value or the initial ansatz of the radius.", 
-     "TableText",ExpressionUUID->"e6e831f5-e23b-44c3-ad37-978b3bd23494"]},
+     "TableText",ExpressionUUID->"d8e1587d-b843-4064-8652-daa19d47ec31"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "8fc1bc08-607e-46c0-89d3-66ab7d9b697a"], 
+     "8e577100-53f4-45c6-9306-570fa9f4d158"], 
     "\"\<InitialRadiusAccuracyGoal\>\"", "100", Cell[
     "the accuracy sought of the initial radius", "TableText",ExpressionUUID->
-     "4f705ae0-814c-4853-85a1-41512979610e"]},
+     "1e69e089-ad5e-4348-b836-4e2700f5b1d4"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "8ffbdf63-1fdb-4354-ab99-51533d5f6678"], "\"\<MaxPathIterations\>\"", 
+     "78fd3fe3-5a3b-4566-8bb4-1a21932a1906"], "\"\<MaxPathIterations\>\"", 
     "3", Cell[
     "maximum number of iterations of the path in field space", "TableText",
-     ExpressionUUID->"28260961-e9ff-4c18-9dbf-0ed9f72c5dcf"]},
+     ExpressionUUID->"a0890a0e-194a-4ba4-8ae1-92e9f02c1167"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "95eaef8a-cbce-4bb7-bf2a-fd9e882334ec"], "\"\<MaxRadiusIterations\>\"", 
+     "ad763079-c9fc-4afe-a1c5-20fbc7ce7c5f"], "\"\<MaxRadiusIterations\>\"", 
     "100", Cell[TextData[Cell[BoxData[
     Cell["maximum number of iterations of the initial radius", "TableText",
-      ExpressionUUID->"4e9f7e53-2c80-4ef7-b0f8-14bfab95ff66"]],
+      ExpressionUUID->"d0986427-2f31-4a57-b00f-6c1b7ff18df9"]],
      CellChangeTimes->{{3.780842842381516*^9, 3.780842863724539*^9}, {
       3.78084290005335*^9, 3.7808429727241488`*^9}, {3.780843004976894*^9, 
       3.780843136188416*^9}, {3.780843169132473*^9, 3.780843262203529*^9}, {
@@ -305,16 +305,16 @@ specifies whether the combination of polygonal plus quartic should be used \
        "Rows" -> {None, None, None, None, None, None, None, {None}}},
      GridBoxDividers->{
       "Rows" -> {{True, True, True, True, True, True, True, True, True}}}},
-     ExpressionUUID->"a29a7afa-d768-420e-afd0-93e87039c330"]], "TableText",
-     ExpressionUUID->"b2c5ad02-bf9a-4015-8bfd-42ef249d5fea"]},
+     ExpressionUUID->"865124f4-2bff-4a5a-962c-6feaf97f343a"]], "TableText",
+     ExpressionUUID->"ab11bce6-b94e-4fc5-9665-fca7e60d76f8"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "4d5d4d84-d2b4-4017-be01-c605a09c1e15"], "\"\<MidFieldPoint\>\"", "None",
+     "b0fd422f-9b43-4e0e-89b7-b6933cfc6936"], "\"\<MidFieldPoint\>\"", "None",
      Cell["inserts an intermediate field point between the two minima", 
-     "TableText",ExpressionUUID->"7d90ae9d-7d5e-4046-86dd-2f130a0c2bbb"]},
+     "TableText",ExpressionUUID->"abd2bf41-3ea1-4553-ab9a-b418ac926fcb"]},
    {Cell["      ", "TableRowIcon",ExpressionUUID->
-     "131fd83d-bccc-48db-bd9d-c5c0c38948db"], "\"\<PathTolerance\>\"", "0.01",
+     "30f86a13-4033-49cd-b0f2-87492f02f9b5"], "\"\<PathTolerance\>\"", "0.01",
      Cell["the tolerance of the path deformation", "TableText",ExpressionUUID->
-     "ff7a5599-c9a1-47ba-8786-61146f4ba122"]}
+     "8f595a7e-f3a6-4955-8f23-7544d88ec289"]}
   },
   GridBoxAlignment->{
    "Columns" -> {Left, Left, {Left}}, "ColumnsIndexed" -> {}, 
@@ -325,41 +325,42 @@ specifies whether the combination of polygonal plus quartic should be used \
    "Rows" -> {None, None, None, None, None, None, None, {None}}},
  GridBoxDividers->{
   "Rows" -> {{True, True, True, True, True, True, True, True, True}}}},
- CellID->1680388746,ExpressionUUID->"42710e61-4d78-4485-9664-826d98b0c4e6"]
+ CellID->1680388746,ExpressionUUID->"1d0461db-a278-483a-9eab-364efeecae4d"]
 }, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Single field potentials", \
-"Section",ExpressionUUID->"d117fd07-0421-4d7f-9ed0-688dbee9204e"],
+"Section",ExpressionUUID->"f6babb64-36fa-42e1-8d69-4b5b735894f7"],
 
 Cell[CellGroupData[{
 
 Cell["Basic example", \
-"Subsection",ExpressionUUID->"2be6e236-d697-481c-b3c5-e47ba6419552"],
+"Subsection",ExpressionUUID->"041fa13d-2859-48b1-97ae-fb6205adab6d"],
 
 Cell["Find the bounce configuration of a single potential U(\[CurlyPhi]):", \
 "Text", "ApplicationNotes",
- CellID->436901123,ExpressionUUID->"38e891cd-9498-4ec3-96e0-4c1d1106953d"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->436901123,ExpressionUUID->"1f0739ba-c52c-4578-9b49-e5acbcb97eed"],
 
 Cell[BoxData[{
  RowBox[{
   RowBox[{
-   RowBox[{"U", "[", "x_", "]"}], ":=", 
+   RowBox[{"U", "[", "\[CurlyPhi]_", "]"}], ":=", 
    RowBox[{
     RowBox[{"0.5", 
-     RowBox[{"x", "^", "2"}]}], "-", 
+     RowBox[{"\[CurlyPhi]", "^", "2"}]}], "+", 
     RowBox[{".5", 
-     RowBox[{"x", "^", "3"}]}], "+", 
+     RowBox[{"\[CurlyPhi]", "^", "3"}]}], "+", 
     RowBox[{".1", " ", 
-     RowBox[{"x", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+     RowBox[{"\[CurlyPhi]", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"extrema", "=", 
    RowBox[{"Block", "[", 
     RowBox[{
-     RowBox[{"{", "x", "}"}], ",", 
-     RowBox[{"x", "/.", 
+     RowBox[{"{", "\[CurlyPhi]", "}"}], ",", 
+     RowBox[{"\[CurlyPhi]", "/.", 
       RowBox[{"Sort", "@", 
        RowBox[{"NSolve", "[", 
         RowBox[{
@@ -367,9 +368,9 @@ Cell[BoxData[{
           RowBox[{"(", 
            RowBox[{"D", "[", 
             RowBox[{
-             RowBox[{"U", "[", "x", "]"}], ",", "x"}], "]"}], ")"}], "==", 
-          "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
+             RowBox[{"U", "[", "\[CurlyPhi]", "]"}], ",", "\[CurlyPhi]"}], 
+            "]"}], ")"}], "==", "0"}], ",", "\[CurlyPhi]"}], "]"}]}]}]}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"bf", " ", "=", " ", 
   RowBox[{"FindBounce", "[", " ", 
    RowBox[{
@@ -380,34 +381,39 @@ Cell[BoxData[{
       RowBox[{"extrema", "[", 
        RowBox[{"[", "1", "]"}], "]"}], ",", 
       RowBox[{"extrema", "[", 
-       RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], 
-   "]"}]}], "\[IndentingNewLine]", 
+       RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], "]"}]}]}], "Input",
+ CellLabel->"In[83]:=",ExpressionUUID->"aee70fa0-03e5-4d76-b69a-a4d653b67ba0"],
+
+Cell["\<\
+Use the function designed to plot easily the bounce field configuration:\
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1027768710,ExpressionUUID->"e74d0721-33ff-4e37-a6cf-8eee9d0ece96"],
+
+Cell[BoxData[
  RowBox[{"BouncePlot", "[", 
   RowBox[{"bf", ",", 
    RowBox[{"PlotStyle", "\[Rule]", 
     RowBox[{"Darker", "[", 
-     RowBox[{"Yellow", ",", "0.2"}], "]"}]}]}], "]"}]}], "Input",
- CellChangeTimes->{{3.7821260331366463`*^9, 3.782126045136462*^9}, {
-  3.782126759160615*^9, 3.782126826744855*^9}, {3.78214713633694*^9, 
-  3.782147152102788*^9}},
- CellLabel->"In[86]:=",ExpressionUUID->"4fc847db-652d-45c1-8fbd-9c60aa9859d4"],
+     RowBox[{"Yellow", ",", "0.2"}], "]"}]}]}], 
+  "]"}]], "Input",ExpressionUUID->"d0261b8f-22ec-4e73-b402-5356c25fb0ac"],
 
 Cell["List the properties of the BounceFunction:", "Text", "ApplicationNotes",
- 
- CellID->26471464,ExpressionUUID->"976f2d2d-b537-4261-864b-2d5949365a9a"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->26471464,ExpressionUUID->"ecf569ae-db9a-4305-9f29-59e05a06bc76"],
 
 Cell[BoxData[
  RowBox[{"bf", "[", "\"\<Properties\>\"", "]"}]], "Input",
- CellLabel->
-  "In[159]:=",ExpressionUUID->"0d66897a-fa76-43b7-8e57-6dc1ed6d3ca4"],
+ CellLabel->"In[83]:=",ExpressionUUID->"5b9a130e-3ee4-463d-833b-0e182e825135"],
 
 Cell["  Extract the solution from the BounceFunction:", "Text", \
 "ApplicationNotes",
- CellID->181313677,ExpressionUUID->"a4e26ee4-b0c9-4e3d-8645-6f9394b7757f"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->181313677,ExpressionUUID->"84d4801c-5e4a-4a64-a6ec-933da4c1f5c2"],
 
 Cell[BoxData[
  RowBox[{"bf", "[", "\"\<Dimension\>\"", "]"}]], "Input",
- CellLabel->"In[160]:=",ExpressionUUID->"bb52e13b-ada8-42a7-8604-32bd0611e199"]
+ CellLabel->"In[82]:=",ExpressionUUID->"24265959-743f-468f-a8c3-3260bd2a7686"]
 }, Closed]],
 
 Cell[CellGroupData[{
@@ -415,12 +421,15 @@ Cell[CellGroupData[{
 Cell[TextData[{
  Cell[BoxData[
   FormBox["Quartic", TraditionalForm]],ExpressionUUID->
-  "5046eb98-765c-42e1-8816-fe681886743e"],
+  "0229fe45-6ee8-4379-8b18-f317911619aa"],
  " potential: exact solution"
-}], "Subsection",ExpressionUUID->"ce64951b-544a-48ea-ace6-d2b9399967f6"],
+}], "Subsection",ExpressionUUID->"f6826200-b54a-4535-b9fe-8e70690d8145"],
 
 Cell["Compute the potential, extrema and the exact bounce action:", "Text", \
-"ApplicationNotes",ExpressionUUID->"ce9cd0f0-fa82-4932-97ab-9e552c57c77a"],
+"ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"94194690-767a-4459-b807-2d9b042400c0"],
 
 Cell[BoxData[
  RowBox[{"Module", "[", 
@@ -535,7 +544,6 @@ Cell[BoxData[
          SuperscriptBox["\[Alpha]", "3"]}], " ", "+", " ", 
         RowBox[{"6", 
          SuperscriptBox["\[Alpha]", "2"], "\[CapitalDelta]"}], " ", "+", " ", 
-        
         RowBox[{"4", "\[Alpha]", " ", 
          SuperscriptBox["\[CapitalDelta]", "2"]}], "+", 
         SuperscriptBox["\[CapitalDelta]", "3"], "+", 
@@ -550,13 +558,14 @@ Cell[BoxData[
         RowBox[{"(", 
          RowBox[{"1", " ", "-", " ", "\[CapitalDelta]"}], ")"}], "3"]]}]}], 
     ";"}]}], "\[IndentingNewLine]", "]"}]], "Input",
- CellLabel->
-  "In[161]:=",ExpressionUUID->"e9ae16d5-6793-4f91-b7d2-9fc33f560288"],
+ CellLabel->"In[86]:=",ExpressionUUID->"169d6827-5e38-4ca5-95a1-d4ce84c83378"],
 
 Cell["\<\
 Find the bounce configuration for two different number of field points:\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"8063397a-fd47-4c5a-ad0a-6d56fd0ee67f"],
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"d80eb4ec-168d-47cd-8f53-8b229716009a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -620,17 +629,18 @@ Cell[BoxData[{
         RowBox[{"\"\<\!\(\*SubscriptBox[\(S\), \(N = 200\)]\) = \>\"", ",", 
          RowBox[{"bf200", "[", "\"\<Action\>\"", "]"}]}], "}"}]}]}], 
      "}"}]}]}], "]"}], "\[IndentingNewLine]"}], "Input",
- CellChangeTimes->{{3.7814442026655617`*^9, 3.7814442045029984`*^9}},
- CellLabel->"In[165]:=",ExpressionUUID->"0923297a-3532-4493-88ac-1e43a9f49f67"]
+ CellLabel->"In[87]:=",ExpressionUUID->"96935484-97d0-4c5c-b84e-e3530c58304f"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Quasi-flat potential", \
-"Subsection",ExpressionUUID->"65737905-587f-486b-a498-780700ae9aaa"],
+"Subsection",ExpressionUUID->"0ff3adff-1bbc-4ce4-a2cb-2318e506dcfe"],
 
-Cell["Find the bounce configuration for a quasi flat potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"cd1423cb-7d8e-4f76-ac0a-53758e0761c8"],
+Cell["Show the potential quasi flat potential", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"efaa9422-06aa-4544-8391-6e412876ce39"],
 
 Cell[BoxData[{
  RowBox[{
@@ -700,19 +710,18 @@ Cell[BoxData[{
             RowBox[{"-", "\[Phi]"}], "/", "T"}], "]"}], ")"}]}]}], ")"}]}]}], 
     "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"extrema", " ", "=", 
-    RowBox[{"{", 
-     RowBox[{"0", ",", 
-      RowBox[{"\[Phi]", "/.", 
-       RowBox[{"FindRoot", "[", 
-        RowBox[{
-         RowBox[{"D", "[", 
-          RowBox[{
-           RowBox[{"U", "[", "\[Phi]", "]"}], ",", "\[Phi]"}], "]"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"\[Phi]", ",", "0"}], "}"}]}], "]"}]}], ",", "1"}], "}"}]}],
-    ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+  RowBox[{"extrema", " ", "=", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"\[Phi]", "/.", 
+      RowBox[{"FindRoot", "[", 
+       RowBox[{
+        RowBox[{"D", "[", 
+         RowBox[{
+          RowBox[{"U", "[", "\[Phi]", "]"}], ",", "\[Phi]"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\[Phi]", ",", "0"}], "}"}]}], "]"}]}], ",", "1"}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"Plot", "[", 
   RowBox[{
    RowBox[{"Evaluate", "@", 
@@ -724,7 +733,16 @@ Cell[BoxData[{
      RowBox[{"extrema", "[", 
       RowBox[{"[", 
        RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], ",", " ", 
-   RowBox[{"Evaluate", "@", "OptionsPlot"}]}], "]"}], "\[IndentingNewLine]", 
+   RowBox[{"Evaluate", "@", "OptionsPlot"}]}], "]"}]}], "Input",
+ CellLabel->
+  "In[100]:=",ExpressionUUID->"b10b53ce-4a80-44a2-a11f-3b248058fa11"],
+
+Cell["Find the bounce configuration", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"96234d3f-0d1f-4813-963c-1b65f621c2eb"],
+
+Cell[BoxData[
  RowBox[{"bf", " ", "=", "  ", 
   RowBox[{"FindBounce", "[", " ", 
    RowBox[{
@@ -734,21 +752,44 @@ Cell[BoxData[{
      RowBox[{"0", ",", ".4"}], "}"}], ",", "\[IndentingNewLine]", "\t", 
     RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "100"}], ",", 
     "\[IndentingNewLine]", "\t", 
-    RowBox[{"\"\<InitialRadiusAccuracyGoal\>\"", "\[Rule]", "10"}], ",", " ", 
+    RowBox[{"\"\<InitialRadiusAccuracyGoal\>\"", "\[Rule]", "5"}], ",", " ", 
     "\[IndentingNewLine]", "\t", 
     RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", 
      RowBox[{"extrema", "[", 
-      RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]}], "Input",
- CellLabel->"In[168]:=",ExpressionUUID->"603ba0d0-c2ba-4b08-808d-ee0c52ab8776"]
+      RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]], "Input",
+ CellLabel->
+  "In[105]:=",ExpressionUUID->"196de48a-efc4-44f4-894a-293894e7d941"],
+
+Cell[TextData[{
+ "The accuracy of the initial radius has been reduced since \
+\[OpenCurlyDoubleQuote]InitialRadiusAccuracyGoal\[CloseCurlyDoubleQuote] and \
+\[OpenCurlyDoubleQuote]FieldPoints\[CloseCurlyDoubleQuote] have to be \
+consistent, and it also depends on the shape of the potential. Besides, \
+\[OpenCurlyDoubleQuote]MidFieldPoint\[CloseCurlyDoubleQuote]-> Maximum has to \
+be included by hand since by default the segments are longer than the \
+distance between the minimum and the maximum \[CapitalDelta]extrema ~ ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox["10", 
+    RowBox[{"-", "7"}]], TraditionalForm]],ExpressionUUID->
+  "716570cd-2cd3-4304-9719-76c8c12b0493"],
+ "."
+}], "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"cf5fa35c-34b8-4472-a77e-cb8b9a704fdf"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Bottomless potential", \
-"Subsection",ExpressionUUID->"7009b4c7-960e-45da-9f42-4945aefe234e"],
+"Subsection",ExpressionUUID->"a05a197e-6787-4f71-9d41-37ceb8b3071e"],
 
 Cell["Find the bounce of a unbounded from below potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"4fadcc4e-1203-4254-9704-456e4d85fccc"],
+"ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"8c97e7be-76a4-4ae2-85a9-508524ed8cf6"],
 
 Cell[BoxData[{
  RowBox[{
@@ -848,10 +889,13 @@ Cell[BoxData[{
        RowBox[{"3", " ", "\[Lambda]"}], ")"}]}], "/", "4"}]}]}], 
   ";"}]}], "Input",
  CellLabel->
-  "In[174]:=",ExpressionUUID->"0a9e3749-6432-4f7c-84c7-40d04d8bfaf8"],
+  "In[106]:=",ExpressionUUID->"643c92a0-373f-468a-93f7-9e6a312a8044"],
 
 Cell["Plot the quartic, the real and the polygonal potential", "Text", \
-"ApplicationNotes",ExpressionUUID->"b9513528-6de6-45f6-af37-ab235ce447f2"],
+"ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"acb77ded-5e10-4bb1-8457-713d849e0afe"],
 
 Cell[BoxData[{
  RowBox[{
@@ -916,7 +960,6 @@ Cell[BoxData[{
             RowBox[{"-", "1"}]}], "]"}], "]"}], "]"}]}], "}"}]}], ",", 
      "\[IndentingNewLine]", "\t", 
      RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", "\t", 
-     
      RowBox[{"PlotStyle", "\[Rule]", "Green"}]}], "]"}], ",", 
    "\[IndentingNewLine]", 
    RowBox[{"Plot", "[", 
@@ -930,67 +973,61 @@ Cell[BoxData[{
           RowBox[{
            RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
            RowBox[{"[", "2", "]"}], "]"}], ",", "7"}], "}"}]}]}], "}"}], ",", 
-     
      RowBox[{"PlotStyle", "\[Rule]", "Green"}]}], "]"}]}], "]"}]}], "Input",
- CellLabel->"In[181]:=",ExpressionUUID->"f4236eb9-480f-4047-9ded-5281faa9ddf8"]
+ CellLabel->"In[113]:=",ExpressionUUID->"1f7278e4-c4a4-44d2-a05e-b479a014aa34"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Intermediate minima & disappearing of instanton", \
-"Subsection",ExpressionUUID->"bfcdd131-b46e-43e7-bcd1-49049e69c944"],
-
-Cell["Plot the potential with V3 as dynamical variable", "Text", \
-"ApplicationNotes",ExpressionUUID->"ba50ae4b-3249-4691-937c-5ce67d7f83e4"],
-
-Cell[BoxData[
- RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
-  RowBox[{
-   RowBox[{"ListPlot", "[", 
-    RowBox[{
-     RowBox[{"Transpose", "[", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"0", ",", "1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"0", ",", "2", ",", "V3", ",", "2", ",", "1"}], "}"}]}], 
-       "}"}], "]"}], ",", "\[IndentingNewLine]", "\t", 
-     RowBox[{"PlotRange", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"0", ",", "4"}], "}"}], ",", "Automatic"}], "}"}]}], ",", 
-     "\[IndentingNewLine]", "\t", 
-     RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", "\t", 
-     
-     RowBox[{"Mesh", "->", "All"}], ",", "\[IndentingNewLine]", "\t", 
-     RowBox[{"AxesLabel", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"\"\<\[CurlyPhi]\>\"", ",", "\"\<V\>\""}], "}"}]}]}], "]"}], 
-   "\[IndentingNewLine]", ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"V3", ",", ".5"}], "}"}], ",", "0", ",", "1"}], "}"}]}], 
-  "]"}]], "Input",
- CellLabel->
-  "In[290]:=",ExpressionUUID->"02ba0895-5c71-4087-9129-5cd4d7907524"],
+"Subsection",ExpressionUUID->"6e700d89-03ed-4491-8eeb-1c2b1cc08c4e"],
 
 Cell["\<\
-Find the decay rate of a potential with multiple minima as a function of V3 \
-(see above):\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"980da30b-2bb0-44ca-8a6b-f47b78f98859"],
+Find the decay rate of a potential with multiple minima as a function of V3:\
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"658a9e33-a0c8-4879-9d76-de6e3f0b6ddb"],
 
 Cell[BoxData[{
  RowBox[{
+  RowBox[{"OptionPlot", " ", "=", " ", 
+   RowBox[{"{", "\[IndentingNewLine]", "\t", 
+    RowBox[{
+     RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", "\[IndentingNewLine]", 
+     "\t", 
+     RowBox[{"LabelStyle", "->", 
+      RowBox[{"Directive", "[", 
+       RowBox[{"Black", ",", 
+        RowBox[{"FontSize", "->", "17"}], ",", 
+        RowBox[{"FontFamily", "->", "\"\<Times New Roman\>\""}], ",", 
+        "\[IndentingNewLine]", "\t\t", 
+        RowBox[{"FontSlant", "->", "Plain"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", "\t", 
+     RowBox[{"PlotLegends", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AC\)]\)\>\"", ",", 
+        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AB\)]\)\>\"", ",", 
+        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(BC\)]\)\>\"", ",", 
+        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(Total\)]\)\>\""}], 
+       "}"}]}], ",", "\[IndentingNewLine]", "\t", 
+     RowBox[{"AxesLabel", "->", 
+      RowBox[{"{", 
+       RowBox[{"\"\<V3\>\"", ",", "\"\<{\[CapitalGamma]}\>\""}], "}"}]}], ",",
+      "\[IndentingNewLine]", "\t", 
+     RowBox[{"PlotPoints", "\[Rule]", "2"}], ",", "\[IndentingNewLine]", "\t", 
+     RowBox[{"WorkingPrecision", "\[Rule]", "10"}]}], "\[IndentingNewLine]", 
+    "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
   RowBox[{
-   RowBox[{"OptionPlot", " ", "=", " ", 
+   RowBox[{"OptionListPlot", " ", "=", " ", 
     RowBox[{"{", "\[IndentingNewLine]", "\t", 
      RowBox[{
       RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", "\[IndentingNewLine]", 
       "\t", 
+      RowBox[{"Joined", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", "\t", 
+      RowBox[{"Mesh", "->", "All"}], ",", "\[IndentingNewLine]", "\t", 
       RowBox[{"LabelStyle", "->", 
        RowBox[{"Directive", "[", 
         RowBox[{"Black", ",", 
@@ -999,22 +1036,24 @@ Cell[BoxData[{
          "\[IndentingNewLine]", "\t\t", 
          RowBox[{"FontSlant", "->", "Plain"}]}], "]"}]}], ",", 
       "\[IndentingNewLine]", "\t", 
-      RowBox[{"PlotLegends", "\[Rule]", 
+      RowBox[{"AxesLabel", "\[Rule]", 
        RowBox[{"{", 
-        RowBox[{
-        "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AC\)]\)\>\"", ",", 
-         "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(AB\)]\)\>\"", ",", 
-         "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(BC\)]\)\>\"", ",", 
-         "\"\<\!\(\*SubscriptBox[\(\[CapitalGamma]\), \(Total\)]\)\>\""}], 
-        "}"}]}], ",", "\[IndentingNewLine]", "\t", 
-      RowBox[{"AxesLabel", "->", 
+        RowBox[{"\"\<\[CurlyPhi]\>\"", ",", "\"\<V\>\""}], "}"}]}], ",", 
+      "\[IndentingNewLine]", "\t", 
+      RowBox[{"Epilog", "\[Rule]", 
        RowBox[{"{", 
-        RowBox[{"\"\<V3\>\"", ",", "\"\<{\[CapitalGamma]}\>\""}], "}"}]}], 
-      ",", "\[IndentingNewLine]", "\t", 
-      RowBox[{"PlotPoints", "\[Rule]", "2"}], ",", "\[IndentingNewLine]", 
-      "\t", 
-      RowBox[{"WorkingPrecision", "\[Rule]", "10"}]}], "\[IndentingNewLine]", 
-     "}"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+        RowBox[{"Text", "[", 
+         RowBox[{
+          RowBox[{"Style", "[", 
+           RowBox[{"\"\<V3\>\"", ",", 
+            RowBox[{"FontSize", "->", "15"}], ",", 
+            RowBox[{"FontFamily", "->", "\"\<Times New Roman\>\""}], ",", 
+            RowBox[{"FontSlant", "->", "Plain"}]}], "]"}], ",", 
+          RowBox[{"Scaled", "[", 
+           RowBox[{"{", 
+            RowBox[{".5", ",", ".2"}], "}"}], "]"}]}], "]"}], "}"}]}]}], 
+     "\[IndentingNewLine]", "}"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{
@@ -1102,73 +1141,69 @@ Cell[BoxData[{
              RowBox[{"-", "BC"}]}], "}"}]}], ",", 
           RowBox[{"{", "total", "}"}]}], "]"}]}]}], " ", "]"}]}]}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"LogPlot", "[", 
+ RowBox[{"Row", "@", 
+  RowBox[{"{", "\[IndentingNewLine]", 
    RowBox[{
-    RowBox[{"{", 
+    RowBox[{"ListPlot", "[", 
      RowBox[{
+      RowBox[{"Transpose", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1", ",", "2", ",", "3", ",", "4"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "2", ",", ".6", ",", "2", ",", "1"}], "}"}]}], 
+        "}"}], "]"}], ",", 
+      RowBox[{"Evaluate", "@", "OptionListPlot"}]}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"LogPlot", "[", 
       RowBox[{
-       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
-       RowBox[{"[", "1", "]"}], "]"}], ",", 
-      RowBox[{
-       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
-       RowBox[{"[", "2", "]"}], "]"}], ",", 
-      RowBox[{
-       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
-       RowBox[{"[", "3", "]"}], "]"}], ",", 
-      RowBox[{
-       RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
-       RowBox[{"[", "4", "]"}], "]"}]}], "}"}], ",", 
-    RowBox[{"{", 
-     RowBox[{"V3", ",", ".5", ",", ".7"}], "}"}], ",", 
-    RowBox[{"Evaluate", "@", "OptionPlot"}]}], "]"}], "//", 
-  "Quiet"}], "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], ",", 
+         RowBox[{
+          RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+          RowBox[{"[", "2", "]"}], "]"}], ",", 
+         RowBox[{
+          RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+          RowBox[{"[", "3", "]"}], "]"}], ",", 
+         RowBox[{
+          RowBox[{"DecayRates", "[", "V3", "]"}], "[", 
+          RowBox[{"[", "4", "]"}], "]"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"V3", ",", ".5", ",", ".7"}], "}"}], ",", 
+       RowBox[{"Evaluate", "@", "OptionPlot"}]}], "]"}], "//", "Quiet"}]}], 
+   "}"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"Clear", "[", "DecayRates", "]"}], ";"}]}], "Input",
- CellChangeTimes->{
-  3.7814442894759617`*^9, {3.781444461089333*^9, 3.7814445355826893`*^9}, {
-   3.7814445901208344`*^9, 3.781444649015394*^9}, {3.7814446819289417`*^9, 
-   3.781444712302785*^9}, {3.781444750985113*^9, 3.7814447721512823`*^9}, {
-   3.781445016209096*^9, 3.7814450189933863`*^9}, {3.7814453637240763`*^9, 
-   3.7814454026335506`*^9}, {3.782122924653179*^9, 3.782123011390678*^9}, {
-   3.7821230449446363`*^9, 3.782123051710784*^9}, 3.7821230838997707`*^9, {
-   3.782123126233132*^9, 3.7821231735587378`*^9}, {3.782123214320464*^9, 
-   3.78212324691098*^9}, {3.782123288152422*^9, 3.7821232948153048`*^9}, {
-   3.782123348167054*^9, 3.782123385248667*^9}, {3.782123421776587*^9, 
-   3.782123421854694*^9}, {3.7821235154893217`*^9, 3.7821235169589033`*^9}, {
-   3.782123703529449*^9, 3.782123735310742*^9}, {3.7821243982573547`*^9, 
-   3.782124466639213*^9}, {3.7821245118167973`*^9, 3.7821245425514507`*^9}, {
-   3.7821245824333878`*^9, 3.782124627415246*^9}, {3.782124800553083*^9, 
-   3.7821248007028637`*^9}, {3.78212485804114*^9, 3.782124899318861*^9}, {
-   3.782124957920385*^9, 3.782124963078919*^9}, {3.78212500794531*^9, 
-   3.7821250701907997`*^9}, 3.782125107287953*^9, 3.782125200561027*^9, {
-   3.782125250273335*^9, 3.782125250695345*^9}, {3.782125284129696*^9, 
-   3.782125327631587*^9}, {3.7821253704653587`*^9, 3.782125409695496*^9}, {
-   3.782125441859405*^9, 3.782125457671639*^9}, {3.782125773465172*^9, 
-   3.782125842503841*^9}},
- CellLabel->"In[286]:=",ExpressionUUID->"aa55855e-f0c2-433e-9e98-289085a834fc"]
+ CellLabel->"In[115]:=",ExpressionUUID->"382840c4-11e3-4aa0-a382-74f7920b6636"]
 }, Closed]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell["Multi-field potentials", \
-"Section",ExpressionUUID->"242781aa-14ac-40c9-8e8a-402e8958a1d2"],
+"Section",ExpressionUUID->"fb209d1e-b268-4974-8914-6bff00a91997"],
 
 Cell[CellGroupData[{
 
 Cell["Two field potential", \
-"Subsection",ExpressionUUID->"31a8cea8-8edb-43d3-81aa-adaf9c53e730"],
+"Subsection",ExpressionUUID->"ff506850-ef66-4d45-9d2a-1fef8d05450c"],
 
 Cell[CellGroupData[{
 
 Cell["Thin wall potentials", \
-"Subsubsection",ExpressionUUID->"77380a12-26d7-40b6-aa1a-b6364875afe5"],
+"Subsubsection",ExpressionUUID->"d4e13f12-6470-4e97-99d7-1ce9fa7efe6b"],
 
 Cell["\<\
 Find the bounce configuration of a two fields thin wall potential:\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"2251b7c7-bca5-4c16-85a5-c7caae3bdc1a"],
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"55cad767-bc32-4c64-8393-decd0326c937"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1306,25 +1341,29 @@ Cell[BoxData[{
   RowBox[{"contourV", ",", 
    RowBox[{"ParametricPlot", "[", 
     RowBox[{
-     RowBox[{
-      RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], ",", 
+     RowBox[{"Through", "@", 
+      RowBox[{
+       RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}]}], 
+     ",", 
      RowBox[{"{", 
       RowBox[{"\[Rho]", ",", "0", ",", 
        RowBox[{"Max", "@", 
         RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}]}]}], "}"}]}], "]"}]}], 
   "]"}]}], "Input",
- CellLabel->"In[237]:=",ExpressionUUID->"34cf8c18-d076-4da3-83b9-0cb8147c5be1"]
+ CellLabel->"In[120]:=",ExpressionUUID->"29704fdf-42bd-49a7-91cf-860d6042c091"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Thick wall potentials", \
-"Subsubsection",ExpressionUUID->"0b3785cd-ebe5-4939-960f-5ee4edc986bc"],
+"Subsubsection",ExpressionUUID->"50044ca4-12d9-45aa-9c53-a29cd2813bd2"],
 
 Cell["\<\
 Find the bounce configuration of a two fields thick wall potential:\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"a6ffa392-6050-45cd-b359-9cb1a7cc381f"],
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"21e41d4e-6fb2-4639-ae47-e8ca6c4f5d7a"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1462,29 +1501,32 @@ Cell[BoxData[{
   RowBox[{"contourV", ",", 
    RowBox[{"ParametricPlot", "[", 
     RowBox[{
-     RowBox[{
-      RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], ",", 
+     RowBox[{"Through", "@", 
+      RowBox[{
+       RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}]}], 
+     ",", 
      RowBox[{"{", 
       RowBox[{"\[Rho]", ",", "0", ",", 
        RowBox[{"Max", "@", 
         RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}]}]}], "}"}]}], "]"}]}], 
   "]"}]}], "Input",
- CellLabel->"In[243]:=",ExpressionUUID->"fc030f89-3e04-4e09-9329-38696f751493"]
+ CellLabel->"In[120]:=",ExpressionUUID->"0bc13074-2501-4f7e-851a-6d7784227870"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Three field potential", \
-"Subsection",ExpressionUUID->"502917f9-24cb-49c2-b7d4-f5c6ccd62624"],
+"Subsection",ExpressionUUID->"94877f90-7726-4698-b36e-d40d3a589245"],
 
 Cell[CellGroupData[{
 
 Cell["Potential", \
-"Subsubsection",ExpressionUUID->"d909bbb5-e575-4235-b096-bb9b764230b3"],
+"Subsubsection",ExpressionUUID->"5ded4f7b-794a-4db1-acc1-dbea917cb785"],
 
 Cell["Plot the multi-field potential:", "Text", "ApplicationNotes",
- CellID->1862495724,ExpressionUUID->"c94bfc9a-8cdb-4d84-bfb7-bcd2d696ca7b"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1862495724,ExpressionUUID->"8d138f56-fa23-4ace-95a7-4cf9052e226a"],
 
 Cell[BoxData[
  RowBox[{
@@ -1587,16 +1629,17 @@ Cell[BoxData[
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2", ",", "\[CurlyPhi]3"}], 
       "}"}]}], ";"}]}]}]], "Input",
- CellLabel->"In[249]:=",ExpressionUUID->"06555611-89e4-4f52-9d37-8998797dce57"]
+ CellLabel->"In[126]:=",ExpressionUUID->"83a1a821-78e7-40a2-b9f8-f418bcdce462"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Find & classify the minima", \
-"Subsubsection",ExpressionUUID->"15e07c83-7a3a-402f-b605-58fe8c09f919"],
+"Subsubsection",ExpressionUUID->"9f5eb77a-49b6-4dac-bd0b-f88de3b8053a"],
 
 Cell["Find and classifies the minima:", "Text", "ApplicationNotes",
- CellID->1017313013,ExpressionUUID->"24b3602a-9fb1-4eac-8999-3630dc5bac8a"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1017313013,ExpressionUUID->"a600033e-f56e-4a60-a805-0f5b8e17bef4"],
 
 Cell[BoxData[
  RowBox[{
@@ -1766,16 +1809,19 @@ Cell[BoxData[
     RowBox[{"{", 
      RowBox[{"\"\<type of Minima: \>\"", ",", "typeV"}], "}"}], 
     "]"}]}]}]], "Input",
- CellLabel->"In[251]:=",ExpressionUUID->"999c06f7-fb0c-45ba-9f07-52275fc0633d"]
+ CellLabel->"In[128]:=",ExpressionUUID->"de171a33-7762-4c5c-a930-24e5f8ee7664"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["Tools for 3D", \
-"Subsubsection",ExpressionUUID->"e37d6930-56e0-4f88-b3f1-f1fd494cafbc"],
+Cell["Tools for 3D Plot", \
+"Subsubsection",ExpressionUUID->"9772b96d-74db-4b8e-99fc-75207e0071c1"],
 
 Cell["Define the option values for plotting in 3D:", "Text", \
-"ApplicationNotes",ExpressionUUID->"c89b1031-cf78-4ba3-bace-2f4546392664"],
+"ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"d245a308-1ea8-4abe-b6ec-eb173a147a9b"],
 
 Cell[BoxData[
  RowBox[{
@@ -1977,18 +2023,20 @@ Cell[BoxData[
              RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}]}], ",", 
          RowBox[{"PlotStyle", "\[Rule]", "Orange"}]}], "]"}]}], 
       "\[IndentingNewLine]", "]"}]}], ";"}]}]}]], "Input",
- CellLabel->"In[253]:=",ExpressionUUID->"42547f34-9e0d-4316-9be1-3572d4b62ffa"]
+ CellLabel->"In[130]:=",ExpressionUUID->"ee9859e2-a8bd-4150-bfaa-061faf1158f7"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Bounce", \
-"Subsubsection",ExpressionUUID->"34bdaf76-8cd7-43b0-a907-7f88e41b071b"],
+"Subsubsection",ExpressionUUID->"103013d0-68d0-4d46-a699-ad9b312c8d66"],
 
 Cell["\<\
 Find and plot the bounce configuration for three fields potential:\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"875a1542-60be-43be-bfb5-eb2df1201be3"],
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"094c41f6-e2bc-41f1-9756-8b5c8bf01f89"],
 
 Cell[BoxData[{
  RowBox[{"bf", " ", "=", " ", 
@@ -2011,13 +2059,26 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{"\"\<Action = \>\"", ",", 
        RowBox[{"bf", "[", "\"\<Action\>\"", "]"}]}], "}"}], "]"}]}]}], 
-  "]"}], "\[IndentingNewLine]", 
+  "]"}]}], "Input",
+ CellLabel->
+  "In[140]:=",ExpressionUUID->"56af86a4-4443-48f5-912e-0c5c914da0ca"],
+
+Cell["\<\
+Plot the trajectory of the bounce in field space of a three fields potential:\
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"edd0e4a1-70ec-458f-ae75-9aa2a8fdac3a"],
+
+Cell[BoxData[{
  RowBox[{
   RowBox[{"PathBounce", " ", "=", 
    RowBox[{"ParametricPlot3D", "[", 
     RowBox[{
-     RowBox[{
-      RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], ",", 
+     RowBox[{"Through", "@", 
+      RowBox[{
+       RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}]}], 
+     ",", 
      RowBox[{"{", 
       RowBox[{"\[Rho]", ",", "0", ",", 
        RowBox[{"Max", "@", 
@@ -2029,9 +2090,10 @@ Cell[BoxData[{
    RowBox[{"ParametricPlot", "[", 
     RowBox[{
      RowBox[{
-      RowBox[{
-       RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], "[", 
-      
+      RowBox[{"Through", "[", 
+       RowBox[{
+        RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], 
+       "]"}], "[", 
       RowBox[{"[", 
        RowBox[{"{", 
         RowBox[{"1", ",", "2"}], "}"}], "]"}], "]"}], ",", 
@@ -2048,20 +2110,21 @@ Cell[BoxData[{
      RowBox[{"Show", "[", 
       RowBox[{"plotZ", ",", "Bounce2DProjection"}], "]"}], "]"}]}], "}"}], 
   "]"}]}], "Input",
- CellLabel->"In[258]:=",ExpressionUUID->"d2921be3-9b35-4809-a00c-57c7200b6730"]
+ CellLabel->"In[145]:=",ExpressionUUID->"35763d18-ecad-482a-a9b6-840011ed324b"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["N-Fields Potential", \
-"Subsection",ExpressionUUID->"75c09dc9-d839-4724-8857-31320f554670"],
+"Subsection",ExpressionUUID->"c5e0793a-3d1c-464b-9e88-6bcdc068ccac"],
 
 Cell["\<\
 Defines the N-fields potential, where N is arbitrary and discriminate the \
 typo of extrema computed with FindRoot:\
 \>", "Text", "ApplicationNotes",
- CellID->1442606652,ExpressionUUID->"95c62a5e-6a54-4e3d-b663-0a501a4cee37"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1442606652,ExpressionUUID->"aa9f9ee5-d8d0-449f-b1b5-c2a6802459fc"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2079,36 +2142,6 @@ Cell[BoxData[{
   RowBox[{"(*", "Coeficients", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"V", "[", "x_", "]"}], ":=", " ", 
-   RowBox[{
-    RowBox[{"(", 
-     RowBox[{
-      RowBox[{"Sum", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"c", "[", 
-          RowBox[{"[", "i", "]"}], "]"}], 
-         RowBox[{
-          RowBox[{"(", 
-           RowBox[{
-            RowBox[{"x", "[", 
-             RowBox[{"[", "i", "]"}], "]"}], "-", "1"}], ")"}], "^", "2"}]}], 
-        ",", 
-        RowBox[{"{", 
-         RowBox[{"i", ",", "noFields"}], "}"}]}], "]"}], "-", 
-      RowBox[{"c", "[", 
-       RowBox[{"[", 
-        RowBox[{"-", "1"}], "]"}], "]"}]}], ")"}], 
-    RowBox[{"Sum", "[", 
-     RowBox[{
-      RowBox[{
-       RowBox[{"x", "[", 
-        RowBox[{"[", "i", "]"}], "]"}], "^", "2"}], ",", 
-      RowBox[{"{", 
-       RowBox[{"i", ",", "noFields"}], "}"}]}], "]"}]}]}], 
-  ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
    RowBox[{"\[CapitalPhi]", " ", "=", 
     RowBox[{"Table", "[", 
      RowBox[{
@@ -2117,51 +2150,84 @@ Cell[BoxData[{
         RowBox[{"ToString", "[", "i", "]"}]}], "]"}], ",", 
       RowBox[{"{", 
        RowBox[{"i", ",", "noFields"}], "}"}]}], "]"}]}], ";"}], 
-  RowBox[{"(*", "Variables", "*)"}], "\[IndentingNewLine]", 
-  "\[IndentingNewLine]", 
+  RowBox[{"(*", "Fields", "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"V", "[", "x_", "]"}], ":=", " ", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Sum", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"c", "[", 
+           RowBox[{"[", "i", "]"}], "]"}], 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"x", "[", 
+              RowBox[{"[", "i", "]"}], "]"}], "-", "1"}], ")"}], "^", "2"}]}],
+          ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "noFields"}], "}"}]}], "]"}], "-", 
+       RowBox[{"c", "[", 
+        RowBox[{"[", 
+         RowBox[{"-", "1"}], "]"}], "]"}]}], ")"}], 
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"[", "i", "]"}], "]"}], "^", "2"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "noFields"}], "}"}]}], "]"}]}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{"(*", 
    RowBox[{
    "Finds", " ", "two", " ", "extrema", " ", "of", " ", "the", " ", 
     "potential", " ", "close", " ", "to", " ", "0", " ", "and", " ", "1"}], 
    "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"sol", " ", "=", " ", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"FindRoot", "[", 
-      RowBox[{
-       RowBox[{"D", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"V", "[", "\[CapitalPhi]", "]"}], "\[Equal]", "0"}], ",", 
-         RowBox[{"{", "\[CapitalPhi]", "}"}]}], "]"}], ",", 
-       RowBox[{"Transpose", "@", 
-        RowBox[{"{", 
-         RowBox[{"\[CapitalPhi]", ",", 
-          RowBox[{"ConstantArray", "[", 
-           RowBox[{"m", ",", "noFields"}], "]"}]}], "}"}]}]}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"m", ",", "0", ",", "1"}], "}"}]}], "]"}]}], 
-  ";"}], "\[IndentingNewLine]", 
- RowBox[{
   RowBox[{
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{"minima", ",", "d2V"}], "}"}], " ", "=", " ", 
-    RowBox[{"{", 
+   RowBox[{"extrema", " ", "=", " ", 
+    RowBox[{"Table", "[", 
      RowBox[{
-      RowBox[{"\[CapitalPhi]", "/.", "sol"}], ",", 
-      RowBox[{
-       RowBox[{"D", "[", 
-        RowBox[{
-         RowBox[{"V", "[", "\[CapitalPhi]", "]"}], ",", 
-         RowBox[{"{", "\[CapitalPhi]", "}"}], ",", 
-         RowBox[{"{", "\[CapitalPhi]", "}"}]}], "]"}], "/.", "sol"}]}], 
-     "}"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{"(*", "Eigenvalues", "*)"}]}], "\[IndentingNewLine]", 
+      RowBox[{"FindRoot", "[", 
+       RowBox[{
+        RowBox[{"D", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"V", "[", "\[CapitalPhi]", "]"}], "\[Equal]", "0"}], ",", 
+          RowBox[{"{", "\[CapitalPhi]", "}"}]}], "]"}], ",", 
+        RowBox[{"Transpose", "@", 
+         RowBox[{"{", 
+          RowBox[{"\[CapitalPhi]", ",", 
+           RowBox[{"ConstantArray", "[", 
+            RowBox[{"m", ",", "noFields"}], "]"}]}], "}"}]}]}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"m", ",", "0", ",", "1"}], "}"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Discriminate", " ", "the", " ", "type", " ", "of", " ", "extrema"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"singEig", " ", "=", 
+   RowBox[{"{", 
+    RowBox[{"minima", ",", "d2V"}], "}"}], " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"\[CapitalPhi]", "/.", "extrema"}], ",", 
+     RowBox[{
+      RowBox[{"D", "[", 
+       RowBox[{
+        RowBox[{"V", "[", "\[CapitalPhi]", "]"}], ",", 
+        RowBox[{"{", "\[CapitalPhi]", "}"}], ",", 
+        RowBox[{"{", "\[CapitalPhi]", "}"}]}], "]"}], "/.", "extrema"}]}], 
+    "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"signE", " ", "=", 
     RowBox[{"Table", "[", 
      RowBox[{
       RowBox[{"DeleteDuplicates", "@", 
@@ -2171,38 +2237,38 @@ Cell[BoxData[{
           RowBox[{"[", "i", "]"}], "]"}]}], "]"}]}], ",", 
       RowBox[{"{", 
        RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]", 
-  RowBox[{"(*", 
-   RowBox[{
-   "Discriminate", " ", "the", " ", "type", " ", "of", " ", "extrema"}], 
-   "*)"}]}], "\[IndentingNewLine]", 
+  RowBox[{"(*", "Eigenvalues", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{"typeV", " ", "=", " ", 
-  RowBox[{"Table", "[", 
+  RowBox[{"Table", "[", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"If", "[", 
      RowBox[{
       RowBox[{
        RowBox[{"Length", "@", 
-        RowBox[{"singEig", "[", 
+        RowBox[{"signE", "[", 
          RowBox[{"[", "i", "]"}], "]"}]}], " ", ">", "1"}], ",", 
-      "\"\<Saddle\>\"", ",", "\[IndentingNewLine]", "\t\t\t\t", 
+      "\"\<Saddle\>\"", ",", "\[IndentingNewLine]", "\t", 
       RowBox[{"If", "[", 
        RowBox[{
         RowBox[{
-         RowBox[{"singEig", "[", 
+         RowBox[{"signE", "[", 
           RowBox[{"[", 
            RowBox[{"i", ",", "1"}], "]"}], "]"}], " ", ">", "0"}], ",", 
-        "\"\<Minimum\>\"", ",", "\"\<Maximum\>\""}], "]"}]}], "]"}], ",", 
+        "\[IndentingNewLine]", "\t\t", "\"\<Minimum\>\"", ",", 
+        "\[IndentingNewLine]", "\t\t", "\"\<Maximum\>\""}], "]"}]}], 
+     "\[IndentingNewLine]", "]"}], ",", 
     RowBox[{"{", 
-     RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "Input",
- CellLabel->
-  "In[263]:=",ExpressionUUID->"99929f96-3f9b-4940-a205-16a8eb670fd1"],
+     RowBox[{"i", ",", "2"}], "}"}]}], "]"}], 
+  RowBox[{"(*", 
+   RowBox[{"Send", " ", "Message"}], 
+   "*)"}]}]}], "Input",ExpressionUUID->"ff8ae1a4-46c1-4bf9-be04-2873ac262845"],
 
 Cell["\<\
-Find the bounce configuration for the N-fields potential (if its extrema are \
-minima):\
+If its extrema are minima, find the bounce configuration for the N-fields \
+potential:\
 \>", "Text", "ApplicationNotes",
- CellID->1243994596,ExpressionUUID->"603eef2c-059d-42ff-8b74-2c2a9de67fed"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1243994596,ExpressionUUID->"61f041ee-06c5-4af0-a7ec-0d7783aefffe"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", " ", 
@@ -2211,47 +2277,56 @@ Cell[BoxData[
     RowBox[{"V", "[", "\[CapitalPhi]", "]"}], ",", "\[CapitalPhi]", ",", 
     "minima"}], "]"}]}]], "Input",
  CellLabel->
-  "In[271]:=",ExpressionUUID->"8935bbdf-0b0d-4cd9-afad-69c4f81386ab"],
+  "In[117]:=",ExpressionUUID->"68fb98da-e5d1-4dd8-906c-1d27719a8a64"],
+
+Cell["Plot the bounce configuration with plot:", "Text", "ApplicationNotes",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1250517705,ExpressionUUID->"525857a2-d7d5-4b0f-a224-d3a75e0d7422"],
 
 Cell[BoxData[
  RowBox[{"Plot", "[", 
   RowBox[{
    RowBox[{"Evaluate", "@", 
-    RowBox[{
+    RowBox[{"Through", "@", 
      RowBox[{
-      RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], "[", 
-     RowBox[{"[", 
-      RowBox[{"{", 
-       RowBox[{"1", ",", 
-        RowBox[{"-", "1"}]}], "}"}], "]"}], "]"}]}], ",", 
+      RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}]}]}], 
+   ",", 
    RowBox[{"{", 
-    RowBox[{"\[Rho]", ",", 
-     RowBox[{"Sequence", "@@", 
+    RowBox[{"\[Rho]", ",", "0", ",", 
+     RowBox[{
       RowBox[{
        RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
        RowBox[{"[", 
-        RowBox[{"{", 
-         RowBox[{"1", ",", 
-          RowBox[{"-", "1"}]}], "}"}], "]"}], "]"}]}]}], "}"}]}], 
+        RowBox[{"-", "1"}], "]"}], "]"}], "*", "1.1"}]}], "}"}], ",", 
+   RowBox[{"AxesLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"\"\<\[Rho]\>\"", ",", "\"\<\[CurlyPhi](\[Rho])\>\""}], "}"}]}], 
+   ",", 
+   RowBox[{"PlotLegends", "\[Rule]", 
+    RowBox[{"LineLegend", "[", 
+     RowBox[{"Automatic", ",", 
+      RowBox[{"LegendLabel", "\[Rule]", "\"\<Fields\>\""}]}], "]"}]}]}], 
   "]"}]], "Input",
- CellLabel->"In[272]:=",ExpressionUUID->"97019850-9342-46da-a5b9-69766d00e32a"]
+ CellLabel->"In[124]:=",ExpressionUUID->"24c397c5-b373-4460-a3f7-6872202b3118"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Dynamical examples", \
-"Section",ExpressionUUID->"5e003193-395f-4797-acca-3a17bf954807"],
+"Section",ExpressionUUID->"479d4172-409f-4a77-ad83-d25c224f8561"],
 
 Cell[CellGroupData[{
 
 Cell["Single field potential", \
-"Subsection",ExpressionUUID->"f243884b-9de7-49de-8f23-7264b437d751"],
+"Subsection",ExpressionUUID->"94c39f6a-644a-49d1-9bfb-4e9c6c6c2894"],
 
 Cell["\<\
 Find the bounce configuration of a arbitrary dynamical potential:\
-\>", "Text", \
-"ApplicationNotes",ExpressionUUID->"9fc0878e-602e-41e7-8db1-47919113e6fb"],
+\>", "Text", "ApplicationNotes",
+ FontColor->RGBColor[
+  0., 0.25098039215686274`, 
+   0.5019607843137255],ExpressionUUID->"794abedf-f123-45a7-a38f-e8fc789cf3a0"],
 
 Cell[BoxData[
  RowBox[{"DynamicModule", "[", "\[IndentingNewLine]", 
@@ -2288,7 +2363,6 @@ Cell[BoxData[
               RowBox[{"Line", "[", "pts", "]"}]}], "}"}], ",", 
             "\[IndentingNewLine]", 
             RowBox[{"Frame", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", 
-            
             RowBox[{"PlotRange", "\[Rule]", 
              RowBox[{"{", 
               RowBox[{
@@ -2348,7 +2422,6 @@ Cell[BoxData[
                RowBox[{"Black", ",", 
                 RowBox[{"FontSize", "->", "14"}], ",", " ", 
                 RowBox[{"FontFamily", "->", "\"\<Times New Roman\>\""}], ",", 
-                
                 RowBox[{"FontSlant", "->", "Plain"}]}], "]"}]}], ",", 
              "\[IndentingNewLine]", 
              RowBox[{"GridLines", "\[Rule]", "None"}], ",", 
@@ -2364,53 +2437,8 @@ Cell[BoxData[
              "\[IndentingNewLine]", 
              RowBox[{"PlotStyle", "\[Rule]", 
               RowBox[{"Darker", "[", 
-               RowBox[{"Yellow", ",", ".2"}], "]"}]}], ",", 
-             "\[IndentingNewLine]", 
-             RowBox[{"Epilog", "\[Rule]", 
-              RowBox[{"{", 
-               RowBox[{
-                RowBox[{"Darker", "[", 
-                 RowBox[{"Yellow", ",", ".2"}], "]"}], ",", 
-                RowBox[{"AbsoluteThickness", "[", "1.6", "]"}], ",", 
-                "\[IndentingNewLine]", 
-                RowBox[{"Line", "[", 
-                 RowBox[{"{", 
-                  RowBox[{
-                   RowBox[{"{", 
-                    RowBox[{"0", ",", 
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
-                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}], ",", 
-                   RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
-                    RowBox[{"[", "1", "]"}], "]"}], ",", 
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
-                    RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}], "}"}], "]"}], 
-                ",", "\[IndentingNewLine]", 
-                RowBox[{"Line", "[", 
-                 RowBox[{"{", 
-                  RowBox[{
-                   RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
-                    RowBox[{"[", 
-                    RowBox[{"-", "1"}], "]"}], "]"}], ",", 
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
-                    RowBox[{"[", 
-                    RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}], ",", 
-                   RowBox[{"{", 
-                    RowBox[{"30", ",", 
-                    RowBox[{
-                    RowBox[{"bf", "[", "\"\<Path\>\"", "]"}], "[", 
-                    RowBox[{"[", 
-                    RowBox[{"-", "1"}], "]"}], "]"}]}], "}"}]}], "}"}], 
-                 "]"}]}], "}"}]}]}], "\[IndentingNewLine]", "]"}], ",", 
-           "\[IndentingNewLine]", 
+               RowBox[{"Yellow", ",", ".2"}], "]"}]}]}], 
+            "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
            RowBox[{"Graphics", "[", 
             RowBox[{
              RowBox[{"{", "}"}], ",", 
@@ -2419,30 +2447,19 @@ Cell[BoxData[
           "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}], 
       "\[IndentingNewLine]", "}"}], "]"}]}]}], "\[IndentingNewLine]", 
   "]"}]], "Input",
- CellChangeTimes->{{3.78212622835367*^9, 3.782126237888193*^9}, {
-   3.782126272096113*^9, 3.782126307647579*^9}, {3.7821264040571003`*^9, 
-   3.782126440527866*^9}, {3.782126645937208*^9, 3.782126647680183*^9}, {
-   3.782126918386445*^9, 3.782127001447858*^9}, {3.782127199257955*^9, 
-   3.7821272416558933`*^9}, {3.7821272734981537`*^9, 3.782127276407872*^9}, {
-   3.782127428841155*^9, 3.782127457672166*^9}, {3.78212750529828*^9, 
-   3.7821275319602757`*^9}, {3.782127591274506*^9, 3.782127703256322*^9}, {
-   3.782127843634446*^9, 3.7821278521844177`*^9}, {3.7821279931622066`*^9, 
-   3.782128033394977*^9}, {3.7821280744912977`*^9, 3.7821281124187927`*^9}, 
-   3.782128152268249*^9, {3.782128243338311*^9, 3.7821283565536747`*^9}, {
-   3.7821284337548323`*^9, 3.782128439792232*^9}, {3.7821284939859457`*^9, 
-   3.782128516896534*^9}},
- CellLabel->"In[507]:=",ExpressionUUID->"4f5557e6-9b71-4fea-8d97-bdc01ed1d063"]
+ CellLabel->"In[192]:=",ExpressionUUID->"a34dfad8-e3b6-402e-ba21-e463a69b9b86"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Two field potential ", \
-"Subsection",ExpressionUUID->"0fdefa4a-26a8-4bba-ac7d-fd1e4a7c6013"],
+"Subsection",ExpressionUUID->"fff967c8-dd2b-438f-9b67-bb8c1841d32b"],
 
 Cell["\<\
 Find the bounce configuration for two field dynamical potential\
 \>", "Text", "ApplicationNotes",
- CellID->1331207245,ExpressionUUID->"ac179540-abd5-447d-8e54-f4dd76574265"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1331207245,ExpressionUUID->"943dafde-3d64-42ea-a11e-8c34845cf44d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2547,7 +2564,6 @@ Cell[BoxData[{
             ",", 
            RowBox[{"{", 
             RowBox[{"\[Epsilon]1", ",", "\[Epsilon]2"}], "}"}]}], "}"}], ",", 
-         
          RowBox[{"{", 
           RowBox[{"\[Phi]1", ",", "\[Phi]2"}], "}"}]}], "]"}], ",", 
        "\[IndentingNewLine]", 
@@ -2617,7 +2633,6 @@ Cell[BoxData[{
             ",", 
            RowBox[{"{", 
             RowBox[{"\[Epsilon]1", ",", "\[Epsilon]2"}], "}"}]}], "}"}], ",", 
-         
          RowBox[{"{", 
           RowBox[{"\[Phi]1", ",", "\[Phi]2"}], "}"}]}], "]"}], ",", 
        RowBox[{"{", 
@@ -2691,7 +2706,6 @@ Cell[BoxData[{
         RowBox[{"{", 
          RowBox[{"\[Phi]2", ",", 
           RowBox[{"-", "5"}], ",", "25"}], "}"}], ",", "\[IndentingNewLine]", 
-        
         RowBox[{"Epilog", "\[Rule]", 
          RowBox[{"{", 
           RowBox[{
@@ -2705,9 +2719,10 @@ Cell[BoxData[{
         "\[IndentingNewLine]", 
         RowBox[{"ParametricPlot", "[", "\[IndentingNewLine]", 
          RowBox[{
-          RowBox[{
-           RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], 
-          ",", 
+          RowBox[{"Through", "@", 
+           RowBox[{
+            RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", 
+            "]"}]}], ",", 
           RowBox[{"{", 
            RowBox[{"\[Rho]", ",", "0", ",", "10"}], "}"}], ",", 
           "\[IndentingNewLine]", 
@@ -2785,27 +2800,41 @@ Cell[BoxData[{
       ",", "1", ",", 
      RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}]}], 
   "\[IndentingNewLine]", " ", "]"}]}], "Input",
- CellLabel->"In[508]:=",ExpressionUUID->"8297fe09-8d9c-4468-a250-9db61621e0b7"]
+ CellLabel->"In[200]:=",ExpressionUUID->"01862cca-e0d6-4b96-84ac-6f42f31c1e8d"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Options", \
-"Section",ExpressionUUID->"71cb7ad5-8128-4b80-8b0c-60835ede6bcc"],
+"Section",ExpressionUUID->"cd2eebdc-fd0b-40be-bd5d-e1e3ef2c809b"],
+
+Cell[CellGroupData[{
+
+Cell["Summary&Default Values", \
+"Subsection",ExpressionUUID->"85302a19-3cd7-4644-a2f3-92e7b7526948"],
+
+Cell["Get the options and default values:", "Text",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1573132974,ExpressionUUID->"f610a38a-b8cc-47d4-accc-05bf661f1ca4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Options", "[", "FindBounce", "]"}], "//", "MatrixForm"}]], "Input",
+ CellLabel->
+  "In[1143]:=",ExpressionUUID->"2f4f4c21-b4e1-4a55-91ad-c7fd3df0cbf8"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]ActionTolerance\[CloseCurlyDoubleQuote]", \
-"Subsection",
- CellChangeTimes->{{3.782126059886305*^9, 
-  3.7821260752143793`*^9}},ExpressionUUID->"dfcdf500-e43d-41c6-97ce-\
-e5ab3a581f1e"],
+"Subsection",ExpressionUUID->"0719a82d-8937-406a-bbea-4672977d1b70"],
 
 Cell["\<\
 Find the bounce configuration for different tolerance of the action:\
 \>", "Text",
- CellID->1837602838,ExpressionUUID->"dde33640-3073-470f-9bcb-86fd6394fc5c"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1837602838,ExpressionUUID->"e8065dca-166e-4bb3-b855-091014ac0fdb"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2920,20 +2949,20 @@ Cell[BoxData[{
       "\"\<ActionTolerance\>\"", ",", "\"\<Action\>\"", ",", 
        "\"\<PathIterations\>\""}], "}"}], "}"}], ",", "bf"}], 
    "]"}]}]}], "Input",
- CellLabel->
-  "In[90]:=",ExpressionUUID->"87e5daef-fd59-474f-8da8-09ac17273df2"]
+ CellLabel->"In[207]:=",ExpressionUUID->"41955bbb-fcca-4e29-9fbb-ec75487d760f"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]BottomlessPotential\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"a7b4b0ac-214a-4501-9880-c24a24dc7b38"],
+"Subsection",ExpressionUUID->"0aefbec3-635a-4235-bca2-f714e967b8e9"],
 
 Cell["\<\
 Find the bounce configuration for a single field unbounded from below \
 potential:\
 \>", "Text",
- CellID->380837463,ExpressionUUID->"42a3401b-ba7f-49c0-b9be-633bd18e323d"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->380837463,ExpressionUUID->"f64aa0d6-85ec-459d-9243-d0a379add391"],
 
 Cell[BoxData[{
  RowBox[{
@@ -2977,7 +3006,16 @@ Cell[BoxData[{
  RowBox[{"bf", " ", "=", "  ", 
   RowBox[{"FindBounce", "[", " ", 
    RowBox[{
-    RowBox[{"U", "[", "\[CurlyPhi]", "]"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"1", "/", "2"}], 
+      RowBox[{
+       RowBox[{"(", "\[CurlyPhi]", ")"}], "^", "2"}]}], "+", 
+     RowBox[{"4", "\[Lambda]B", " ", "\[CurlyPhi]B", " ", 
+      RowBox[{"\[CurlyPhi]", "^", "3"}]}], "-", 
+     RowBox[{"\[Lambda]B", " ", 
+      RowBox[{
+       RowBox[{"(", "\[CurlyPhi]", ")"}], "^", "4"}]}]}], ",", 
     RowBox[{"{", "\[CurlyPhi]", "}"}], ",", 
     RowBox[{"{", 
      RowBox[{
@@ -2986,10 +3024,11 @@ Cell[BoxData[{
     "\[IndentingNewLine]", "\t\t", 
     RowBox[{"\"\<BottomlessPotential\>\"", "\[Rule]", "True"}]}], 
    "]"}]}]}], "Input",
- CellLabel->"In[85]:=",ExpressionUUID->"93a6f974-c6fd-410e-897c-626dc5df8ec0"],
+ CellLabel->"In[79]:=",ExpressionUUID->"2d575c90-dc41-4075-aa52-1750f6e0763f"],
 
 Cell[" Plot quartic, quartic-Polygonal,Polygonal bounce:", "Text",
- CellID->140808809,ExpressionUUID->"68dc30fa-669f-43b4-ab5e-25361d8aed16"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->140808809,ExpressionUUID->"46264c0f-d863-46af-ac75-7690e79d67b1"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3101,63 +3140,37 @@ Cell[BoxData[{
       RowBox[{"{", "\"\<Polygnal+Quartic\>\"", "}"}]}]}], "]"}], ",", 
    "\[IndentingNewLine]", 
    RowBox[{"PlotRange", "->", "All"}]}], "]"}]}], "Input",
- CellChangeTimes->{{3.7821459592602053`*^9, 3.782145959519103*^9}},
- CellLabel->
-  "In[93]:=",ExpressionUUID->"660a7525-c6f3-4276-b64f-91004394d04a"]
+ CellLabel->"In[83]:=",ExpressionUUID->"1189da12-b7ef-4f8e-a370-331f85cb5704"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]Dimension\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"b5ac0fd0-7da3-4790-b006-ee4afebfed13"],
+"Subsection",ExpressionUUID->"4cdb6351-9fdb-4c33-9425-2e57007c3bc5"],
 
 Cell["\<\
 Find the bounce field configuration for different space-time dimensions:\
 \>", "Text",
- CellID->1333572201,ExpressionUUID->"fc0e7305-e7c7-4a5c-9340-c47d0d3e8cad"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1333572201,ExpressionUUID->"cc7b6f21-59bb-4e5c-980a-7b66c8734dee"],
 
 Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"U", "[", "x_", "]"}], ":=", 
-   RowBox[{
-    RowBox[{"0.5", 
-     RowBox[{"x", "^", "2"}]}], "-", 
-    RowBox[{".5", 
-     RowBox[{"x", "^", "3"}]}], "+", 
-    RowBox[{".1", " ", 
-     RowBox[{"x", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"extrema", "=", 
-    RowBox[{"Block", "[", 
-     RowBox[{
-      RowBox[{"{", "x", "}"}], ",", 
-      RowBox[{"x", "/.", 
-       RowBox[{"Sort", "@", 
-        RowBox[{"NSolve", "[", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"(", 
-            RowBox[{"D", "[", 
-             RowBox[{
-              RowBox[{"U", "[", "x", "]"}], ",", "x"}], "]"}], ")"}], "==", 
-           "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"bf", " ", "=", "  ", 
    RowBox[{"Table", "[", 
     RowBox[{
      RowBox[{"FindBounce", "[", " ", 
       RowBox[{
-       RowBox[{"U", "[", "x", "]"}], ",", 
+       RowBox[{
+        RowBox[{"0.5", 
+         RowBox[{"x", "^", "2"}]}], "-", 
+        RowBox[{".5", 
+         RowBox[{"x", "^", "3"}]}], "+", 
+        RowBox[{".1", " ", 
+         RowBox[{"x", "^", "4"}]}]}], ",", 
        RowBox[{"{", "x", "}"}], ",", 
        RowBox[{"{", 
-        RowBox[{
-         RowBox[{"extrema", "[", 
-          RowBox[{"[", "1", "]"}], "]"}], ",", 
-         RowBox[{"extrema", "[", 
-          RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
+        RowBox[{"0", ",", "2.88278"}], "}"}], ",", 
        RowBox[{"\"\<Dimension\>\"", "\[Rule]", "d"}]}], "]"}], ",", 
      RowBox[{"{", 
       RowBox[{"d", ",", 
@@ -3171,63 +3184,40 @@ Cell[BoxData[{
     RowBox[{"{", 
      RowBox[{"\"\<D = 3\>\"", ",", "\"\<D = 4\>\""}], "}"}]}]}], 
   "]"}]}], "Input",
- CellLabel->
-  "In[97]:=",ExpressionUUID->"b39c2c97-e62d-4233-884c-ad3e4e7e7b23"]
+ CellLabel->"In[87]:=",ExpressionUUID->"6d9fba0a-91c1-47f4-9c29-6347b6cb7f03"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]FieldPoints\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"7922877d-c56b-493f-8610-461d6d961514"],
+"Subsection",ExpressionUUID->"81ab92a0-0d75-4fc9-b67a-cbc0cf18d25b"],
 
 Cell[CellGroupData[{
 
-Cell["Changing the number of fields points", \
-"Subsubsection",ExpressionUUID->"7a118d85-89b3-4f49-b280-1deb538b511b"],
+Cell["Change the number of fields points", \
+"Subsubsection",ExpressionUUID->"7b52aaee-76af-4038-8d21-fe602941568c"],
 
 Cell["Find the bounce configuration for different field points:", "Text",
- CellID->1611372145,ExpressionUUID->"0c614104-3bb9-49fe-bb36-86981c6eecc5"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1611372145,ExpressionUUID->"bc6a3d4e-73eb-491c-92b5-ae9a8e6db9aa"],
 
 Cell[BoxData[{
- RowBox[{
-  RowBox[{
-   RowBox[{"U", "[", "x_", "]"}], ":=", 
-   RowBox[{
-    RowBox[{"0.5", 
-     RowBox[{"x", "^", "2"}]}], "-", 
-    RowBox[{".5", 
-     RowBox[{"x", "^", "3"}]}], "+", 
-    RowBox[{".1", " ", 
-     RowBox[{"x", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"extrema", "=", 
-    RowBox[{"Block", "[", 
-     RowBox[{
-      RowBox[{"{", "x", "}"}], ",", 
-      RowBox[{"x", "/.", 
-       RowBox[{"Sort", "@", 
-        RowBox[{"NSolve", "[", 
-         RowBox[{
-          RowBox[{
-           RowBox[{"(", 
-            RowBox[{"D", "[", 
-             RowBox[{
-              RowBox[{"U", "[", "x", "]"}], ",", "x"}], "]"}], ")"}], "==", 
-           "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"bf", " ", "=", 
    RowBox[{"Table", "[", " ", 
     RowBox[{
      RowBox[{"FindBounce", "[", " ", 
       RowBox[{
-       RowBox[{"U", "[", "x", "]"}], ",", 
+       RowBox[{
+        RowBox[{"0.5", 
+         RowBox[{"x", "^", "2"}]}], "-", 
+        RowBox[{".5", 
+         RowBox[{"x", "^", "3"}]}], "+", 
+        RowBox[{".1", " ", 
+         RowBox[{"x", "^", "4"}]}]}], ",", 
        RowBox[{"{", "x", "}"}], ",", 
-       RowBox[{"extrema", "[", 
-        RowBox[{"[", 
-         RowBox[{"{", 
-          RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "2.88278"}], "}"}], ",", 
        RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "fp"}]}], " ", "]"}], ",", 
      RowBox[{"{", 
       RowBox[{"fp", ",", 
@@ -3252,19 +3242,20 @@ Cell[BoxData[{
         "]"}]}], ",", 
       RowBox[{"{", 
        RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
- CellLabel->"In[101]:=",ExpressionUUID->"82e5b0a1-b0af-4bf8-b2fa-12b795c203d6"]
+ CellLabel->"In[89]:=",ExpressionUUID->"7e6216e0-8c3f-44a5-8ef3-f31122f983da"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
-Cell["Adding the initial path by hand", \
-"Subsubsection",ExpressionUUID->"bffaf1eb-480e-4cbd-b5db-35f0563423e1"],
+Cell["Add the initial path by hand", \
+"Subsubsection",ExpressionUUID->"6e70a5d6-3278-4ab5-85a3-c869e0e85879"],
 
 Cell["\<\
 Find the bounce configuration given the ansatz of trajectory in field space, \
 where the number of deformation are taken to be zero and one:\
 \>", "Text",
- CellID->415368698,ExpressionUUID->"95006961-73d7-4273-99b6-e2846fcd8af6"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->415368698,ExpressionUUID->"3b744510-c83a-4472-9af5-9ac32a642010"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3385,32 +3376,39 @@ Cell[BoxData[{
       ";", "\[IndentingNewLine]", "\t", 
       RowBox[{"ParametricPlot", "[", 
        RowBox[{
-        RowBox[{
-         RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}], 
+        RowBox[{"Through", "@", 
+         RowBox[{
+          RowBox[{"bf", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", "]"}]}], 
         ",", 
         RowBox[{"{", 
          RowBox[{"\[Rho]", ",", "0", ",", "10"}], "}"}], ",", 
         "\[IndentingNewLine]", "\t\t", 
         RowBox[{"PlotStyle", "\[Rule]", 
          RowBox[{"{", 
-          RowBox[{"Lighter", "@", "Red"}], "}"}]}], ",", 
+          RowBox[{
+           RowBox[{"Lighter", "@", "Red"}], ",", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Dashed", ",", "None"}], "}"}], "[", 
+            RowBox[{"[", 
+             RowBox[{"i", "+", "1"}], "]"}], "]"}]}], "}"}]}], ",", 
         "\[IndentingNewLine]", "\t\t", 
         RowBox[{"PlotLegends", "\[Rule]", 
          RowBox[{"{", 
-          RowBox[{"\"\<MaxPathIteration = \>\"", "<>", 
+          RowBox[{"\"\<\\\"MaxPathIteration\\\"-> \>\"", "<>", 
            RowBox[{"ToString", "[", "i", "]"}]}], "}"}]}]}], "]"}]}], 
      "\[IndentingNewLine]", ",", 
      RowBox[{"{", 
       RowBox[{"i", ",", 
        RowBox[{"{", 
         RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], ";"}]}], "Input",
- CellLabel->
-  "In[105]:=",ExpressionUUID->"8a36f1a4-2acb-4ce0-a6ea-855b3b3229f1"],
+ CellLabel->"In[91]:=",ExpressionUUID->"bf1455c3-bf73-4304-ab71-e635f4b2c105"],
 
 Cell["\<\
 Plot both bounce field configurations and the ansatz of the path:\
 \>", "Text",
- CellID->1779854536,ExpressionUUID->"74b51b2a-2538-4dfd-99f4-2d99470510c7"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1779854536,ExpressionUUID->"9c5a88bd-dcb7-4002-a6f2-463cd5a37dde"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3489,25 +3487,27 @@ Cell[BoxData[{
            RowBox[{"PointSize", "[", ".015", "]"}]}], "}"}]}]}], "]"}]}], 
      "}"}]}], "\[IndentingNewLine]", ",", 
    RowBox[{"PlotRange", "->", "All"}]}], "]"}]}], "Input",
- CellLabel->"In[109]:=",ExpressionUUID->"8d1ca623-f0a4-47b1-ae31-fa61e2bf0659"]
+ CellLabel->"In[95]:=",ExpressionUUID->"6706a850-88a5-4029-85c6-a2322d5e6910"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Gradient", \
-"Subsection",ExpressionUUID->"ae58d386-0549-4c9e-ba92-516c314dde6d"],
+"Subsection",ExpressionUUID->"b3e938f0-877d-40e8-afc1-e2b702342a14"],
 
 Cell[CellGroupData[{
 
 Cell["\<\
 Turning off and on of the 2nd order approximation of the potential\
-\>", "Subsubsection",ExpressionUUID->"11a5da3c-5300-45fd-92ea-c09ae932f2c7"],
+\>", "Subsubsection",ExpressionUUID->"a22c6c7f-fc4a-42cb-a88f-9e2b33cafce7"],
 
 Cell["\<\
-      Find the bounce action for different options value of Gradient:\
-\>", "ExampleText",
- CellID->1326729068,ExpressionUUID->"60cf6a24-b9b9-4538-827c-fd5a5fae1b01"],
+Find the bounce action given the first derivative of the potential as a \
+vector of the field by hand:\
+\>", "Text",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1816253940,ExpressionUUID->"bbfae5f8-ef82-4691-b0d3-7daaa76d5a77"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3544,8 +3544,14 @@ Cell[BoxData[{
       RowBox[{
        RowBox[{"FindBounce", "[", " ", 
         RowBox[{
-         RowBox[{"U", "[", "\[CurlyPhi]", "]"}], ",", 
-         RowBox[{"{", "\[CurlyPhi]", "}"}], ",", 
+         RowBox[{
+          RowBox[{"0.5", 
+           RowBox[{"x", "^", "2"}]}], "-", 
+          RowBox[{".5", 
+           RowBox[{"x", "^", "3"}]}], "+", 
+          RowBox[{".1", " ", 
+           RowBox[{"x", "^", "4"}]}]}], ",", 
+         RowBox[{"{", "x", "}"}], ",", 
          RowBox[{"{", 
           RowBox[{
            RowBox[{"extrema", "[", 
@@ -3570,19 +3576,20 @@ Cell[BoxData[{
      RowBox[{
       RowBox[{"{", "\"\< Action = \>\"", "}"}], ",", "bfAction"}], "]"}]}], 
    "}"}]}]}], "Input",
- CellLabel->"In[111]:=",ExpressionUUID->"9385bfa4-d6b5-4828-8089-f50e83370e13"]
+ CellLabel->"In[118]:=",ExpressionUUID->"491c739e-04fc-4e9c-8b65-1cf37d093d15"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Providing the first derivative of the potential by hand", \
-"Subsubsection",ExpressionUUID->"6dcc6b87-ffab-40ef-9138-d20e8df26792"],
+"Subsubsection",ExpressionUUID->"0ce88a2f-2f90-400b-88bd-b7032ba54b4b"],
 
 Cell["\<\
 Find the bounce configuration given first derivative of the potential as a \
 function of the field by hand:\
 \>", "Text",
- CellID->1994222503,ExpressionUUID->"42a4ace8-c731-4bba-9d19-01aa5e3e5a65"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1994222503,ExpressionUUID->"b5bd0486-e327-4cec-b7cb-70d8bbb096df"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3743,20 +3750,21 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}]}]}], 
   "]"}]}], "Input",
- CellLabel->"In[115]:=",ExpressionUUID->"eeddcf04-d138-422a-ab8b-c887e811c187"]
+ CellLabel->"In[243]:=",ExpressionUUID->"5afb7ff4-e9fa-4052-b54e-5fdd72526c53"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Hessian", \
-"Subsection",ExpressionUUID->"734a56d6-12f2-4a72-8aad-e8c681e67385"],
+"Subsection",ExpressionUUID->"d2b298af-5b84-4daa-b740-0df504ddb0f8"],
 
 Cell["\<\
 Find the bounce configuration given the second derivative of the potential as \
 a matrix of functions of the field by hand:\
 \>", "Text",
- CellID->1499301392,ExpressionUUID->"425f4928-64c1-443d-91b3-dd7f1e7c056d"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1499301392,ExpressionUUID->"a33ad6e9-e7a0-4211-8848-d3bedf1654f7"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3918,16 +3926,17 @@ Cell[BoxData[{
      RowBox[{"{", 
       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}]}]}], 
   "]"}]}], "Input",
- CellLabel->"In[119]:=",ExpressionUUID->"3109fb88-45bd-45fb-afe8-0916b8ebcd87"]
+ CellLabel->"In[247]:=",ExpressionUUID->"5bcb485d-f49a-4072-9312-42708c4b3c62"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]InitialRadius\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"4689fdfb-74d4-45ab-b3fa-1222cce5333e"],
+"Subsection",ExpressionUUID->"d4742a03-32d5-42f7-a3b8-278f4f6fee44"],
 
 Cell["Find the bounce configuration for a given initial radius:", "Text",
- CellID->1758766572,ExpressionUUID->"fb5e7234-a4d5-456c-b66a-d9a00bd2ac76"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1758766572,ExpressionUUID->"c2423376-22f7-419b-9150-4b168f788322"],
 
 Cell[BoxData[{
  RowBox[{
@@ -3942,23 +3951,22 @@ Cell[BoxData[{
     RowBox[{".1", " ", 
      RowBox[{"x", "^", "4"}]}]}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"extrema", "=", 
-    RowBox[{"Block", "[", 
-     RowBox[{
-      RowBox[{"{", "x", "}"}], ",", 
-      RowBox[{"x", "/.", 
-       RowBox[{"Sort", "@", 
-        RowBox[{"NSolve", "[", 
+  RowBox[{"extrema", "=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "x", "}"}], ",", 
+     RowBox[{"x", "/.", 
+      RowBox[{"Sort", "@", 
+       RowBox[{"NSolve", "[", 
+        RowBox[{
          RowBox[{
-          RowBox[{
-           RowBox[{"(", 
-            RowBox[{"D", "[", 
-             RowBox[{
-              RowBox[{"V", "[", 
-               RowBox[{"x", ",", "1"}], "]"}], ",", "x"}], "]"}], ")"}], "==",
-            "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+          RowBox[{"(", 
+           RowBox[{"D", "[", 
+            RowBox[{
+             RowBox[{"V", "[", 
+              RowBox[{"x", ",", "1"}], "]"}], ",", "x"}], "]"}], ")"}], "==", 
+          "0"}], ",", "x"}], "]"}]}]}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
  RowBox[{"bf", " ", "=", " ", 
   RowBox[{"FindBounce", "[", " ", 
    RowBox[{
@@ -3971,15 +3979,15 @@ Cell[BoxData[{
        RowBox[{"[", "1", "]"}], "]"}], ",", 
       RowBox[{"extrema", "[", 
        RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
-    RowBox[{"\"\<InitialRadius\>\"", "\[Rule]", "10"}]}], "]"}]}]}], "Input",
- CellLabel->
-  "In[123]:=",ExpressionUUID->"516134de-b428-40c1-bb24-b551cbceacb3"],
+    RowBox[{"\"\<InitialRadius\>\"", "\[Rule]", "10"}]}], 
+   "]"}]}]}], "Input",ExpressionUUID->"50149674-b718-4caf-98a4-0f880cb526bd"],
 
 Cell["\<\
 Can be used to speed up the computation of the bounce for a slightly \
 different potential:\
 \>", "Text",
- CellID->1872332047,ExpressionUUID->"1dcbc450-bca8-433f-b13f-ff4cc6c77d86"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1872332047,ExpressionUUID->"41cf7885-6f04-47ac-bbce-eb33555b5e12"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4016,19 +4024,20 @@ Cell[BoxData[{
       RowBox[{"bf", "[", "\"\<Radii\>\"", "]"}], "[", 
       RowBox[{"[", 
        RowBox[{"-", "2"}], "]"}], "]"}]}]}], "  ", "]"}]}]}], "Input",
- CellLabel->"In[126]:=",ExpressionUUID->"2e775d09-83f9-4527-9b4c-fd8af54c33f4"]
+ CellLabel->"In[254]:=",ExpressionUUID->"9b215938-2829-4966-8d9f-864c930001df"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]InitialRadiusAccuracyGoal\[CloseCurlyDoubleQuote]\
-", "Subsection",ExpressionUUID->"610ba925-fc4a-4fc0-ac80-5617c4bfce3a"],
+", "Subsection",ExpressionUUID->"d7268b72-ebb1-4fc6-bddd-8fe5f22a81b6"],
 
 Cell["\<\
 Find the bounce configuration for different accuracy goal of the initial \
 radius:\
 \>", "Text",
- CellID->1624858296,ExpressionUUID->"c9fecf2b-4ddb-400b-9474-d03ec65653e7"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1624858296,ExpressionUUID->"47019a63-8625-4467-8f75-e91ab1ce6c9d"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4036,7 +4045,7 @@ Cell[BoxData[{
    RowBox[{"U", "[", "x_", "]"}], ":=", 
    RowBox[{
     RowBox[{"0.5", 
-     RowBox[{"x", "^", "2"}]}], "-", 
+     RowBox[{"x", "^", "2"}]}], "+", 
     RowBox[{".5", 
      RowBox[{"x", "^", "3"}]}], "+", 
     RowBox[{".1", " ", 
@@ -4083,13 +4092,13 @@ Cell[BoxData[{
    RowBox[{"PlotLegends", "\[Rule]", 
     RowBox[{"Table", "[", 
      RowBox[{
-      RowBox[{"\"\<InitialRadiusAccuracyGoal = \>\"", "<>", 
+      RowBox[{"\"\<\\\"InitialRadiusAccuracyGoal\\\"-> \>\"", "<>", 
        RowBox[{"ToString", "[", 
         RowBox[{
          RowBox[{"{", 
           RowBox[{"1", ",", "2", ",", "10"}], "}"}], "[", 
-         RowBox[{"[", "i", "]"}], "]"}], "]"}], "<>", "\"\<\\nAction = \>\"", 
-       "<>", 
+         RowBox[{"[", "i", "]"}], "]"}], "]"}], "<>", 
+       "\"\<\\n    Action = \>\"", "<>", 
        RowBox[{"ToString", "[", 
         RowBox[{
          RowBox[{"bf", "[", 
@@ -4098,25 +4107,27 @@ Cell[BoxData[{
       RowBox[{"{", 
        RowBox[{"i", ",", "3"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
  CellLabel->
-  "In[128]:=",ExpressionUUID->"6228aadb-1bd8-4f32-b33e-fc08c4b21bed"],
+  "In[256]:=",ExpressionUUID->"5453c4cc-e920-4e52-8c94-5093ea93ed90"],
 
 Cell["\<\
-Note that low accuracy of the bounce field configuration might have small \
-error of the action.\
+Low accuracy of the bounce field configuration affects the boundary \
+conditions notably, but it might have an acceptable error of the action.\
 \>", "Text",
- CellID->1490726436,ExpressionUUID->"92948819-b440-4d0f-a00e-bdf4c678cdc8"]
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1490726436,ExpressionUUID->"5668383a-2afb-48c3-a2d8-01b4eb950095"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MaxPathIterations\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"51b446ec-f7f9-445f-bebc-62c1b7f1c46f"],
+"Subsection",ExpressionUUID->"5a28e299-5027-4c0a-9f8a-86631353e388"],
 
 Cell["\<\
 Find the bounce field configuration for different limits of the number of \
 iterations to compute the path in field space:\
 \>", "Text",
- CellID->1591325620,ExpressionUUID->"ea7ff69a-e4c1-44ee-ba04-8948ae3de21a"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1591325620,ExpressionUUID->"99be2249-0427-43a1-aa81-6b0db3663e05"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4264,38 +4275,35 @@ Cell[BoxData[{
      RowBox[{"Evaluate", "@", 
       RowBox[{"Table", "[", 
        RowBox[{
-        RowBox[{
+        RowBox[{"Through", "@", 
          RowBox[{
-          RowBox[{"bf", "[", 
-           RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Bounce\>\"", "]"}], "[", 
-         "\[Rho]", "]"}], ",", 
+          RowBox[{
+           RowBox[{"bf", "[", 
+            RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Bounce\>\"", "]"}], "[",
+           "\[Rho]", "]"}]}], ",", 
         RowBox[{"{", 
          RowBox[{"i", ",", "3"}], "}"}]}], "]"}]}], ",", 
      RowBox[{"{", 
       RowBox[{"\[Rho]", ",", "0", ",", "10"}], "}"}], ",", 
-     "\[IndentingNewLine]", "\t\t", 
+     "\[IndentingNewLine]", "\t", 
      RowBox[{"PlotLegends", "\[Rule]", 
-      RowBox[{"Table", "[", 
-       RowBox[{
-        RowBox[{"\"\<MaxPathIterations = \>\"", "<>", 
-         RowBox[{"ToString", "[", "i", "]"}]}], ",", 
-        RowBox[{"{", 
-         RowBox[{"i", ",", 
-          RowBox[{"{", 
-           RowBox[{"0", ",", "1", ",", "2"}], "}"}]}], "}"}]}], "]"}]}]}], 
-    "]"}]}], "]"}]}], "Input",
- CellLabel->"In[132]:=",ExpressionUUID->"173035c7-29c7-4976-9ddc-c93f2ff70be3"]
+      RowBox[{"LineLegend", "[", 
+       RowBox[{"Automatic", ",", 
+        RowBox[{"LegendLabel", "\[Rule]", "\"\<MaxPathIterations\>\""}]}], 
+       "]"}]}]}], " ", "]"}]}], "\[IndentingNewLine]", "]"}]}], "Input",
+ CellLabel->"In[126]:=",ExpressionUUID->"c537409b-0a2b-45a4-83af-a92f37bd8ee9"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MaxRadiusIterations\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"5ed5c159-3e2b-4130-8bd7-118c801aeaaf"],
+"Subsection",ExpressionUUID->"2f0262f9-91b8-45e4-a23e-e16c6efd158a"],
 
 Cell["\<\
 Find the bounce configuration for different maximum number of iterations:\
 \>", "Text",
- CellID->1172879825,ExpressionUUID->"1d1a1093-71de-4753-a5ab-a84ae1914c9a"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1172879825,ExpressionUUID->"1271b752-5076-42e4-8cb7-3cded036ceec"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4339,7 +4347,6 @@ Cell[BoxData[{
          RowBox[{"extrema", "[", 
           RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", 
        RowBox[{"\"\<MaxRadiusIterations\>\"", "\[Rule]", "i"}]}], "]"}], ",", 
-     
      RowBox[{"{", 
       RowBox[{"i", ",", 
        RowBox[{"{", 
@@ -4364,23 +4371,33 @@ Cell[BoxData[{
         "]"}]}], ",", 
       RowBox[{"{", 
        RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}]}], "]"}]}], "Input",
- CellLabel->"In[138]:=",ExpressionUUID->"ddbc51d8-5aa1-49bb-a002-eac3d66a9664"]
+ CellLabel->
+  "In[122]:=",ExpressionUUID->"a8691a9d-a266-4c35-8c18-9c5c0caa1b5b"],
+
+Cell["\<\
+As expected, FindBounce send a message when the number of iteration to get \
+the radius is insufficient for the required \
+\[OpenCurlyDoubleQuote]InitialRadiusAccuracyGoal\[CloseCurlyDoubleQuote].\
+\>", "Text",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1802997168,ExpressionUUID->"c92f4ba8-60e5-4c1e-acb4-1bb6e14485f7"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]MidFieldPoint\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"5b2c7772-827a-407d-9520-302598bd3117"],
+"Subsection",ExpressionUUID->"ffd2b624-fd14-47cf-a8c0-04f7a28dee18"],
 
 Cell[CellGroupData[{
 
 Cell["Intermediate point on a single field potential", \
-"Subsubsection",ExpressionUUID->"9136b60f-4091-431d-b053-18640ab73444"],
+"Subsubsection",ExpressionUUID->"5d18da3f-397b-4c70-9d27-043aaa170b72"],
 
 Cell["\<\
 Find the bounce configuration including an arbitrary point of the potential:\
 \>", "Text",
- CellID->580577936,ExpressionUUID->"7ff1aea6-28be-4564-bbf2-fb1398e303d2"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->580577936,ExpressionUUID->"7ce00431-da25-4770-8b3d-a99bc3ec2d96"],
 
 Cell[BoxData[
  RowBox[{
@@ -4477,20 +4494,21 @@ Cell[BoxData[
        "\t\t", 
        RowBox[{"PlotStyle", "\[Rule]", "Purple"}]}], "]"}]}], 
     "]"}]}]}]], "Input",
- CellLabel->"In[142]:=",ExpressionUUID->"1da2c6be-178c-47a6-a016-a2bca6d38f12"]
+ CellLabel->"In[132]:=",ExpressionUUID->"d55b0243-47a7-441f-93f0-6aa594d48cbd"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\<\
 Intermediate point and path in field space on a two fields potential\
-\>", "Subsubsection",ExpressionUUID->"cde6e43e-960b-40a8-8085-f296a58b01e1"],
+\>", "Subsubsection",ExpressionUUID->"521f3640-7628-434a-930a-41e80e605a86"],
 
 Cell["\<\
 Find the bounce configuration from an ansatz given by a single point in field \
 space:\
 \>", "Text",
- CellID->1755162031,ExpressionUUID->"cba2be2b-3d0b-400f-9e27-47a977e90791"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1755162031,ExpressionUUID->"64090347-dc7d-46fa-b841-24d3fb89cd63"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4517,10 +4535,65 @@ Cell[BoxData[{
       ",", "\[IndentingNewLine]", "\t\t", 
       RowBox[{"Contours", "\[Rule]", "50"}], ",", "\[IndentingNewLine]", 
       "\t\t", 
-      RowBox[{
-      "PlotLabel", "\[Rule]", 
-       "\"\<Ansatz:  \\\"MaxPathIterations\\\"->0\>\""}]}], "}"}]}], ";"}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+      RowBox[{"PlotRange", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "16000"}], ",", "1000"}], "}"}]}], ",", 
+      "\[IndentingNewLine]", "\t\t", 
+      RowBox[{"ContourStyle", "\[Rule]", 
+       RowBox[{"Opacity", "[", "0.4", "]"}]}], ",", "\[IndentingNewLine]", 
+      "\t\t", 
+      RowBox[{"PlotLegends", "\[Rule]", 
+       RowBox[{"LineLegend", "[", "\[IndentingNewLine]", "\t\t", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"Directive", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+               "Orange", ",", "Orange", ",", "Blue", ",", "Blue", ",", 
+                "Purple"}], "}"}], "[", 
+              RowBox[{"[", "m", "]"}], "]"}], ",", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{
+               "Dashed", ",", "None", ",", "Dashed", ",", "None", ",", 
+                "None"}], "}"}], "[", 
+              RowBox[{"[", "m", "]"}], "]"}]}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"m", ",", "5"}], "}"}]}], "]"}], ",", 
+         "\[IndentingNewLine]", "\t\t", 
+         RowBox[{"{", 
+          RowBox[{
+          "\"\<\\\"MidFieldPoint\\\"-> None\>\"", ",", 
+           "\"\<1st iteration\>\"", ",", 
+           "\"\<\\\"MidFieldPoint\\\"-> {7,6}\>\"", ",", 
+           "\"\<1st iteration\>\"", ",", 
+           "\"\<Final iteration (default)\>\""}], "}"}], ",", 
+         "\[IndentingNewLine]", "\t\t", 
+         RowBox[{"LabelStyle", "\[Rule]", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Black", ",", 
+            RowBox[{"FontSize", "\[Rule]", "14"}], ",", " ", 
+            RowBox[{"FontFamily", "\[Rule]", "\"\<Times New Roman\>\""}], ",", 
+            RowBox[{"FontSlant", "\[Rule]", "Plain"}]}], "]"}]}], ",", 
+         "\[IndentingNewLine]", "\t\t", 
+         RowBox[{"LegendMarkers", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{
+           "None", ",", "None", ",", "\"\<\[FilledDiamond]\>\"", ",", "None", 
+            ",", "None"}], "}"}]}]}], "]"}]}], ",", "\[IndentingNewLine]", 
+      "\t\t", 
+      RowBox[{"Epilog", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"Blue", ",", 
+         RowBox[{"PointSize", "[", ".02", "]"}], ",", " ", 
+         RowBox[{"Point", "[", 
+          RowBox[{"{", 
+           RowBox[{"7", ",", "6"}], "}"}], "]"}]}], " ", "}"}]}]}], " ", 
+     "}"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"extrema", " ", "=", " ", 
    RowBox[{"{", 
@@ -4602,80 +4675,123 @@ Cell[BoxData[{
        RowBox[{"\[Phi]2", ",", 
         RowBox[{"-", "1"}], ",", "14"}], "}"}], ",", "\[IndentingNewLine]", 
       "\t", 
-      RowBox[{"PlotRange", "\[Rule]", 
-       RowBox[{"{", 
-        RowBox[{
-         RowBox[{"-", "16000"}], ",", "1000"}], "}"}]}], ",", 
-      "\[IndentingNewLine]", "\t", 
       RowBox[{"Evaluate", "@", "optionsContour"}]}], "]"}]}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{
-   RowBox[{"bf", " ", "=", " ", 
-    RowBox[{"Table", "[", 
-     RowBox[{
-      RowBox[{"FindBounce", "[", 
-       RowBox[{
-        RowBox[{"U", "[", 
+  RowBox[{"bf", " ", "=", " ", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"FindBounce", "[", 
+      RowBox[{
+       RowBox[{"U", "[", 
+        RowBox[{"{", 
+         RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], ",", 
+       RowBox[{"extrema", "[", 
+        RowBox[{"[", 
          RowBox[{"{", 
-          RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], ",", 
-        RowBox[{"extrema", "[", 
-         RowBox[{"[", 
-          RowBox[{"{", 
-           RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}], ",", 
-        "\[IndentingNewLine]", "\t\t", 
-        RowBox[{"\"\<MaxPathIterations\>\"", "\[Rule]", "0"}], ",", 
-        "\[IndentingNewLine]", "\t\t", 
-        RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", " ", "m"}]}], "]"}], ",", 
-      
+          RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", "\t\t", 
+       RowBox[{"\"\<MaxPathIterations\>\"", "\[Rule]", "i"}], ",", 
+       "\[IndentingNewLine]", "\t\t", 
+       RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", " ", "m"}]}], "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"m", ",", 
+       RowBox[{"{", 
+        RowBox[{"None", ",", 
+         RowBox[{"{", 
+          RowBox[{"7", ",", "6"}], "}"}]}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"bfdfault", " ", "=", " ", 
+    RowBox[{"FindBounce", "[", 
+     RowBox[{
+      RowBox[{"U", "[", 
+       RowBox[{"{", 
+        RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{"m", ",", 
+       RowBox[{"\[CurlyPhi]1", ",", "\[CurlyPhi]2"}], "}"}], ",", 
+      RowBox[{"extrema", "[", 
+       RowBox[{"[", 
         RowBox[{"{", 
-         RowBox[{"None", ",", 
-          RowBox[{"{", 
-           RowBox[{"7", ",", "6"}], "}"}]}], "}"}]}], "}"}]}], "]"}]}], ";"}],
-   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"1", ",", "3"}], "}"}], "]"}], "]"}]}], "]"}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{"(*", "Plots", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{"Show", "[", 
   RowBox[{"contourV", ",", "\[IndentingNewLine]", "\t", 
    RowBox[{"ParametricPlot", "[", 
     RowBox[{
-     RowBox[{"Evaluate", "@", 
-      RowBox[{"Table", "[", 
-       RowBox[{
-        RowBox[{
-         RowBox[{
-          RowBox[{"bf", "[", 
-           RowBox[{"[", "i", "]"}], "]"}], "[", "\"\<Bounce\>\"", "]"}], "[", 
-         "\[Rho]", "]"}], ",", 
-        RowBox[{"{", 
-         RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}], ",", 
+     RowBox[{"Through", "@", 
+      RowBox[{
+       RowBox[{"bfdfault", "[", "\"\<Bounce\>\"", "]"}], "[", "\[Rho]", 
+       "]"}]}], ",", 
      RowBox[{"{", 
       RowBox[{"\[Rho]", ",", "0", ",", "10"}], "}"}], ",", 
-     "\[IndentingNewLine]", "\t\t", 
-     RowBox[{"PlotLegends", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"\"\<MidFieldPoint = None\>\"", ",", 
-        RowBox[{"Row", "@", 
-         RowBox[{"{", 
-          RowBox[{"\"\<MidFieldPoint -> \>\"", ",", 
-           RowBox[{"{", 
-            RowBox[{"7", ",", "6"}], "}"}]}], "}"}]}]}], "}"}]}]}], "]"}]}], 
-  "\[IndentingNewLine]", "]"}]}], "Input",
- CellChangeTimes->{{3.7821461164254313`*^9, 3.7821461752486153`*^9}},
- CellLabel->"In[165]:=",ExpressionUUID->"23af2801-3d45-4445-b319-2894d1b61c42"]
+     RowBox[{"PlotStyle", "\[Rule]", "Purple"}]}], "]"}], ",", 
+   "\[IndentingNewLine]", "\t", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"ParametricPlot", "[", 
+      RowBox[{
+       RowBox[{"Evaluate", "@", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Through", "@", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"bf", "[", 
+              RowBox[{"[", 
+               RowBox[{"m", ",", "i"}], "]"}], "]"}], "[", "\"\<Bounce\>\"", 
+             "]"}], "[", "\[Rho]", "]"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "2"}], "}"}]}], "]"}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"\[Rho]", ",", "0", ",", "10"}], "}"}], ",", 
+       "\[IndentingNewLine]", "\t", 
+       RowBox[{"PlotStyle", "\[Rule]", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"Orange", ",", "Blue"}], "}"}], "[", 
+             RowBox[{"[", "m", "]"}], "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{"{", 
+             RowBox[{"Dashed", ",", "None"}], "}"}]}], "}"}]}], "]"}]}]}], 
+      "\[IndentingNewLine]", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"m", ",", "2"}], "}"}]}], "]"}]}], "\[IndentingNewLine]", 
+  "]"}]}], "Input",
+ CellLabel->
+  "In[137]:=",ExpressionUUID->"1bd53a61-36bb-407d-9a35-3bf7038b6f8b"],
+
+Cell["\<\
+Here the bounce with  \[OpenCurlyDoubleQuote]MidFieldPoint\
+\[CloseCurlyDoubleQuote]-> {7,6} converge faster than the default straight \
+line.\
+\>", "Text",
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->556935237,ExpressionUUID->"382ad424-c07d-43bc-ab09-987e7ab93a4f"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["\[OpenCurlyDoubleQuote]PathTolerance\[CloseCurlyDoubleQuote]", \
-"Subsection",ExpressionUUID->"b627166e-3bd3-4a3f-bd6b-dd09e0830d85"],
+"Subsection",ExpressionUUID->"65509ab1-eda4-4aeb-96f6-17619d64b262"],
 
 Cell["Find the bounce configuration for different path tolerance:", "Text",
- CellID->648355602,ExpressionUUID->"b66aab62-5005-475b-9853-f2ea42017f3c"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->648355602,ExpressionUUID->"57f7b593-7560-4d4b-a4ef-9aef6dd194be"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4772,7 +4888,6 @@ Cell[BoxData[{
             RowBox[{"\"\<ActionTolerance\>\"", "\[Rule]", "0"}], ",", 
             "\[IndentingNewLine]", "\t\t", 
             RowBox[{"\"\<PathTolerance\>\"", "\[Rule]", "pt"}]}], "]"}], "[", 
-          
           RowBox[{"{", 
            RowBox[{"\"\<Action\>\"", ",", "\"\<PathIterations\>\""}], "}"}], 
           "]"}]}], "}"}]}], ",", 
@@ -4790,24 +4905,25 @@ Cell[BoxData[{
       "\"\<PathTolerance\>\"", ",", "\"\<Action\>\"", ",", 
        "\"\<PathIterations\>\""}], "}"}], "}"}], ",", "bf"}], 
    "]"}]}]}], "Input",
- CellLabel->"In[171]:=",ExpressionUUID->"eac1e3ba-bb8e-4754-b36e-f5497e3f2912"]
+ CellLabel->"In[144]:=",ExpressionUUID->"e1a89edd-ff28-405a-a053-40a26e193639"]
 }, Closed]]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Possible issues", \
-"Section",ExpressionUUID->"0b1ffa66-30db-4812-b3df-5b6f9f0cf6c0"],
+"Section",ExpressionUUID->"428cf71d-99e6-491a-8f8f-b91d65d2776b"],
 
 Cell[CellGroupData[{
 
 Cell["Accuracy of the bounce", \
-"Subsection",ExpressionUUID->"d9189a1c-ee63-43dd-bf67-e878184d108e"],
+"Subsection",ExpressionUUID->"a7cd35d9-ad28-4e14-9ec2-bf59bf84b2a6"],
 
 Cell["\<\
 The bounce field configuration computed with different accuracy:\
 \>", "Text",
- CellID->732734702,ExpressionUUID->"fb91db1c-5a72-4792-b63f-4c97e4333c60"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->732734702,ExpressionUUID->"df0ca517-a4a4-443a-992b-f7b6ace42aa0"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4838,7 +4954,7 @@ Cell[BoxData[{
      "\[IndentingNewLine]", 
      RowBox[{"\"\<Dimension\>\"", "\[Rule]", "3"}], ",", 
      "\[IndentingNewLine]", 
-     RowBox[{"\"\<InitialRadiusAccuracyGoal\>\"", "\[Rule]", "16"}]}], 
+     RowBox[{"\"\<InitialRadiusAccuracyGoal\>\"", "\[Rule]", "18"}]}], 
     "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"BouncePlot", "[", 
   RowBox[{
@@ -4854,20 +4970,20 @@ Cell[BoxData[{
        RowBox[{"ToString", "[", 
         RowBox[{"bf2", "[", "\"\<Action\>\"", "]"}], "]"}]}]}], "}"}]}]}], 
   "]"}]}], "Input",
- CellLabel->
-  "In[94]:=",ExpressionUUID->"9db3899f-6851-4bb2-88c1-a3eab064d1e3"]
+ CellLabel->"In[308]:=",ExpressionUUID->"0b891ac8-2705-4d15-96b7-4bb5a9e3f4c8"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Degenerated vacua", \
-"Subsection",ExpressionUUID->"850c41e1-036b-4c3c-92d7-3acea9c51ddf"],
+"Subsection",ExpressionUUID->"51ba582c-b6e4-4f88-b32e-9371a91e2f38"],
 
 Cell["\<\
 Degenerated minima returns infinite action and constant bounce field \
 configuration:\
 \>", "Text",
- CellID->1400904616,ExpressionUUID->"80aad88c-dfd9-4c9b-9af7-f6ccf4bf590e"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1400904616,ExpressionUUID->"635f300b-d4fe-4d44-90ed-91e9422ecc2b"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4885,7 +5001,7 @@ Cell[BoxData[{
       RowBox[{"(", "\[Phi]", ")"}], "^", "4"}]}]}]}], " ", 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"Extrema1", "=", 
+  RowBox[{"extrema", "=", 
    RowBox[{"Block", "[", 
     RowBox[{
      RowBox[{"{", "\[CurlyPhi]", "}"}], ",", 
@@ -4907,24 +5023,24 @@ Cell[BoxData[{
     RowBox[{"{", "\[CurlyPhi]", "}"}], ",", 
     RowBox[{"{", 
      RowBox[{
-      RowBox[{"Extrema1", "[", 
+      RowBox[{"extrema", "[", 
        RowBox[{"[", "1", "]"}], "]"}], ",", 
-      RowBox[{"Extrema1", "[", 
+      RowBox[{"extrema", "[", 
        RowBox[{"[", "3", "]"}], "]"}]}], "}"}]}], "]"}]}]}], "Input",
- CellLabel->
-  "In[97]:=",ExpressionUUID->"0d154235-2a16-404c-a76b-f265bb0e8ce2"]
+ CellLabel->"In[151]:=",ExpressionUUID->"28645b77-ebed-4cb8-8c1f-1737e8a98a2e"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Local maximum & few number of field points", \
-"Subsection",ExpressionUUID->"0f91e5b0-91c8-4608-bf75-48dd95db1404"],
+"Subsection",ExpressionUUID->"7705a69f-6456-4b24-a46b-0fc2721d8979"],
 
 Cell["\<\
 Few field points might not contain the maximum of the potential, thereby \
 there is no solution:\
 \>", "Text",
- CellID->2140659051,ExpressionUUID->"13dc21d3-6322-42b3-91e1-2c189b068b2b"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->2140659051,ExpressionUUID->"03f56be2-8863-4415-9293-282334b1b9ca"],
 
 Cell[BoxData[{
  RowBox[{
@@ -4968,10 +5084,11 @@ Cell[BoxData[{
    "\t", 
    RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "3"}]}], "]"}]}], "Input",
  CellLabel->
-  "In[100]:=",ExpressionUUID->"6916b191-99fd-4421-b599-dfa4a64103c2"],
+  "In[148]:=",ExpressionUUID->"358f9725-efa8-4003-997c-3111e3ebf750"],
 
 Cell["This can be solved by increasing the number of field points:", "Text",
- CellID->385184742,ExpressionUUID->"49a25705-be05-4086-ad73-03df1152d0b0"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->385184742,ExpressionUUID->"c1f1d9bf-00d7-401d-b3e3-87b4f152e568"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", 
@@ -4988,10 +5105,11 @@ Cell[BoxData[
     "\t", 
     RowBox[{"\"\<FieldPoints\>\"", "\[Rule]", "10"}]}], "]"}]}]], "Input",
  CellLabel->
-  "In[103]:=",ExpressionUUID->"eac1bf66-1e2c-409f-ba7e-ab526441dc0a"],
+  "In[317]:=",ExpressionUUID->"ca81da49-5208-4889-ade0-a49c69ff4f4a"],
 
 Cell["Or by adding the maximum of the potential by hand:", "Text",
- CellID->1449664275,ExpressionUUID->"7920e5b7-a7f3-484d-9fc8-76b46b4b59ff"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1449664275,ExpressionUUID->"bf46023e-2d40-483c-aea9-428cf57d6f9f"],
 
 Cell[BoxData[
  RowBox[{"bf3", " ", "=", 
@@ -5010,10 +5128,11 @@ Cell[BoxData[
     "\[IndentingNewLine]", "\t", 
     RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", "1"}]}], "]"}]}]], "Input",
  CellLabel->
-  "In[104]:=",ExpressionUUID->"e5f4be6e-5c8e-42ff-8a9f-090dd5883ce1"],
+  "In[318]:=",ExpressionUUID->"f3a01e46-9349-4ad5-acc7-ab0d88e89425"],
 
 Cell["where the potential given by:", "Text",
- CellID->1049028256,ExpressionUUID->"c2f6ec3d-910d-4542-97bf-1977106aedc4"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1049028256,ExpressionUUID->"886d65a4-7556-47da-976f-1c18f75bb028"],
 
 Cell[BoxData[
  RowBox[{
@@ -5074,16 +5193,17 @@ Cell[BoxData[
         RowBox[{
         "{", "\"\<\\\"MidFieldPoint\\\" -> 1\\n\\\"FieldPoints\\\" -> 3\>\"", 
          "}"}]}]}], "]"}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input",
- CellLabel->"In[105]:=",ExpressionUUID->"90a40ba6-fa28-406c-affb-4764c514fd19"]
+ CellLabel->"In[319]:=",ExpressionUUID->"e01a27f4-efa4-4d5d-be37-6f505e232cf4"]
 }, Closed]],
 
 Cell[CellGroupData[{
 
 Cell["Sharp potential", \
-"Subsection",ExpressionUUID->"1911d5aa-1f1e-4011-9749-a3bfb51e16e2"],
+"Subsection",ExpressionUUID->"a6f04e44-6545-482f-89f2-a95c504ba6ae"],
 
 Cell["Find the extrema and the quartic potential:", "Text",
- CellID->1263131966,ExpressionUUID->"a31531a1-e9da-4da7-8604-62b86d72a07a"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->1263131966,ExpressionUUID->"5b9149fc-1cc1-47bd-86ca-00fb603caebe"],
 
 Cell[BoxData[{
  RowBox[{
@@ -5181,7 +5301,7 @@ Cell[BoxData[{
             "-", "Vp"}], ",", 
            RowBox[{"\[Phi]", "\[GreaterEqual]", " ", "0"}]}], "}"}]}], "}"}], 
        "]"}]}], ";", "\[IndentingNewLine]", "\t", 
-     RowBox[{"Extrema", " ", "=", 
+     RowBox[{"extrema", " ", "=", 
       RowBox[{"{", 
        RowBox[{"\[Phi]p", ",", "0", ",", "\[Phi]m"}], "}"}]}], " ", ";"}]}], 
    "\[IndentingNewLine]", "]"}], 
@@ -5193,7 +5313,7 @@ Cell[BoxData[{
     RowBox[{"{", 
      RowBox[{"\[Phi]", ",", 
       RowBox[{"Sequence", "@@", 
-       RowBox[{"Extrema", "[", 
+       RowBox[{"extrema", "[", 
         RowBox[{"[", 
          RowBox[{"{", 
           RowBox[{"1", ",", 
@@ -5203,13 +5323,14 @@ Cell[BoxData[{
       RowBox[{"\"\<\[CurlyPhi]\>\"", ",", "\"\<V(\[CurlyPhi])\>\""}], 
       "}"}]}]}], "]"}]}]}], "Input",
  CellLabel->
-  "In[107]:=",ExpressionUUID->"36034ca4-a82e-4967-b901-72a326d038f6"],
+  "In[154]:=",ExpressionUUID->"45a73455-aab1-435b-8d1b-ce954441cf70"],
 
 Cell["\<\
 Compute the bounce configuration taking into account the 2nd order \
 approximation of the potential:\
 \>", "Text",
- CellID->309829826,ExpressionUUID->"3082387d-7599-4b8b-9b52-a383b103c23c"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->309829826,ExpressionUUID->"2eaaa4f3-24fc-417a-af67-e5a4fe2dcc09"],
 
 Cell[BoxData[
  RowBox[{"bf", " ", "=", "  ", 
@@ -5219,22 +5340,23 @@ Cell[BoxData[
     RowBox[{"{", "\[Phi]", "}"}], ",", 
     RowBox[{"{", 
      RowBox[{
-      RowBox[{"Extrema", "[", 
+      RowBox[{"extrema", "[", 
        RowBox[{"[", "1", "]"}], "]"}], ",", 
-      RowBox[{"Extrema", "[", 
+      RowBox[{"extrema", "[", 
        RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
     "\t\t", 
     RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", 
-     RowBox[{"Extrema", "[", 
+     RowBox[{"extrema", "[", 
       RowBox[{"[", "2", "]"}], "]"}]}]}], "]"}]}]], "Input",
  CellLabel->
-  "In[109]:=",ExpressionUUID->"dc447ccf-5c0e-4b29-859a-4c89abdd626f"],
+  "In[156]:=",ExpressionUUID->"7bacb9aa-da0e-4a03-8590-b0f3e89e3b73"],
 
 Cell["\<\
 Compute the bounce configuration with only the poly-linear approximation of \
 the potential:\
 \>", "Text",
- CellID->478422709,ExpressionUUID->"831f8714-717c-4cdf-af1a-764bd4ff9ba3"],
+ FontColor->RGBColor[0., 0.25098039215686274`, 0.5019607843137255],
+ CellID->478422709,ExpressionUUID->"b948c45a-2ebb-46f9-894b-e8bb931cc7ef"],
 
 Cell[BoxData[
  RowBox[{
@@ -5245,29 +5367,26 @@ Cell[BoxData[
      RowBox[{"{", "\[Phi]", "}"}], ",", 
      RowBox[{"{", 
       RowBox[{
-       RowBox[{"Extrema", "[", 
+       RowBox[{"extrema", "[", 
         RowBox[{"[", "1", "]"}], "]"}], ",", 
-       RowBox[{"Extrema", "[", 
+       RowBox[{"extrema", "[", 
         RowBox[{"[", "3", "]"}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
      "\t\t", 
      RowBox[{"\"\<MidFieldPoint\>\"", "\[Rule]", 
-      RowBox[{"Extrema", "[", 
+      RowBox[{"extrema", "[", 
        RowBox[{"[", "2", "]"}], "]"}]}], ",", "\[IndentingNewLine]", "\t\t", 
      RowBox[{"Gradient", "\[Rule]", "None"}]}], "]"}]}], 
   "\[IndentingNewLine]"}]], "Input",
- CellLabel->"In[110]:=",ExpressionUUID->"2af20e6e-e891-44f7-8571-aa4e96cb5e54"]
+ CellLabel->"In[157]:=",ExpressionUUID->"d0882c49-bfe0-47c6-9f44-bfb7e7fdd088"]
 }, Closed]]
-}, Closed]],
-
-Cell["Acknowledgment", \
-"Section",ExpressionUUID->"fdbe3998-f204-474d-891f-4c92a960599d"]
+}, Closed]]
 }, Open  ]]
 },
 WindowSize->{958, 1086},
-WindowMargins->{{Automatic, 474}, {Automatic, 107}},
+WindowMargins->{{221, Automatic}, {80, Automatic}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 TrackCellChangeTimes->False,
-FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
+FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
 StyleDefinitions->"Default.nb"
 ]
 
