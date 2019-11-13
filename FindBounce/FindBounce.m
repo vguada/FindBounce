@@ -63,6 +63,34 @@ Begin["`Private`"];
 
 
 (* ::Section::Closed:: *)
+(*Utilities*)
+
+
+(* ::Subsection::Closed:: *)
+(*Version compatibility*)
+
+
+(* Manual implementation of MinMax function, because it has been only added in Mathematica 10.1
+It matches the original in all examples from documentation. *)
+minMax[list_List]:={Min[list],Max[list]};
+
+minMax[list_List,d_]:={Min[list]-d,Max[list]+d};
+
+minMax[list_List,Scaled[s_]]:=With[
+	{d=s*(Max[list]-Min[list])},
+	{Min[list]-d,Max[list]+d}
+];
+
+minMax[list_List,{dMin_,dMax_}]:={Min[list]-dMin,Max[list]+dMax};
+
+
+If[
+	$VersionNumber<10.1,
+	MinMax=minMax
+];
+
+
+(* ::Section::Closed:: *)
 (*InitialValue*)
 
 
@@ -966,6 +994,7 @@ summaryBoxGraphics[bf_BounceFunction]:= BouncePlot[
 
 BounceFunction::usage="BounceFunction object represents results from FindBounce function.";
 
+(* In Mma 10. AssociationQ already works, even though it is undocumented. *)
 BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
 (* A message about missing property could be issued if neccesary (three argument Lookup).  *)
@@ -1183,12 +1212,12 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 				SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
 					accuracyRadius,ansatzInitialR,initialR,rule,iter,
 					switchPath||iter==maxItePath
-					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
+					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 				,
 				BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
 					dim,maxIteR,accuracyRadius,ansatzInitialR,initialR,rule,
 					iter,fields
-					]/.x_/;FailureQ[x]:>Return[$Failed,Module]
+					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 			];
 
 		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
@@ -1242,7 +1271,7 @@ BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= BouncePlot[{bf},opts];
 	
 BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
-	{bounce,radii,defaultPlotRange,plotRange},
+	{bounce,radii,defaultPlotRange,plotRange,rangeMin,rangeMax},
 	(* In case of degenerated vacua, "Action" is Infinity and empty plot is returned. 
 	This is suitable form for FindBounce summary box plot.*)
 	If[
@@ -1264,19 +1293,22 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 	(* Clip estimated plot range to non-negative values. *)
 	defaultPlotRange = MinMax[radii,Scaled[0.25]];
 	(* With this flat parts of curve are ploted if explicit value for option PlotRange is given.*)
-	
+	(* Clip is used for backward comparibility, because Ramp is introduced in Mma 11. *)
 	plotRange=Quiet[
-		Ramp@If[
+		Clip[#,{0.,Infinity}]&@If[
 			MatchQ[OptionValue[PlotRange],{{_?NumberQ,_?NumberQ},_}],
 			First@OptionValue[PlotRange],
 			defaultPlotRange
 		],
 		OptionValue::nodef
 	];
+	(* This fiddling is neccesary for compatibility with Mma 10. becase evaluation sequence 
+	for Plot has changed. *)
+	{rangeMin,rangeMax}=plotRange;
 
 	Plot[
 		Evaluate@Through[bounce[r]],
-		{r,Sequence@@plotRange},
+		{r,rangeMin,rangeMax},
 		(* Exclusions->None is very important because it dramatically speeds up plotting. 
 		We know that function is continious and there is no need to search for discontinuities. *)
 		Exclusions->None,
