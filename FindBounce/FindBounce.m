@@ -1100,7 +1100,7 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of numbers longer than 2.";
 FindBounce::syms = "Field symbols should not have any value.";
-FindBounce::mins = "Minima should be consistent or not complex.";
+FindBounce::mins = "Dimensions of minima should be consistent to number of fields and not complex.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
