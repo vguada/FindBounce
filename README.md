@@ -10,7 +10,7 @@ The physics background is described in the paper by [Guada, Maiezza and Nemevše
 
 To use the _FindBounce_ package you need Mathematica version 10 or later.
 The package is released in the `.paclet` file format that contains the code, documentation and other necessary resources.
-Download the latest `.paclet` file from the repository ["releases"](https://github.com/vguada/FindBounces/releases) page
+Download the latest `.paclet` file from the repository ["releases"](https://github.com/vguada/FindBounce/releases) page
 to your computer and install it by evaluating the following command in the Mathematica:
 
 ```mathematica
