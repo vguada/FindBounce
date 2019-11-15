@@ -430,6 +430,23 @@ VerificationTest[
 
 
 (* ::Subsection::Closed:: *)
+(*BounceFunction*)
+
+
+With[{
+	bf=FindBounce[x^4-x^2+x/4,x,{-0.762,0.633}]
+	},
+	VerificationTest[
+		bf["BadValue"],
+		_Missing,
+		{BounceFunction::noprop},
+		SameTest->MatchQ,
+		TestID->"BounceFunction - non-existent property"
+	]
+];
+
+
+(* ::Subsection::Closed:: *)
 (*BouncePlot*)
 
 

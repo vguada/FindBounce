@@ -993,13 +993,22 @@ summaryBoxGraphics[bf_BounceFunction]:= BouncePlot[
 
 
 BounceFunction::usage="BounceFunction object represents results from FindBounce function.";
+BounceFunction::noprop="Property `1` of BounceFunction is not available. It should be one of `2`.";
 
 (* In Mma 10. AssociationQ already works, even though it is undocumented. *)
 BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
-(* A message about missing property could be issued if neccesary (three argument Lookup).  *)
-BounceFunction[asc_?AssociationQ][property_]:=Lookup[asc,property,Sort@Keys[asc]];
-	
+BounceFunction[asc_?AssociationQ][property_]:=With[{
+	value=Lookup[asc,property],
+	supported=Sort@Keys[asc]
+	},
+	If[
+		MatchQ[value,_Missing],
+		Message[BounceFunction::noprop,property,supported]
+	];
+	value
+];
+
 (* Nice styling of output, see https://mathematica.stackexchange.com/questions/77658 *)
 BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardForm|TraditionalForm)]:=Module[
 	{above,below,icon},
