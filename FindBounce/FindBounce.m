@@ -1209,7 +1209,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 				"Coefficients"->Null,
 				"Dimension"->dim,
 				"FieldPoints"->Ns+1,
-				"PathIterations"->Missing["NotAvailable"],
+				"PathIterations"->0,
 				"Path"->\[Phi],
 				"Radii"->{0,Infinity}
 			]
