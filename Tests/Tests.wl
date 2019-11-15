@@ -349,7 +349,7 @@ VerificationTest[
 	FindBounce[x^4-x^2,{x},{-0.707107+.01 I,0.707107}],
 	$Failed,
 	{FindBounce::mins},
-	TestID->"FindBounce - Error: degenerated minima"
+	TestID->"FindBounce - Error: minima are complex"
 ];
 
 
