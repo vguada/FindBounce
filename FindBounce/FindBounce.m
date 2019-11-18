@@ -598,7 +598,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 		aRinitial,pos,switchMessage]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*Checks if we got a consistent answer.*)
-	If[V1+T1<0,
+	If[V1+T1<0&&switchMessage,
 		Message[SingleFieldBounce::noSolution];
 		Return[$Failed,Module]
 	];
