@@ -276,7 +276,7 @@ If[path === None,
 		\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Ns +1 ,"Method"->methodSeg];
 		\[Phi] = Table[ 
 			If[ \[Phi]L[[s]]< \[Phi]L3[[2]],
-				eL3[[1]](\[Phi]L[[s]]-L3[[1]])+ \[Phi]3[[2]],
+				eL3[[1]](\[Phi]L[[s]]-L3[[1]]) + \[Phi]3[[2]],
 				eL3[[2]](\[Phi]L[[s]]-(L3[[1]] + L3[[2]]))+\[Phi]3[[3]]
 			]
 		,{s,1,Length[\[Phi]L]} ];
@@ -1020,7 +1020,7 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 	};
 	below = {
 		BoxForm`SummaryItem[{"Domain: ", obj["Radii"][[{1,-1}]]}],		
-		BoxForm`SummaryItem[{"IterationsPath: ", obj["PathIterations"]}],
+		BoxForm`SummaryItem[{"Path iterations: ", obj["PathIterations"]}],
 		BoxForm`SummaryItem[{"Field points: ", Length@obj["Path"]}]
 	};
 	icon = summaryBoxGraphics[obj];
