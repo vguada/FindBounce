@@ -1,0 +1,10 @@
+Resources[
+    Version[1],
+    Sources[
+        Directory["~"]
+    ],
+    Paclet[
+        PacletFolder["FindBounce"],
+        FunctionPaclet[False]
+    ]
+]

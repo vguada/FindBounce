@@ -1,23 +1,17 @@
-(* ::Package:: *)
-
 (* Paclet Info File *)
-(* BuildNumber and Internal values are inserted during build procedure. *)
+
+(* Created on 2019/11/19 *)
+
 Paclet[
-	Name -> "FindBounce",
-	Version -> "0.1.0",
-	WolframVersion -> "10.+",
-	Description -> "Computes tunneling transition with multiple scalar fields.",
-	Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar",
-	URL->"https://github.com/vguada/FindBounce",
-	Thumbnail->"FrontEnd/Icon.png",
-	Extensions -> {
-		{"Kernel",
-			Root -> ".",
-			Context ->{"FindBounce`"}
-		},
-		{"Documentation",
-			Language -> "English",
-			MainPage -> "Tutorials/Examples_FindBounce"
-		}
+    Name -> "FindBounce",
+    Version -> "0.1.0",
+    MathematicaVersion -> "10.0+",
+    Description -> "Package for computing tunneling transition with multiple scalar fields.",
+    Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar",
+    Thumbnail -> "FrontEnd/Icon.png",
+    URL -> "https://github.com/vguada/FindBounce",
+    Extensions -> {
+		{"Kernel", Root -> ".", Context -> {"FindBounce`"}},
+		{"Documentation", Language -> "English", MainPage -> "Guides/FindBouncePackage"}
 	}
 ]
