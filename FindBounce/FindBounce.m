@@ -1021,7 +1021,7 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 	below = {
 		BoxForm`SummaryItem[{"Domain: ", obj["Radii"][[{1,-1}]]}],		
 		BoxForm`SummaryItem[{"IterationsPath: ", obj["PathIterations"]}],
-		BoxForm`SummaryItem[{"FieldPoints: ", obj["FieldPoints"]}]
+		BoxForm`SummaryItem[{"Field points: ", Length@obj["Path"]}]
 	};
 	icon = summaryBoxGraphics[obj];
 	
@@ -1206,7 +1206,6 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 				"BottomlessPotential"->Missing["NotAvailable"],
 				"Coefficients"->Null,
 				"Dimension"->dim,
-				"FieldPoints"->Ns+1,
 				"PathIterations"->0,
 				"Path"->\[Phi],
 				"Radii"->{0,Infinity}
@@ -1265,7 +1264,6 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
 		"Coefficients"->{v,a,b}[[All,p;;-1]],
 		"Dimension"->dim,
-		"FieldPoints"->Ns+1,
 		"PathIterations"->iter,
 		"Path"->\[Phi],
 		"Radii"->R[[p;;-1]]
