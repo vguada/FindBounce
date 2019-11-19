@@ -1119,7 +1119,6 @@ Options[FindBounce] = {
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
 	Hessian -> None,
-	"InitialRadius" -> None,
 	"InitialRadiusAccuracyGoal" -> 10,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
@@ -1148,10 +1147,10 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 	
 FindBounce[V_,fields_List,{min1_,min2_},opts:OptionsPattern[]]:=
-Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,initialR,accuracyRadius,
-	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,potentialPoints=None,
+Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
+	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
-	ddVL,dPath,switchPath=False,iter=0,bottomless,p,dAction},
+	ddVL,dPath,bottomless,p,dAction,iter=0,potentialPoints=None,switchPath=False,initialR=None},
 	
 	(*Checks if field variables do not have any values. *)
 	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
@@ -1162,7 +1161,6 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 	dPath = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
 	dAction = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
-	initialR = OptionValue["InitialRadius"]/.Except[_?NonNegative|None]:>(Message[FindBounce::posreal,"InitialRadius"];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	point = OptionValue["MidFieldPoint"];
@@ -1258,7 +1256,6 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,in
 		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,
 			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],dPath];
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
-		ansatzInitialR = initialR;
 		iter++
 	];
 	
