@@ -49,6 +49,14 @@ VerificationTest[
 
 
 VerificationTest[
+	FindBounce[x^4-x^2+x/2,{x},{{-0.809017},{0.5}}]["Action"],
+	16.856,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F default second form (multi-field like)"
+];
+
+
+VerificationTest[
 	FindBounce[x^4-x^2+x/2,x,{1/2,1/4 (-1-Sqrt[5])},"FieldPoints"->3,"MidFieldPoint"->1/4 (-1+Sqrt[5])]["Action"],
 	2.911,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
