@@ -353,6 +353,15 @@ VerificationTest[
 ];
 
 
+(* The minima are the same. *)
+VerificationTest[
+	FindBounce[x^4-x^2,{x},{0.707107,0.707107}],
+	$Failed,
+	{FindBounce::mins},
+	TestID->"FindBounce - Error: minima are the same"
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Fail checks - wrong option values*)
 

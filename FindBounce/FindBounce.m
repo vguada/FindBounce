@@ -1097,7 +1097,7 @@ FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
 FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
 FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of numbers longer than 2.";
 FindBounce::syms = "Field symbols should not have any value.";
-FindBounce::mins = "Dimensions of minima should be consistent to number of fields and not complex.";
+FindBounce::mins = "Dimensions of minima should be consistent to the number of fields, different and not complex.";
 
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
@@ -1157,11 +1157,12 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 	noFields = Length[fields];
 	If[noFields == 1, maxItePath = 0];
 	
-	(*Checks if the minima are real.*)
+	(*Checks if the minima are real and different.*)
 	If[
 		Not@And[
 			ArrayQ[N@{min1,min2},1|2,(MatchQ[#,_Real]&)],
-			(noFields==1&&Length[N@min1]==0)|(noFields>1&&Length[N@min1]==noFields)
+			(noFields==1&&Length[N@min1]==0)||(noFields>1&&Length[N@min1]==noFields),
+			min1 != min2
 		],
 		Message[FindBounce::mins];Return[$Failed,Module]
 	];
