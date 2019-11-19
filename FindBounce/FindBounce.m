@@ -188,16 +188,27 @@ InitialValue::wrongInput = "Wrong \"`1`\".";
 InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
 InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
 
-InitialValue[V_,fields_,noFields_,min1_,Point_,min2_,potentialPoints_,
-gradient_,hessian_,dim_,bottomless_,fieldpoints_]:=
-Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,
-fieldPoints,dV = None,d2V=None,improvePB=False,c,\[CurlyPhi]0,point = Point,methodSeg,path },
-
-If[point === None,
+InitialValue[V_,fields_,noFields_,min1A_,points_,min2A_,potentialPoints_,
+gradient_,hessian_,dim_,bottomless_,fieldpointsA_]:=
+Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,fieldPoints,methodSeg,path,c,\[CurlyPhi]0,
+dV=None,d2V=None,improvePB=False,point=points,min1=min1A,min2=min2A,fieldpoints = fieldpointsA},
+	
+	If[noFields==1,
+		min1 = {min1};
+		min2 = {min2};
+		If[Not[Head[fieldpoints] === Integer],
+			fieldpoints = Partition[fieldpoints,1]
+		];
+		If[Not[point===None],
+			point = {point}	
+		];
+	];
+	
+	If[point === None,
 		point = (min1+min2)/2;
 		methodSeg = "H"
 		,
-		If[Not[Length[N@point]===noFields||(noFields===1&&Length[N@point]===0)],
+		If[Not[Length[N@point]===noFields],
 			Message[InitialValue::mpts];
 			Return[$Failed,Module]
 		];
@@ -206,22 +217,16 @@ If[point === None,
 
 	If[ Head[fieldpoints] === Integer,
 		Ns = fieldpoints-1;
-		path = None,
+		\[Phi] = N@{min1,point,min2};
+		path = True
+		,
 		Ns = Length[fieldpoints]-1;
-		path = fieldpoints
+		\[Phi] = N@fieldpoints;
+		path = False
 	];
-
-	If[path === None, 
-		\[Phi] = N@{min1,point,min2},
-		\[Phi] = N@path
-	];
+	
 	fieldPoints = Length[\[Phi]];
-
-	rule = If[
-		noFields == 1,
-		Table[fields[[1]]->\[Phi][[s]],{s,fieldPoints}], 
-		Table[fields[[i]]->\[Phi][[s,i]],{s,fieldPoints},{i,noFields}]
-	];
+	rule = Table[fields[[i]]->\[Phi][[s,i]],{s,fieldPoints},{i,noFields}];
 	
 	VL = If[
 		potentialPoints===None, 
@@ -231,11 +236,11 @@ If[point === None,
 
 	(*Checks if the values of the potential are well definited*)
 	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
-	Message[InitialValue::wrongInput,"Potential"];
-	Return[$Failed,Module]
+		Message[InitialValue::wrongInput,"Potential"];
+		Return[$Failed,Module]
 	];
 	 
-(*Checks the dimension of the field values*)
+	(*Checks the dimension of the field values*)
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
 	Message[InitialValue::dimArray];
 	Return[$Failed,Module]   
@@ -259,21 +264,21 @@ If[point === None,
 
 	(*Estimates the initial radii initialR with the N=2 close form solution*)
 	initialR = 
-If[VL3[[1]]!= VL3[[3]] ,
-	c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
-	\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
-	If[Re@\[CurlyPhi]0>=0&&Im@\[CurlyPhi]0==0,
-		Sqrt[dim/4(\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
-				,
-				1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])])
-	]
-	,
-	Infinity
-];
+	If[VL3[[1]]!= VL3[[3]] ,
+		c = dim/(dim-2) (a3[[2]]-a3[[1]])/a3[[1]] (1 -(a3[[2]]/(a3[[2]]-a3[[1]]))^(1-2/dim));
+		\[CurlyPhi]0 =( ( \[Phi]L3[[3]] + c \[Phi]L3[[2]] )/(1+c)  );
+		If[Re@\[CurlyPhi]0>=0&&Im@\[CurlyPhi]0==0,
+			Sqrt[dim/4(\[Phi]L3[[2]]-\[CurlyPhi]0)/a3[[1]]]
+			,	
+			1/2(\[Phi]L3[[3]]-\[Phi]L3[[1]])/(Sqrt[a3[[1]] (\[Phi]L3[[2]]-\[Phi]L3[[1]])]-Sqrt[-a3[[2]] (\[Phi]L3[[3]]-\[Phi]L3[[2]])])
+		]
+		,
+		Infinity
+	];
 
 	(*Finds the Logitudinal field values \[Phi]L, fields \[Phi], distance l, and direction eL*)
-If[path === None,
-		\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints" ->Ns +1 ,"Method"->methodSeg];
+	If[path,
+		\[Phi]L = Segmentation[\[Phi]L3,"FieldPoints"-> Ns+1 ,"Method"->methodSeg];
 		\[Phi] = Table[ 
 			If[ \[Phi]L[[s]]< \[Phi]L3[[2]],
 				eL3[[1]](\[Phi]L[[s]]-L3[[1]]) + \[Phi]3[[2]],
@@ -281,21 +286,21 @@ If[path === None,
 			]
 		,{s,1,Length[\[Phi]L]} ];
 		l = \[Phi]L[[2;;-1]]-\[Phi]L[[1;;-2]];
-	,
-		l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,fieldPoints-1}];
-		\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,fieldPoints}];
+		,
+		l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,Ns}];
+		\[Phi]L = Table[Sum[l[[s1]],{s1,s-1}],{s,Ns+1}];
 	];
 
 	If[potentialPoints===None&&Not[bottomless],
 		If[Not[gradient === None &&noFields==1],
-	{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
-	If[Ns>3&&Not[gradient === None],
-		improvePB = True
-	];
+			{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
+			If[Ns>3&&Not[gradient === None],
+				improvePB = True
+			];
 		];
 	];
-	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 	
+	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path}
 ];
 
@@ -780,11 +785,7 @@ SingleFieldBounceImprovement[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,po
 Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,T\[Xi]=0,V\[Xi]=0,ddVL = Missing["NotAvailable"]},
 	eL0 = Join[eL,{eL[[-1]]}];
 	If[improvePB,	
-		dVL= If[
-			noFields==1,
-			Table[(dV[[1]]/.rule[[s]])*eL0[[s]],{s,Ns+1}],
-			Table[(dV/.rule[[s]]).eL0[[s]],{s,Ns+1}]
-		];
+		dVL= Table[(dV/.rule[[s]]).eL0[[s]],{s,Ns+1}];
 		If[And@@(NumericQ[#]&/@dVL),
 			\[Alpha]  = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
 			ddVL = Table[ (dVL[[s+1]]-8(a[[s]]+\[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,Ns}];
@@ -1043,11 +1044,12 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 (*Process results: piecewiseBounce*)
 
 
-piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottomless_}]:=Module[
-	{\[CurlyPhi]0},
+piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottomless_}]:=
+Module[{\[CurlyPhi]0},
 
 	If[bottomless,
-		\[CurlyPhi]0[\[Rho]_] := v[[1]] + b[[1]]/(1 + 1/2 Norm[a[[1]]]*Norm[b[[1]]]^2\[Rho]^2),
+		\[CurlyPhi]0[\[Rho]_] := v[[1]] + b[[1]]/(1 + 1/2 Norm[a[[1]]]*Norm[b[[1]]]^2\[Rho]^2)
+		,
 		If[
 			pos>1,
 			(*Case A*)
@@ -1056,24 +1058,11 @@ piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottoml
 			\[CurlyPhi]0[\[Rho]_] := min1 
 		];
 	];
+	
 	(* System symbol FormalR (\[FormalR]) is used as Function argument, because it has attribute
 	Protected and cannot be assigned any value. Syntax with explicit Function is clearer than
 	using pure functions. *)
-	If[noFields==1,
-		Function[
-			Evaluate@\[FormalR],
-			Evaluate@Piecewise[
-				Join[
-					{{\[CurlyPhi]0[\[FormalR]],\[FormalR]<R[[pos]]}},
-					Table[{
-						v[[s]]+4/dim*a[[s]]*\[FormalR]^2+2/(dim-2)*b[[s]]/\[FormalR]^(dim-2),R[[s]]<=\[FormalR]<R[[s+1]]},
-						{s,pos,noSegs}
-					]
-				],
-				min2 (* default value of Piecewise *)
-			]
-		],(* else (multifield case) *)
-		Table[
+	Table[
 		Function[
 			Evaluate@\[FormalR],
 			Evaluate@Piecewise[
@@ -1088,7 +1077,6 @@ piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottoml
 			]
 		],
 		{i,noFields}
-		]	
 	]
 ];
 
@@ -1217,11 +1205,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 	While[iter <= maxItePath||switchPath,
 	
 		(*Rule*)
-		rule = If[
-			Length[fields] == 1,
-			Table[fields[[1]]->\[Phi][[s]],{s,Ns+1}],
-			Table[fields[[i]]->\[Phi][[s,i]],{s,Ns+1},{i,noFields}]
-		];
+		rule = Table[fields[[i]]->\[Phi][[s,i]],{s,Ns+1},{i,noFields}];
 		
 		(*Single Field Bounce*)
 		{actionP,VL,v,a,b,pos,R,initialR} = 
@@ -1238,7 +1222,7 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 			];
 
 		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
-			improvePB&&path===None];
+			improvePB&&path];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
