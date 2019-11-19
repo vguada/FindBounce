@@ -234,16 +234,16 @@ dV=None,d2V=None,improvePB=False,point=points,min1=min1A,min2=min2A,fieldpoints 
 		{potentialPoints[[1]],Max[potentialPoints],potentialPoints[[-1]]}
 	];
 
-	(*Checks if the values of the potential are well definited*)
-	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
-		Message[InitialValue::wrongInput,"Potential"];
-		Return[$Failed,Module]
-	];
-	 
 	(*Checks the dimension of the field values*)
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
 	Message[InitialValue::dimArray];
 	Return[$Failed,Module]   
+	];
+
+	(*Checks if the values of the potential are well definited*)
+	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
+		Message[InitialValue::wrongInput,"Potential"];
+		Return[$Failed,Module]
 	];
 
 	(*The number 3 stands for Number of Field Values: Segments+1 = 3*) 
