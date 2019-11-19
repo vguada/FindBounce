@@ -558,7 +558,7 @@ Module[{p,T},
 (*SingleFieldBounce*)
 
 
-SingleFieldBounce::extrema = "Wrong position of the minima.";
+SingleFieldBounce::extrema = "Wrong position of the extrema, check the minima or use \"MidFieldPoint\" to include the maximum/saddle point of the potential.";
 MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
 SingleFieldBounce::noSolution = "Solution not found, increase the number of segments or accuracy.";
 
