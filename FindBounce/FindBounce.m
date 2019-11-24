@@ -1107,9 +1107,10 @@ FindBounce//SyntaxInformation={
 	"LocalVariables"->{"Solve",{2,2}}
 };
 
-(* This definition should take care of single field case. *)
-FindBounce[V_,fields_/;Length[fields]==0,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-	FindBounce[V,{fields},{minimum1,minimum2},opts];	
+(* This definition transforms single field case to multi-field case with one field. *)
+FindBounce[V_,field_Symbol,{minimum1_,minimum2_},opts:OptionsPattern[]]:=FindBounce[
+	V,{field},{minimum1,minimum2},opts
+];
 
 (* Definition for a potential defined by a list of points. *)
 FindBounce[points_List,opts:OptionsPattern[]]:=(
@@ -1122,12 +1123,12 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 	];
 	FindBounce[points,{True},points[[1,{1,-1}]],opts]
 );	
-	
+
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
-	noFields,VL,d\[Phi]L,point,fieldpoints,maxItePath,maxIteR,R,improvePB,
+Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
+	noFields,VL,d\[Phi]L,midPoint,fieldPoints,maxItePath,maxIteR,R,improvePB,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
-	ddVL,dPath,bottomless,p,dAction,min1=N@minimum1,min2=N@minimum2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
+	ddVL,dPath,bottomless,p,dAction,min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
 	
 	(*Checks if field variables do not have any values.*)
 	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
@@ -1140,54 +1141,52 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
-	point = N@OptionValue["MidFieldPoint"];
-	fieldpoints = OptionValue["FieldPoints"];
+	midPoint = N@OptionValue["MidFieldPoint"];
+	fieldPoints = OptionValue["FieldPoints"];
 	noFields = Length[fields];
 	
 	(*In case the potential is given as a list of points.*)
 	If[fields[[1]]===True,
-		{fieldpoints,potentialPoints} = Transpose@V
+		{fieldPoints,potentialPoints} = Transpose@V;
+		fieldPoints=Partition[fieldPoints,1]
 	];
-	
-	(*Redefine the extrema.*)
-	If[noFields==1,
-		maxItePath = 0;
-		If[Length[min1]==0,
-			min1 = {min1};
-			min2 = {min2};
-		];
-		If[Not[Head[fieldpoints] === Integer],
-			fieldpoints = N@Partition[fieldpoints,1]
-		];
-		If[Not[point===None]&&Length[point]==0,
-			point = {point}
-		];
-	];
-	
-	(*Checks if the minima are real and different.*)
+
+	(* Minima are transformed to a matrix of Dimensions {2,noFields}. *)
+	{min1,min2}=N@Re[Flatten/@{{minimum1},{minimum2}}];
 	If[
 		Not@And[
-			ArrayQ[{min1,min2},2,(MatchQ[#,_Real]&)],
+			ArrayQ[{min1,min2},2,NumericQ],
 			Length[min1]==noFields,
 			min1 != min2
 		],
 		Message[FindBounce::mins];Return[$Failed,Module]
 	];
-	
-	(*Checks if fieldpoints has the right dimensions.*)
-	If[
-		And[
-			Not[IntegerQ[fieldpoints]&&fieldpoints>2],
-			Not[ArrayQ[fieldpoints,2,(MatchQ[#,_Real]&)]&&MatchQ[Dimensions[fieldpoints],{x_/;x>=3,noFields}] ]
-		],	
+
+	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
+
+	Which[
+		IntegerQ[fieldPoints],
+		If[fieldPoints<3,Message[FindBounce::fieldpts];Return[$Failed,Module]];
+		,
+		ListQ[fieldPoints],
+		fieldPoints=N@Re@fieldPoints;
+		If[
+			Not@And[
+				ArrayQ[fieldPoints,2,NumericQ],
+				MatchQ[Dimensions@fieldPoints,{x_/;x>=3,noFields}]
+			],
+			Message[FindBounce::fieldpts];Return[$Failed,Module]
+		]
+		,
+		True,
 		Message[FindBounce::fieldpts];Return[$Failed,Module]
 	];
 
 	(*InitialValue.*)
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path} = 
-		InitialValue[V,fields,noFields,min1,point,min2,potentialPoints,
+		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
 		OptionValue[Gradient],OptionValue[Hessian],dim,
-		bottomless,fieldpoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*If the vacua are degenerated.*)
 	If[
@@ -1205,7 +1204,8 @@ Module[{Ns(*Number of segments*),a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,ac
 			]
 		]
 	];
-
+	(* For single field there is no path deformation calculation. *)
+	If[noFields==1,maxItePath = 0];
 	(*Bounce and path deformation.*)
 	While[iter <= maxItePath||switchPath,
 	

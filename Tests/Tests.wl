@@ -23,6 +23,71 @@ BeginTestSection["Tests"];
 
 
 (* ::Subsubsection::Closed:: *)
+(*Basic syntax*)
+
+
+(* This potential has minima at 0. and 1. Parameter values (c1) 0.47 and  0.2 represent 
+thin-walled and thick-walled bouce respectively. This potential is taken from paper
+Chigusa et. al. 2019, https://arxiv.org/abs/1906.10829 *)
+singleField[x_,c1_]:=1/4*x^4-(c1+1)/3*x^3+c1/2*x^2 ;
+
+(* Two field potential from the same paper, which has minima at {0,0} and {1,1}.
+Parameter values (c2) 2 and  80 represent thin-walled and thick-walled bouce respectively. *)
+twoField[x_,y_,c2_]:=(x^2+5y^2)(5(x-1)^2+(y-1)^2)+c2(1/4y^4-1/3y^3) ;
+
+
+(* In the following tests we check for combinations of special case with single field. 
+Only dimensions of the output are checked, but not is values, because we are testing only
+for correct processing of input arguments. *)
+VerificationTest[
+	FindBounce[singleField[x,0.2],x,{0.,1.}]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - 1F basic syntax 1"
+];
+
+
+VerificationTest[
+	FindBounce[singleField[x,0.2],x,{{0.},{1.}}]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - 1F basic syntax 2"
+];
+
+
+VerificationTest[
+	FindBounce[singleField[x,0.2],{x},{0.,1.}]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - 1F basic syntax 3"
+];
+
+
+VerificationTest[
+	FindBounce[singleField[x,0.2],{x},{{0.},{1.}}]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - 1F basic syntax 4"
+];
+
+
+VerificationTest[
+	FindBounce[twoField[x,y,80.],{x,y},{{0.,0.},{1.,1.}}]["Coefficients"]//Dimensions,
+	{3,_,2},
+	SameTest->MatchQ,
+	TestID->"FindBounce - 2F basic syntax 1"
+];
+
+
+VerificationTest[
+	FindBounce[twoField[x,y,80.],{x,y},{{0.},{1.}}],
+	$Failed,
+	{FindBounce::mins},
+	TestID->"FindBounce - 2F wrong minima dimensions"
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*1 field*)
 
 
@@ -316,15 +381,6 @@ VerificationTest[
 (*Fail checks*)
 
 
-(* Function returns unevaluated for single wrong argument. *)
-VerificationTest[
-	FindBounce["totalyWrongArgument"],
-	_FindBounce,
-	SameTest->MatchQ,
-	TestID->"FindBounce - single wrong argument"
-];
-
-
 (* Field symbols have some value, which they should't have. *)
 VerificationTest[
 	Block[{x=1},FindBounce[x^4-x^2+x/4,{x},{-0.762,0.633}]],
@@ -350,15 +406,6 @@ VerificationTest[
 	{FindBounce::degeneracy},
 	TestID->"FindBounce - Error: degenerated minima"
 ]
-
-
-(* The minima are complex. *)
-VerificationTest[
-	FindBounce[x^4-x^2,{x},{-0.707107+.01 I,0.707107}],
-	$Failed,
-	{FindBounce::mins},
-	TestID->"FindBounce - Error: minima are complex"
-];
 
 
 (* The minima are the same. *)
