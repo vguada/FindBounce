@@ -49,15 +49,19 @@ $source=FileNameJoin[{$root,$name}];
 $target=FileNameJoin[{$root,"build",$name}];
 
 
+$helpMessage=("
+  This script packs package source code to .paclet file.
+  Script options:
+    --help                       Output usage information
+    --release                    Build public release
+    --install                    Install just created paclet
+");
+
+
+Print[$helpMessage];
+
 If[$VersionNumber<10.0, Print["Mathematica 10.0 or later required."];Quit[1]];
 
-
-$helpMessage=("  Usage: wolframscript -script Build.wls [options]
-
-  Options:
-    -h, --help                   Output usage information
-    --release                    Build public release
-    --docs                       Build documentation");
 
 (* This should support text based interface with "wolframscript" mechanism and 
 "wolfram -script" mechanism. See tutorial/WolframLanguageScripts for more info. *)
@@ -85,79 +89,11 @@ If[
 
 
 (* ::Subsubsection:: *)
-(*Process documentation notebooks*)
-
-
-(* Notebook name should be relative to root directory. *)
-processDocumentation[nbName_]:=Module[
-	{original,copy,copyDir,nb,tStart,time},
-	tStart=AbsoluteTime[];
-	original=FileNameJoin[{$source,nbName}];
-	If[
-		Not@FileExistsQ[original],
-		Return[$Failed];Print[original," file does not exist!"]
-	];
-	copy=FileNameJoin[{$target,nbName}];
-	copyDir=DirectoryName[copy];
-	If[
-		Not@DirectoryQ[copyDir],
-		CreateDirectory[copyDir,CreateIntermediateDirectories->True]
-	];
-	CopyFile[original,copy,OverwriteTarget->True];
-
-	UsingFrontEnd[
-		NotebookEvaluate[copy,InsertResults->True];
-		nb=NotebookOpen[copy];
-		SetOptions[
-			nb,
-			WindowSize->{Scaled[0.5], Scaled[1]},
-			WindowMargins->{{0,Automatic},{Automatic,0}},
-			Saveable->False
-		];
-		NotebookSave[nb];
-		NotebookClose[nb];
-	];
-	time=Round[AbsoluteTime[]-tStart,0.1];
-	Print["  Processed ",nbName," in ",time," seconds."]
-];
-
-
-If[
-	MemberQ[$args,"--docs"|"--release"],
-
-	(* NotebookEvaluate doesn't work properly (unrendered graphic output)
-	if $EvaluationEnvironment is not "Session". *)
-	If[
-		$EvaluationEnvironment=!="Session",
-		Print["For correct processing of documentation run script with: \"wolframscript -script Build.wls [opts]\"."];
-		Quit[1]
-	];
-	Print["  Building documentation. This may take a few minutes..."];
-	(* Documentation should be evaluated with development version of the package. 
-	Actuall loading of the package should happen inside each documentation notebook. *)
-	Needs["PacletManager`"];
-	PacletDirectoryAdd[$root];
-
-	SetOptions[First[$Output],FormatType->StandardForm];
-
-	(* Add more function calls here if documentation contains more notebooks. *)
-	processDocumentation[
-		FileNameJoin[{"Documentation","English","Tutorials","Examples_FindBounce.nb"}]
-	];
-
-	(* Remove path to development version to enble correct paclet uninstallation 
-	before installing a newly produced .paclet file. *)
-	PacletDirectoryRemove[$root];
-	Print["\n  Documentation build finished."];
-];
-
-
-(* ::Subsubsection:: *)
 (*Copy files*)
 
 
 Module[
-	{},
+	{docDir,docFiles,lastModTime},
 	(* Copy package files from the source to the target directory. *)
 	Map[
 		CopyFile[
@@ -181,9 +117,18 @@ Module[
 	];
 
 	(* Documentation should be built with a separate procedure before. *)
+	docDir=FileNameJoin[{$target,"Documentation"}];
+	docFiles=FileNames["*.nb",docDir,Infinity];
 	If[
-		Not@DirectoryQ[FileNameJoin[{$target,"Documentation"}]],
-		Print["  Warning! Documentation directory is missing in build folder."]
+		docFiles=!={},
+		lastModTime=Min[FileDate[#,"Modification"]&/@docFiles];
+		(* Check if all notebooks have been created at least one hour ago. *)
+		If[
+			(AbsoluteTime@Now-AbsoluteTime@lastModTime)/3600 > 1.,
+			Print["  Warning! Documentation notebooks may be outdated."];
+			Print["  Last modification date is: ",DateString@lastModTime]
+		],
+		Print["  Warning! Documentation notebooks are missing in build folder."]
 	];
 ];
 
@@ -225,26 +170,33 @@ Module[
 
 
 Module[
-	{pacletPath,newPaclet,buildNo},
+	{path,newPaclet,buildNo,successQ},
+
+	buildNo=getGitCommitCount[$root];
+	Print["  Build number: ",buildNo];
+
 	Needs["PacletManager`"];
 	(* Change into the build directory and create the paclet. *)	
 	SetDirectory@FileNameJoin[{$root,"build"}];
-	pacletPath=PackPaclet[$name];
+	path=PackPaclet[$name];
 	ResetDirectory[];
-
-	(* Uninstall older versions first. *)
-	If[PacletFind[$name]=!={},PacletUninstall[$name]];
-	newPaclet=PacletInstall[pacletPath];
-	RebuildPacletData[];
+	(* We check if the paclet was created less than 1 second ago. *)
+	successQ=TrueQ[(AbsoluteTime@Now-AbsoluteTime@FileDate@path)<1.];
 
 	If[
-		Length@PacletFind[$name]===1
-		,
-		buildNo=getGitCommitCount[$root];
-		Print["  ",FileNameTake[pacletPath]," (",buildNo,") built and installed succesfully."];
-		Quit[0]
-		,
-		Print["  Paclet build failed!"];
-		Quit[1]
-	]
-];
+		successQ,
+		Print["  ",FileNameTake[path]," built succesfully."],
+		Print["  Paclet build failed!"];Quit[1]
+	];
+
+	If[
+		MemberQ[$args,"--install"],
+		(* Uninstall older versions first. *)
+		If[PacletFind[$name]=!={},PacletUninstall[$name]];
+		newPaclet=PacletInstall[path];
+		RebuildPacletData[];
+		Print["  Paclet is installed to $UserBasePacletsDirectory."];
+	];
+
+	If[successQ,Quit[0],Quit[1]]
+]
