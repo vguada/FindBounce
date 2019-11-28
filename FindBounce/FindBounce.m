@@ -1083,8 +1083,8 @@ FindBounce::posreal = "Value of option \"`1`\" should be a positive real number.
 FindBounce::posint = "Value of option \"`1`\" should be a positive integer.";
 FindBounce::nonnegint = "Value of option \"`1`\" should be a non-negative integer.";
 FindBounce::degeneracy = "Not vacuum decay, the vacua are degenerated.";
-FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of reals or integers, with n>=3.";
-FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of numbers longer than 2.";
+FindBounce::points = "Single field potential defined by points should be a n by 2 matrix of non-complex numbers, with n>=3.";
+FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of non-complex numbers longer than 2.";
 FindBounce::syms = "Field symbols should not have any value.";
 FindBounce::mins = "Dimensions of minima should be consistent to the number of fields, different and not complex.";
 
@@ -1152,10 +1152,10 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 	];
 
 	(* Minima are transformed to a matrix of Dimensions {2,noFields}. *)
-	{min1,min2}=N@Re[Flatten/@{{minimum1},{minimum2}}];
+	{min1,min2}=N[Flatten/@{{minimum1},{minimum2}}];
 	If[
 		Not@And[
-			ArrayQ[{min1,min2},2,NumericQ],
+			ArrayQ[{min1,min2},2,(MatchQ[#,_Real]&)],
 			Length[min1]==noFields,
 			min1 != min2
 		],
@@ -1169,10 +1169,14 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 		If[fieldPoints<3,Message[FindBounce::fieldpts];Return[$Failed,Module]];
 		,
 		ListQ[fieldPoints],
-		fieldPoints=N@Re@fieldPoints;
+		fieldPoints=N@fieldPoints;
+		If[
+			Depth[fieldPoints]==2&&noFields==1,
+			fieldPoints=Partition[fieldPoints,1]
+		];
 		If[
 			Not@And[
-				ArrayQ[fieldPoints,2,NumericQ],
+				ArrayQ[fieldPoints,2,(MatchQ[#,_Real]&)],
 				MatchQ[Dimensions@fieldPoints,{x_/;x>=3,noFields}]
 			],
 			Message[FindBounce::fieldpts];Return[$Failed,Module]

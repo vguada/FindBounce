@@ -417,6 +417,15 @@ VerificationTest[
 ];
 
 
+(* The minima are complex - we want that function explicitly fails. *)
+VerificationTest[
+	FindBounce[x^4-x^2+x/4,{x},{-0.762,0.633+0.01 I}],
+	$Failed,
+	{FindBounce::mins},
+	TestID->"FindBounce - Error: minima are complex"
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*Fail checks - wrong option values*)
 
@@ -459,6 +468,39 @@ VerificationTest[
 	{FindBounce::fieldpts},
 	TestID->"FindBounce - wrong number of FieldPoints"
 ];
+
+
+VerificationTest[
+	FindBounce[
+		singleField[x,0.2],x,{0.,1.},
+		"FieldPoints"->{0.,0.2,0.4,0.6,0.8,1.}
+	]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - FieldPoints as vector"
+];
+
+
+VerificationTest[
+	FindBounce[
+		singleField[x,0.2],x,{0.,1.},
+		"FieldPoints"->{{0.},{0.2},{0.4},{0.6},{0.8},{1.}}
+	]["Coefficients"]//Dimensions,
+	{3,_,1},
+	SameTest->MatchQ,
+	TestID->"FindBounce - FieldPoints as matrix"
+];
+
+
+VerificationTest[
+	FindBounce[
+		singleField[x,0.2],x,{0.,1.},
+		"FieldPoints"->{{0.},{0.2},{0.4},{0.6},{0.8},{1.+I}}
+	],
+	$Failed,
+	{FindBounce::fieldpts},
+	TestID->"FindBounce - Error: FieldPoints with complex number"
+]
 
 
 VerificationTest[
