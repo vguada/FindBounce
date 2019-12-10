@@ -6,12 +6,21 @@ First you need to install [Git](https://git-scm.com/) version control system and
 [clone](https://help.github.com/articles/cloning-a-repository/) the project
 from its GitHub homepage to your local computer.
 
-You will need [Mathematica](https://www.wolfram.com/mathematica/) version 11.0 or later,
-though version 12.0 is recommended because it produces better looking documentation.
-[Wolfram Workbench](https://www.wolfram.com/workbench/) is needed to produce documentation.
-You will also need command line tool [WolframScript](https://www.wolfram.com/wolframscript/)
+## Required tools
+
+The main required tool is [Mathematica](https://www.wolfram.com/mathematica/) version 11.0 or later,
+although version 12.0 is recommended because it produces better looking documentation.
+
+You will need command line tool [WolframScript](https://www.wolfram.com/wolframscript/)
 for running the test suite and building the package.
 On most systems it already comes bundled with Mathematica installation.
+
+Also [Wolfram Workbench](https://www.wolfram.com/workbench/) is needed to
+process documentation notebooks for proper integration into Mathematica
+documentation framework.
+Wolfram Workbench is a plugin for [Eclipse](https://www.eclipse.org/), a popular and robust IDE.
+Please follow these [instructions](http://support.wolfram.com/kb/27221) for installation
+and pay attention to choose "Eclipse IDE for Java Developers".
 
 ## Testing code
 
@@ -37,17 +46,25 @@ Minimal example of `pre-commit` file content is:
 
 ## Building the package
 
-Package building covers procedures to convert contents of repository to `.paclet` file which can be installed by the users.
-This is done by the build script included in the repository, which can be run from command line (terminal) with `Build.wls`.
-On Unix-like operating systems it may be necessary to set executable permissions first with `chmod a+x Build.wls`.
-See also `wolframscript` [documentation](https://reference.wolfram.com/language/ref/program/wolframscript.html) for more information.
+Package building is a __two step__ procedure.
+First, documentation notebooks have to be processed with Wolfram Workbench.
+Then, the processed documentation is packaged with other source files into
+a `.paclet` file which can be installed by the users.
+This second step is done by the build script included in the repository,
+which can be run from command line (terminal) with `Build.wls`.
+On Unix-like operating systems it may be necessary to set executable permissions first
+with `chmod a+x Build.wls`.
+For more information on how to run scripts see official `wolframscript`
+[documentation](https://reference.wolfram.com/language/ref/program/wolframscript.html).
 
-### Documentation
+### Documentation processing
 
-The package documentation comes in a form of notebooks with textual
-explanation and executable code examples.
-Raw documentation notebooks are created and processed with additional
-software [Wolfram Workbench](https://www.wolfram.com/workbench/).
+The package documentation comes in a form of notebooks with textual explanation
+and executable code examples.
+Source documentation notebooks are created from templates in Wolfram Workbench and
+have to be processed for proper integration into Mathematica documentation framework.
+During processing, for example [`Graphics`](https://reference.wolfram.com/language/ref/Graphics.html)
+objects are rasterized to minimize documentation file size.
 
 Before manipulating documentation for the first time, you have to import
 the project into Workbench. This procedure needs to be done only once.
@@ -58,29 +75,29 @@ the input field "Import source:".
 * You can leave all checkboxes as default and click __Finish__.
 * _FindBounce_ directory tree now appears in "Package Explorer" tab (on the left side).
 
-For more information about adding and modifying documentation notebooks, please see
-[Wolfram Workbench documentation](https://reference.wolfram.com/workbench/index.jsp).
+For more information about adding and modifying documentation notebooks, please see official
+Wolfram Workbench [documentation](https://reference.wolfram.com/workbench/index.jsp).
 
-Documentation build procedure refers to the process of taking "source" notebooks
-and converting them to form suitable for Mathematica documentation centre.
-For example [`Graphics`](https://reference.wolfram.com/language/ref/Graphics.html)
-objects are rasterized to minimize documentation file size.
-To build documentation follow these steps:
+To process documentation follow the steps bellow.
+This has to be done for every package build.
 
 * From the Workbench menu bar, select __Window > Show View > Application Tools__.
+(If the last choice is not present, find it under section
+__Window > Show View > Others > Wolfram > Application Tools__.)
 * In the "Application Tools" tab select _FindBounce_ in project drop down list.
 * Click on button "Build", just bellow the drop down list.
-* Build procedure may take a few minutes and copies processed notebooks to
+* Procedure may take a few minutes and it copies processed notebooks to
 "build" subdirectory in repository root directory.
 * You can also see the result of procedure after it is completed
 by clicking button "Preview" in "Application Tools" tab.
 
 ### Creating a .paclet file
 
-Running the build script in command line from repository root directory
+Running the build script `Build.wls` in command line (terminal) from repository root directory
 will automatically create a `FindBounce-X.Y.Z.paclet` file in the "build"
 folder.
-Keep in mind that you have to build documentation with Workbench before creating the paclet.
+Keep in mind that you have to process documentation with Workbench __before__
+running the build script.
 
 Script option `--install` will also install it locally to `$UserBasePacletsDirectory`.
 Option `--release` adds metadata to indicate a proper public releases.
@@ -99,7 +116,7 @@ It should be determined according to [semantic versioning](https://semver.org/) 
 * Update [README.md]( README.md ) and [CHANGELOG.md]( CHANGELOG.md ) with relevant changes.
 * Make a new [`git tag`](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
 with corresponding version number and push it to remote repository.
-* Build a public version with `--release` option of build script.
+* Build a public version with `Build.wls --release` option.
 * Create a new release on GitHub [releases](https://github.com/vguada/FindBounce/releases)
 page and attach there resulting `.paclet` file.
 * Inform users about a new version (email, website, etc).
