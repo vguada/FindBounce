@@ -1196,11 +1196,12 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 	If[
 		Head[ansatzInitialR]===DirectedInfinity&&Not[bottomless],
 		Message[FindBounce::degeneracy];
-		Return[BounceFunction@Association[
+		Return[
+			Composition[BounceFunction]@Association[
 				"Action"->Infinity,
-				"Bounce"->Function[\[Phi][[1]]],
+				"Bounce"->Function[Evaluate[\[Phi][[1]]]],
 				"BottomlessPotential"->Missing["NotAvailable"],
-				"Coefficients"->Null,
+				"Coefficients"->Missing["NotAvailable"],
 				"Dimension"->dim,
 				"PathIterations"->0,
 				"Path"->\[Phi],
@@ -1250,8 +1251,11 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		iter++
 	];
-	
-	BounceFunction@Association[
+	(* This hack with Composition prevents automatic rendering of BounceFunction when
+	we only display downvalues for FindBounce (or call Information@FindBounce). When 
+	BounceFunction was rendered (with MakeBoxes) without any values for local variables
+	it issued lots of messages. *)
+	Composition[BounceFunction]@Association[
 		"Action"->action,
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields,bottomless}],
 		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
@@ -1597,5 +1601,11 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 
 
 End[]; (*"`Private`"*)
+
+
+(* ReadProtected attribute on public symbols prevents rendering of huge box with all 
+definitions (DownValues) when they are called in Information or with shortcut ?FindBounce. *)
+SetAttributes[Evaluate@Names["`*"],{ReadProtected}];
+
 
 EndPackage[];
