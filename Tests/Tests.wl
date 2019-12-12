@@ -161,6 +161,22 @@ VerificationTest[
 ];
 
 
+VerificationTest[
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Subdivide[{0}, {1}, 10]]["Action"],
+  SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+  TestID -> "1F FieldPoint -> Path vs Fieldpoints"
+];
+
+
+VerificationTest[
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11,Gradient->None]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Subdivide[{0}, {1}, 10],Gradient->None]["Action"],
+  SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+  TestID -> "1F FieldPoint -> Path vs Fieldpoints, Gradient None"
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*1 field - thin vs. thick wall regime*)
 
