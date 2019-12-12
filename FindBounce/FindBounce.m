@@ -156,24 +156,27 @@ DerivativePotential::gradient = "\"Gradient\" is not a vector, default value was
 DerivativePotential::hessian = "\"Hessian\" is not a matrix, default value was taken."; 
 
 DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:=
-Module[{dV,d2V},
+Module[{dV,d2V=None},
 	If[
 		ArrayQ[gradient,1],
-		dV = gradient,
+		dV = gradient
+		,
 		If[Not[gradient === None ||gradient === Automatic],
-		Message[DerivativePotential::gradient]
-	];
+			Message[DerivativePotential::gradient]
+		];
 		dV = D[V,{fields}]
 	];
 
-	If[
-		ArrayQ[hessian,2]&&noFields>1,
-		d2V = hessian
-	,
-		If[hessian =!= None,
-		Message[DerivativePotential::hessian]
-	];
-		d2V = D[V,{fields},{fields}]
+	If[noFields>1,
+		If[
+			ArrayQ[hessian,2],
+			d2V = hessian
+			,
+			If[hessian =!= None,
+				Message[DerivativePotential::hessian]
+			];
+			d2V = D[V,{fields},{fields}]
+		]
 	];
 
 	{dV,d2V}
@@ -281,16 +284,16 @@ dV=None,d2V=None,improvePB=False,point=points},
 	];
 
 	If[potentialPoints===None&&Not[bottomless],
-		If[Not[gradient === None &&noFields==1],
-			{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
-			If[Ns>3&&Not[gradient === None],
-				improvePB = True
-			];
+		If[Ns>3&&Not[gradient===None],
+			improvePB = True
 		];
+		If[improvePB||noFields>1,
+			{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
+		]
 	];
-	
 	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
-	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path}
+	
+	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}
 ];
 
 
@@ -1125,7 +1128,7 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 	noFields,VL,d\[Phi]L,midPoint,fieldPoints,maxItePath,maxIteR,R,improvePB,
 	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
 	ddVL,dPath,bottomless,p,dAction,min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
@@ -1187,7 +1190,7 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 	];
 
 	(*InitialValue.*)
-	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB,path} = 
+	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = 
 		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
 		OptionValue[Gradient],OptionValue[Hessian],dim,
 		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
@@ -1232,7 +1235,7 @@ Module[{Ns,a,path,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 			];
 
 		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
-			improvePB&&path];
+			improvePB];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
