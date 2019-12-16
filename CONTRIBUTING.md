@@ -20,7 +20,8 @@ process documentation notebooks for proper integration into Mathematica
 documentation framework.
 Wolfram Workbench is a plugin for [Eclipse](https://www.eclipse.org/), a popular and robust IDE.
 Please follow these [instructions](http://support.wolfram.com/kb/27221) for installation
-and pay attention to choose "Eclipse IDE for Java Developers".
+and pay attention to choose "Eclipse IDE for Java Developers". The procedure was succesfully
+carried out in the Eclipse version 4.13.0.
 
 ## Testing code
 
