@@ -275,7 +275,25 @@ VerificationTest[
 	196.262,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - simplest polygonal potential, D=3"
-]
+];
+
+
+(* Polygonal potential with 4 points and D=4. *)
+VerificationTest[
+	FindBounce[{{0,0},{2,2},{2.5,3},{3,1}}]["Action"],
+	32937.13,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - N = 4 polygonal potential"
+];
+
+
+(* Polygonal potential with 4 points and D=3. *)
+VerificationTest[
+	FindBounce[{{0,0},{2,2},{2.5,3},{3,1}},"Dimension"->3]["Action"],
+	1039.70,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - N = 4 polygonal potential, D=3"
+];
 
 
 (* Polygonal potential with intermediate minima. *)

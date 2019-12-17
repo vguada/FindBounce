@@ -1127,7 +1127,7 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 		],
 		Message[FindBounce::points];Return[$Failed]
 	];
-	FindBounce[points,{True},points[[1,{1,-1}]],opts]
+	FindBounce[points,{True},points[[{1,-1},1]],opts]
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
