@@ -447,18 +447,18 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"InitialRadiusAccuracyGoal"->0],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"PathTolerance"->-1],
 	$Failed,
-	{FindBounce::posint},
-	TestID->"FindBounce - wrong InitialRadiusAccuracyGoal"
+	{FindBounce::posreal},
+	TestID->"FindBounce - wrong PathTolerance"
 ];
 
 
 VerificationTest[
-	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"PathTolerance"->-0.1],
+	FindBounce[x^4-x^2+x/4,x,{-0.762844,0.633518},"ActionTolerance"->-1],
 	$Failed,
 	{FindBounce::posreal},
-	TestID->"FindBounce - wrong PathTolerance"
+	TestID->"FindBounce - wrong InitialRadiusAccuracyGoal"
 ];
 
 

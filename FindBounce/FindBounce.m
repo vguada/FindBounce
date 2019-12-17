@@ -395,21 +395,24 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
 FindInitialRadius::noSolution = "Large error solving the boundaries conditions. This potential may not have a bounce solution.";
 
 (*Find the solution of eq. 25 or 26.*)
-FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadius_,ansatzInitialR_,aRinitial_,pos_,switchMessage_]:= 
-Module[{R,v,b,radii,initialR,ite,complexR,realR,switch,k,initialR0,complexityR,rw,findInitialR,\[Lambda],lambda,Rvb,kinetic,potential},
-(*The initial Radius can be found simply with FindRoot[R[x],{x,x0}]. However, this is not always the case since FindRoot
-use Newton's Method and it fails if it hits a singularity. Thereby, in order to have a robust mechanism one check the output
-of FindRoot after each iterations and use the bisection method in case FindRoot fails.*)
+FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,pos_,switchMessage_]:= 
+Module[{R,v,b,radii,initialR,ite,complexR,realR,switch,k,initialR0,complexityR,rw,findInitialR,
+	\[Lambda],lambda,Rvb,kinetic,potential,errorAction,action,actionPrev = 0,actionToleranceB,minimum\[Lambda] =.01},
+(*The initial Radius can be also found simply with FindRoot[R[x],{x,x0}]. However, this approach fails 
+if it hits a singularity in R[x] while looking for x0. Thereby, in order to have a robust mechanism, 
+FindInitialRadius checks the output of FindRoot after each iterations and uses the bisection method 
+whenever FindRoot fails.*)
 	
-	(*Definitios of internal functions*)
-	(*Saves values of BounceParameter,kinetic and Potentail energy and simplifies the notation*)
-	
-	(*Defines \[Lambda] of eq. 26*)
+	(*Defines \[Lambda] of eq. 26 and other internal functions related to the validity of the solution*)
 	lambda[initialR_?NumericQ] := lambda[initialR] = (
 		Rvb = BounceParameterRvb[initialR,\[Phi]L,a,d,Ns,True,pos];
 		kinetic = \[ScriptCapitalT][Sequence@@Rvb,a,d,Ns,pos];
 		potential = \[ScriptCapitalV][Sequence@@Rvb,a,d,VL,\[Phi]L,Ns];
-		(*complexityR: Discriminates between undershooting and overshooting*)
+		(*The action and actionTolerance*)
+		action = kinetic + potential;
+		errorAction = Abs[(action-actionPrev)/action];
+		actionToleranceB = If[Not[action == actionPrev], errorAction > actionTolerance,True];
+		(*Discriminates between undershooting and overshooting*)
 		complexityR = Abs@Im@Chop@Rvb[[1,1]];
 		
 		\[Lambda] = Sqrt[(2-d)*kinetic/(d*potential)]
@@ -420,102 +423,103 @@ of FindRoot after each iterations and use the bisection method in case FindRoot 
 		Quiet[Abs[rw/.FindRoot[Abs[Re@lambda[rw]-1],{rw,initialR}, 
 					MaxIterations->1,
 					PrecisionGoal->0,
-					AccuracyGoal->accuracyRadius]
+					AccuracyGoal->0]
 				],
 		{FindRoot::lstol,FindRoot::cvmit}];   
 	
-If[Ns==2&&Not[d==3],(*initialR = exact radius from the close form solution N=3*)
-	initialR = ansatzInitialR;
-	lambda[initialR]
-	,	
-	(*Picks up the best estimate*)
-	If[NumericQ[aRinitial],
-		initialR = aRinitial
-		,
-		radii = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1][[1]];
-		If[ Abs[Im[radii[[-1]]]] < 0,
-			initialR = Abs[radii[[-2]]],
-			initialR = Abs[ansatzInitialR] 
-		];   
-	];
-	initialR0 = initialR;
-	
-	(*Finds the interval of the solution Sol \[Element] [realR, complexR] or reduces the interval*)
-	ite = 0; 
-	switch = True; 
-	k = 1;
-	While[ ite <= maxIteR && switch,   
-		complexR = Infinity;
-		realR = 0;
-		switch = False;
-		lambda[initialR]; (*lambda[initialR] also re-evaluates the values of Rvb,kinetic,potential and complexityR.*)
-		If[ complexityR > 0,
-			(*Overshooting*)
-			While[ complexityR > 0 &&ite <= maxIteR&&Abs[\[Lambda]-1]> 0.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0,
-				If[initialR < complexR,
-					complexR = initialR;
-					initialR = findInitialR[initialR];
-					,
-					(*Perturbs 10% down the ansatz since initialR>complexR*) 
-					initialR = 0.9*complexR
-				];
-				lambda[initialR];
-				ite++
-			]; 
-			realR = initialR;
-			,(*Undershooting*)
-			While[ complexityR == 0&&ite <= maxIteR&&Abs[\[Lambda]-1] > 0.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0,
-				If[initialR > realR,
-					realR = initialR;  
-					initialR = findInitialR[initialR],
-					(*Perturbs 10% up the ansatz since initialR<realR*)  
-					initialR = 1.1*realR
-				];
-				lambda[initialR];
-				ite++
-			]; 
-			complexR = initialR;    
-		];  
-		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR&&Abs[\[Lambda]-1]> 0.5*10^(-accuracyRadius)&&Chop[Re@\[Lambda]]!=0, 
-			
-			If[ complexityR > 0,
-				If[ (*Overshooting*)
-					initialR < complexR,
-					complexR = initialR;
-					initialR = findInitialR[initialR];
-					,
-					initialR = Abs[complexR+realR]/2;
-				];
-				,
-				If[ (*Undershooting*)
-					initialR > realR, 
-					realR = initialR; 
-					initialR = findInitialR[initialR];
-					,
-					initialR = Abs[complexR+realR]/2;
-				];
-			];
-			lambda[initialR];
-			ite++   
+	If[Ns==2&&Not[d==3],
+		(*Exact radius from the close form solution N=3 field points and D=4 dimensions, see appendix B*)
+		initialR = ansatzInitialR;
+		lambda[initialR]
+		,	
+		(*Picks up the best estimate*)
+		If[NumericQ[aRinitial],
+			initialR = aRinitial
+			,
+			radii = BounceParameterRvb[0.,\[Phi]L,a,d,Ns,False,1][[1]];
+			If[ Abs[Im[radii[[-1]]]] < 0,
+				initialR = Abs[radii[[-2]]],
+				initialR = Abs[ansatzInitialR] 
+			];   
 		];
-	   
-		If[ Chop[Re@\[Lambda]] == 0,
-			k++;
-			switch=True;
-			initialR = (1+k)*Abs[initialR0]  
-		];   
-	];    
+		initialR0 = initialR;
 	
-	If[ ite > maxIteR&&switchMessage&& Abs[\[Lambda]-1]> 0.5*10^(-accuracyRadius*0.9),
-		Message[FindInitialRadius::cvmit,maxIteR] 
-	];
+		(*Finds the interval of the solution Sol \[Element] [realR, complexR] or reduces the interval*)
+		ite = 0; 
+		switch = True; 
+		k = 1;
+		While[ ite <= maxIteR && switch,   
+			complexR = Infinity;
+			realR = 0;
+			switch = False;
+			lambda[initialR]; (*lambda[initialR] also re-evaluates the values of Rvb,kinetic,potential and complexityR.*)
+			If[ complexityR > 0,
+				(*Overshooting*)
+				While[ complexityR > 0 &&ite <= maxIteR&&(actionToleranceB||Abs[\[Lambda]-1]>minimum\[Lambda])&&Chop[Re@\[Lambda]]!=0,
+					If[initialR < complexR,
+						complexR = initialR;
+						initialR = findInitialR[initialR];
+						,
+						(*Perturbs 10% down the ansatz since initialR>complexR*) 
+						initialR = 0.9*complexR
+					];
+					actionPrev = action;lambda[initialR];
+					ite++
+				]; 
+				realR = initialR;
+				,(*Undershooting*)
+				While[ complexityR == 0&&ite <= maxIteR&&(actionToleranceB||Abs[\[Lambda]-1]>minimum\[Lambda])&&Chop[Re@\[Lambda]]!=0,
+					If[initialR > realR,
+						realR = initialR;  
+						initialR = findInitialR[initialR],
+						(*Perturbs 10% up the ansatz since initialR<realR*)  
+						initialR = 1.1*realR
+					];
+					actionPrev = action;lambda[initialR];
+					ite++
+				]; 
+				complexR = initialR;    
+			];  
+			(*One the interval is found, reduces the interval and use bisection method*)	
+			While[ite <= maxIteR&&(actionToleranceB||Abs[\[Lambda]-1]>minimum\[Lambda])&&Chop[Re@\[Lambda]]!=0, 
+				
+				If[ complexityR > 0,
+					If[ (*Overshooting*)
+						initialR < complexR,
+						complexR = initialR;
+						initialR = findInitialR[initialR];
+						,
+						initialR = Abs[complexR+realR]/2;
+					];
+					,
+					If[ (*Undershooting*)
+						initialR > realR, 
+						realR = initialR; 
+						initialR = findInitialR[initialR];
+						,
+						initialR = Abs[complexR+realR]/2;
+					];
+				];
+				actionPrev = action;lambda[initialR];
+				ite++   
+			];
+	   
+			If[ Chop[Re@\[Lambda]] == 0,
+				k++;
+				switch=True;
+				initialR = (1+k)*Abs[initialR0]  
+			];   
+		];    
 
-	If[ Re[\[Lambda]-1] > 0.5*10^(-accuracyRadius*0.1)&&switchMessage, 
-		Message[FindInitialRadius::noSolution];
-		Return[$Failed,Module]
+		If[ ite > maxIteR&&switchMessage&&errorAction>actionTolerance*1.1,
+			Message[FindInitialRadius::cvmit,maxIteR] 
+		];
+
+		If[ Abs[\[Lambda]-1]>minimum\[Lambda]&&switchMessage, 
+			Message[FindInitialRadius::noSolution];
+			Return[$Failed,Module]
+		];	
 	];	
-];	
 	Clear[lambda];
 			
 	Re@{initialR,Sequence@@Rvb,potential,kinetic}
@@ -565,7 +569,7 @@ SingleFieldBounce::extrema = "Wrong position of the extrema, check the minima or
 MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
 SingleFieldBounce::noSolution = "Solution not found, increase the number of segments or accuracy.";
 
-SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
+SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
 	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_]:= 
 Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 	
@@ -591,7 +595,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 	
 	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
 	pos = FindSegment[a,\[Phi]L,dim,Ns];
-	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,
+	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,
 		aRinitial,pos,switchMessage]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*Checks if we got a consistent answer.*)
@@ -796,7 +800,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 		]
 	];
 		
-	{V\[Xi]+T\[Xi],ddVL}
+	{Re[V\[Xi]+T\[Xi]],ddVL}
 ];
 
 
@@ -804,7 +808,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,dAction_,switchPathOld_]:=
+ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,actionTolerance_,switchPathOld_]:=
 Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
@@ -814,7 +818,7 @@ Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 		path[[1]] = v[[1]]+b[[1]]
 	];
 	
-	If[Abs[(actionOld-actionNew)/actionNew] < dAction,
+	If[Abs[(actionOld-actionNew)/actionNew] < actionTolerance,
 		switchPath = True
 	];
 	
@@ -826,7 +830,7 @@ Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 (*MultiFieldBounce*)
 
 
-MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,dPath_]:=
+MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=
 Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,rN,DV,D2V,
 	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,rulesQuartic, 
 	\[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
@@ -953,7 +957,7 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 	 
 	{\[Phi]0[[1]],\[Zeta]ts[[1]]} = {\[CapitalPhi]0[[1]],ConstantArray[0,noFields]};
 
-	If[Max[Abs@\[Zeta]ts]/lengthPath < dPath,
+	If[Max[Abs@\[Zeta]ts]/lengthPath < pathTolerance,
 		switchPath = True
 	];
 	Clear[\[Nu]\[Xi]p,\[Beta]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]m,\[Nu]0,\[Beta]0];
@@ -1094,12 +1098,11 @@ FindBounce::mins = "Dimensions of minima should be consistent to the number of f
 Options[FindBounce] = {
 	"BottomlessPotential" -> False,
 	"PathTolerance" -> 0.01,
-	"ActionTolerance" -> 0.01,
+	"ActionTolerance" -> 10^(-6),
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
 	Hessian -> None,
-	"InitialRadiusAccuracyGoal" -> 10,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
 	"MidFieldPoint" -> None
@@ -1128,19 +1131,18 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
-	noFields,VL,d\[Phi]L,midPoint,fieldPoints,maxItePath,maxIteR,R,improvePB,
-	rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,actionP,action\[Xi],action,vM,aM,bM,posM,
-	ddVL,dPath,bottomless,p,dAction,min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,d\[Phi]L,midPoint,fieldPoints,
+	maxItePath,maxIteR,R,improvePB,rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,
+	actionP,action\[Xi],action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
+	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
 	
 	(*Checks if field variables do not have any values.*)
 	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
 	
 	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed.*)
 	bottomless = TrueQ@OptionValue["BottomlessPotential"];
-	accuracyRadius = OptionValue["InitialRadiusAccuracyGoal"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"InitialRadiusAccuracyGoal"];Return[$Failed,Module]);
-	dPath = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
-	dAction = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	pathTolerance = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	actionTolerance = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
@@ -1224,12 +1226,12 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 		{actionP,VL,v,a,b,pos,R,initialR} = 
 			If[Not[bottomless],
 				SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
-					accuracyRadius,ansatzInitialR,initialR,rule,iter,
+					actionTolerance,ansatzInitialR,initialR,rule,iter,
 					switchPath||iter==maxItePath
 					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 				,
 				BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
-					dim,maxIteR,accuracyRadius,ansatzInitialR,initialR,rule,
+					dim,maxIteR,actionTolerance,ansatzInitialR,initialR,rule,
 					iter,fields
 					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 			];
@@ -1239,25 +1241,22 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,accuracyRadius,
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
-			bottomless,action,actionP+action\[Xi],dAction,switchPath];
+			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath];
 	
 		(*Breaks the interations of path deformation.*)
 		If[switchPath||iter == maxItePath||bottomless, 
-			If[noFields> 1&& maxItePath >0, {pos,v,a,b,R} = {posM,vM,aM,bM,RM}];
+			If[noFields>1&&maxItePath>0, {pos,v,a,b,R} = {posM,vM,aM,bM,RM}];
 			p = If[pos>1,pos-1,pos]; 
 			Break[]
 		];
 
 		(*Multi Field Bounce.*)
 		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,
-			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],dPath];
+			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],pathTolerance];
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		iter++
 	];
-	(* This hack with Composition prevents automatic rendering of BounceFunction when
-	we only display downvalues for FindBounce (or call Information@FindBounce). When 
-	BounceFunction was rendered (with MakeBoxes) without any values for local variables
-	it issued lots of messages. *)
+
 	Composition[BounceFunction]@Association[
 		"Action"->action,
 		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields,bottomless}],
@@ -1410,9 +1409,22 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
 
 
 (*Find the solution of eq. 25 or 26.*)
-FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,accuracyRadius_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
+FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
 Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
-
+	(*Defines \[Lambda] of the bottomless potential*)
+	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
+	(*Looks for the initial radius*)
+	findInitialR[initialR_?NumericQ]:= findInitialR[initialR] = 
+		Module[{rw}, 
+			rw =rw/.Quiet[FindRoot[Abs[\[Lambda][rw]-1],{rw,initialR}, 
+				MaxIterations->1,
+				PrecisionGoal->0,
+				AccuracyGoal->0],
+				{FindRoot::lstol,FindRoot::cvmit}]; 
+				  
+			Abs[rw]
+	]; 
+	
 	(*Picks up the best estimate*)
 	If[NumericQ[aRinitial],
 		initialR = aRinitial
@@ -1423,25 +1435,17 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 			initialR = Abs[ansatzInitialR] 
 		];   
 	];
-	
 	initialR0 = initialR;
-	(*Defines the method to use*)
-	\[Lambda][initialR_] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
-	findInitialR[initialR_]:= findInitialR[initialR] = 
-		Module[{rw}, 
-			rw =rw/.Quiet[FindRoot[Abs[\[Lambda][rw]-1],{rw,initialR}, 
-				MaxIterations->1,PrecisionGoal->0,AccuracyGoal->accuracyRadius ],
-				{FindRoot::lstol,FindRoot::cvmit}]; 
-				  
-			Abs[rw]
-	]; 
+	
 	(*Finds the interval of the solution Sol \[Element] [realR, complexR] or reduces the interval*)
 	ite = 0; switch = True; k = 1;
 	While[ ite <= maxIteR && switch &&k<10,    
-		complexR = Infinity; realR=10^(-1); switch = False;
+		complexR = Infinity; 
+		realR=10^(-1); 
+		switch = False;
 		If[ Abs[Im[\[Lambda][initialR]]]>10^(-12),
 			(*-Overshooting*)
-			While[(Abs[Im[\[Lambda][initialR]]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1))&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>0.5*10^(-accuracyRadius),
+			While[(Abs[Im[\[Lambda][initialR]]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1))&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance,
 				If[initialR < complexR,
 					complexR = initialR;
 					initialR = findInitialR[initialR], 
@@ -1450,7 +1454,7 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 			,
 			(*-Undershooting*)
 			(*----else----------*)
-			While[ Abs@\[Lambda][initialR]< 1 &&Abs@Im[\[Lambda][initialR]]<= 10^(-12)&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>0.5*10^(-accuracyRadius)&&Chop@Re[\[Lambda][initialR]]!=0,
+			While[ Abs@\[Lambda][initialR]< 1 &&Abs@Im[\[Lambda][initialR]]<= 10^(-12)&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop@Re[\[Lambda][initialR]]!=0,
 				If[initialR > realR,
 					realR = initialR;
 					initialR= findInitialR[initialR], 
@@ -1462,7 +1466,7 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 		];   
 		
 		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR &&Abs[\[Lambda][initialR]-1]>0.5*10^(-accuracyRadius)&&Chop[Re[\[Lambda][initialR]]]!=0, 
+		While[ite <= maxIteR &&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop[Re[\[Lambda][initialR]]]!=0, 
 		
 			If[Abs@Im[\[Lambda][initialR]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1),
 				If[ initialR <  complexR,
@@ -1492,7 +1496,7 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 		Message[FindInitialRadii::cvmit,maxIteR] 
 	];
 	
-	 If[ Re[\[Lambda][initialR]-1] >0.5*10^(-1), 
+	 If[ Re[\[Lambda][initialR]-1] >0.5, 
 		Message[FindInitialRadius::noSolution];
 		Return[$Failed,Module]
 	];  
@@ -1554,7 +1558,7 @@ BottomlessPotentialBounce::pathDeformation = "The path is deformed irregularly o
 BottomlessPotentialBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
 BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 4.";
 
-BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,accuracyRadius_,
+BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
 ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
 Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 
@@ -1581,7 +1585,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 	a  = Table[ ( (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) )/8,{s,Ns}]; 
 	a[[1]] = \[Lambda];
 	\[Phi]m = v0 + \[Phi]L[[-1]];
-	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,accuracyRadius,ansatzInitialR,aRinitial,\[Phi]m]//Re;
+	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m]//Re;
 	
 	If[initialR<10^(-5.),
 		Message[BottomlessPotentialBounce::Rinitial0];
@@ -1589,7 +1593,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 	];
 	
 	{R,v,b} = BottomlessParameterRvb[initialR,\[Phi]L,a,dim,Ns,True,\[Phi]m]//Re;
-		
+			
 	a = Join[a,{0.}];	
 	T1 = \[ScriptCapitalT]B[R,Ns,a,b]; 
 	V1 = \[ScriptCapitalV]B[R,v,VL,\[Phi]L,Ns,a,b,\[Phi]m];
