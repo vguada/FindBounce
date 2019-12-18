@@ -990,6 +990,274 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 
 
 (* ::Subsection::Closed:: *)
+(*BottomlessPotential*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*BottomlessPotential*)
+
+
+BottomlessPotential[initialR_?NumericQ,a_,\[Phi]L_,\[Phi]m_] :=
+BottomlessPotential[initialR,a,\[Phi]L,\[Phi]m] = 
+Module[{\[Phi]0,b1,v1,bB,vB,p = 2},
+	vB = \[Phi]m + \[Phi]L[[p]];
+	\[Phi]0 = \[Phi]m - (1 + Sqrt[1 - 2 a[[p-1]] initialR^2 (vB-\[Phi]L[[p]])^2])/(a[[p-1]]*initialR^2 (vB-\[Phi]L[[p]]));
+	bB = (\[Phi]0 - \[Phi]m);
+	v1 = vB - 2 a[[p]] initialR^2+4 bB/(2+bB^2 a[[p-1]] initialR^2)^2;
+	b1 = initialR^4 (2*bB^3 a[[p-1]]+a[[p]] (2+bB^2*a[[p-1]]*initialR^2)^2)/(2+bB^2*a[[p-1]]*initialR^2)^2;		
+	
+	{v1,b1,bB,vB}
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*BottomlessParameterRvb*)
+
+
+Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
+
+BottomlessParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,\[Phi]m_]:=
+BottomlessParameterRvb[initialR,\[Phi]L,a,d,Ns,backward,\[Phi]m] =
+Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
+    (*-------Backward--------------------*)
+	If[backward,
+		\[Alpha] = Join[a,{0.}]; 
+		R = RInitial[d,initialR,\[Alpha],\[Phi]L,None,backward]; 
+		b = 0.; 
+		v=\[Phi]L[[-1]];
+		Rvb = Reap[
+			Sow[b,x];Sow[v,y];Sow[R,z];
+			Do[ b +=-(4/d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
+				v +=( 4/(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y]; 
+				R  = Rs[d,(\[Phi]L[[-i-1]]-v) ,\[Alpha][[-i-1]],b];Sow[R,z];
+				,{i,1,Ns-1}
+			];
+			{v,b,b4,v4} = BottomlessPotential[R,a,\[Phi]L,\[Phi]m];
+			Sow[b4,x]; Sow[v4,y]; Sow[0,z];	 
+		][[2]];
+			
+		Return[Reverse[Rvb,{1,2}]]
+	,     
+	\[Alpha] = Join[{0.},a];
+	Rvb = Reap[
+		{v,b,b4,v4} = BottomlessPotential[initialR,a,\[Phi]L,\[Phi]m];
+		Sow[0,x]; Sow[v4,y]; Sow[b4,z];
+		Sow[initialR,x]; Sow[v,y]; Sow[b,z];
+		R = Rs[d, (\[Phi]L[[p+1]]-v) ,\[Alpha][[p+1]],b];Sow[R,x];
+		
+		Do[ v+= -( 4/(d-2)) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^2 ; Sow[v,y];
+			b+= (4/d) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^(d); Sow[b,z];
+			R = Rs[d, (\[Phi]L[[i+1]]-v) ,\[Alpha][[i+1]],b]; Sow[R,x];
+		,{i,p+1,Ns}];
+		v += -( 4/(d-2))(-\[Alpha][[Ns+1]]) R^2 ;Sow[v,y];
+		b += (4/d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; 
+		][[2]];
+		
+		Chop@Return[Rvb]        
+	];	         
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*FindInitialRadiusB*)
+
+
+(*Find the solution of eq. 25 or 26.*)
+FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
+Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
+	(*Defines \[Lambda] of the bottomless potential*)
+	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
+	(*Looks for the initial radius*)
+	findInitialR[initialR_?NumericQ]:= findInitialR[initialR] = 
+		Module[{rw}, 
+			rw =rw/.Quiet[FindRoot[Abs[\[Lambda][rw]-1],{rw,initialR}, 
+				MaxIterations->1,
+				PrecisionGoal->0,
+				AccuracyGoal->0],
+				{FindRoot::lstol,FindRoot::cvmit}]; 
+				  
+			Abs[rw]
+	]; 
+	
+	(*Picks up the best estimate*)
+	If[NumericQ[aRinitial],
+		initialR = aRinitial
+		,
+		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,1][[1]]//Chop;
+		If[ Abs[ Im[R[[-1]]]]<10^(-12),
+			initialR = Abs[R[[-2]]],
+			initialR = Abs[ansatzInitialR] 
+		];   
+	];
+	initialR0 = initialR;
+	
+	(*Finds the interval of the solution Sol \[Element] [realR, complexR] or reduces the interval*)
+	ite = 0; switch = True; k = 1;
+	While[ ite <= maxIteR && switch &&k<10,    
+		complexR = Infinity; 
+		realR=10^(-1); 
+		switch = False;
+		If[ Abs[Im[\[Lambda][initialR]]]>10^(-12),
+			(*-Overshooting*)
+			While[(Abs[Im[\[Lambda][initialR]]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1))&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance,
+				If[initialR < complexR,
+					complexR = initialR;
+					initialR = findInitialR[initialR], 
+					initialR = 0.9*complexR]; 
+			ite++]; 
+			,
+			(*-Undershooting*)
+			(*----else----------*)
+			While[ Abs@\[Lambda][initialR]< 1 &&Abs@Im[\[Lambda][initialR]]<= 10^(-12)&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop@Re[\[Lambda][initialR]]!=0,
+				If[initialR > realR,
+					realR = initialR;
+					initialR= findInitialR[initialR], 
+					initialR = 1.1*realR;
+					k++
+				];
+			ite++]; 
+			complexR = initialR;    
+		];   
+		
+		(*One the interval is found, reduces the interval and use bisection method*)	
+		While[ite <= maxIteR &&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop[Re[\[Lambda][initialR]]]!=0, 
+		
+			If[Abs@Im[\[Lambda][initialR]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1),
+				If[ initialR <  complexR,
+					complexR = initialR;
+					initialR = findInitialR[initialR],
+					(*-Overshooting*)
+					initialR = Abs[complexR+realR]/2];,
+				(*-----else-------------*)
+				If[ initialR > realR, 
+					realR = initialR; 
+					initialR = findInitialR[initialR],
+					(*-Undershooting*)
+					initialR = Abs[complexR +realR]/2  
+				]
+			];
+			ite++;     	
+		];
+		    
+		If[ Re[Chop[\[Lambda][initialR]]] ==0, 
+			k++;
+			switch=True;
+			initialR = (1+k)*Abs[initialR0] 
+		];     
+	];     
+	
+	If[ ite > maxIteR, 
+		Message[FindInitialRadii::cvmit,maxIteR] 
+	];
+	
+	 If[ Re[\[Lambda][initialR]-1] >0.5, 
+		Message[FindInitialRadius::noSolution];
+		Return[$Failed,Module]
+	];  
+	Clear[findInitialR,\[Lambda]];
+	
+	Re@initialR  
+]; 
+
+
+(* ::Subsubsection::Closed:: *)
+(*\[ScriptCapitalT]B,\[ScriptCapitalV]B,\[CapitalLambda]B*)
+
+
+(*Kinetic term from Int[\[Rho]^(D-1)(1/2 d\[CurlyPhi]4^2)]*)
+\[ScriptCapitalT]Bs[a4_,\[Rho]_?NumericQ,b4_] := 
+	-((4 (4+3 b4^2 a4 \[Rho]^2 (2+b4^2 a4 \[Rho]^2)))/(3 a4 (2+b4^2 a4 \[Rho]^2)^3));
+
+\[ScriptCapitalT]B[R_,Ns_,a_,b_] := 
+Module[{\[ScriptCapitalT],VT,p=2,d=4},
+	\[ScriptCapitalT] = 2\[Pi]^(d/2)/Gamma[d/2] (
+		\[ScriptCapitalT]Bs[a[[p-1]],R[[p]],b[[p-1]]] - 
+		\[ScriptCapitalT]Bs[a[[p-1]],0.,b[[p-1]]]);
+	
+	\[ScriptCapitalT] += 2\[Pi]^(d/2)/Gamma[d/2] Sum[32 a[[i]]^2/(d^2(d+2)) (R[[i+1]]^(2+d)- 
+		 R[[i]]^(2+d)) -8 a[[i]]*b[[i]]/d  (R[[i+1]]^2 -R[[i]]^2) -
+		(2/(d-2))b[[i]]^2 (R[[i+1]]^(2-d)-R[[i]]^(2-d)),{i,p,Ns}] 
+];
+
+(*Potential term from Int[\[Rho]^3(VL[[2]] + \[Lambda] \[Phi]m^4- \[Lambda](\[CurlyPhi]\[Rho]-\[Phi]L[[2]]-\[Phi]m)^4)] &&\[Lambda]= a[[p-1]]*)
+\[ScriptCapitalV]Bs[a4_,\[Rho]_?NumericQ,b4_,\[Phi]T_,v4_,\[Phi]m_,VT_] := 
+	(VT \[Rho]^4)/4+(4 (2+3 b4^2 a4 \[Rho]^2))/(3 a4 (2+b4^2 a4 \[Rho]^2)^3)+1/4 a4 \[Rho]^4 \[Phi]m^4;
+
+\[ScriptCapitalV]B[R_,v_,VL_,\[Phi]L_,Ns_,a_,b_,\[Phi]m_] := 
+Module[{\[ScriptCapitalV],p=2,d=4},
+	\[ScriptCapitalV] = 2\[Pi]^(d/2)/Gamma[d/2](
+		\[ScriptCapitalV]Bs[a[[p-1]],R[[p]],b[[p-1]],\[Phi]L[[p]],v[[p-1]],\[Phi]m,VL[[p]]]-
+		\[ScriptCapitalV]Bs[a[[p-1]],0.,b[[p-1]],\[Phi]L[[p]],v[[p-1]],\[Phi]m,VL[[p]]]);
+
+	\[ScriptCapitalV] += 2\[Pi]^(d/2)/Gamma[d/2](Sum[
+		32 a[[i]]^2/(d(d+2))  (R[[i+1]]^(2+d) - R[[i]]^(2+d))  + 
+		8 a[[i]]*b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2)  +
+		( VL[[i]]-VL[[Ns+1]]+ 8 a[[i]]( v[[i]] - \[Phi]L[[i]]))(R[[i+1]]^d-R[[i]]^d)/d  ,{i,p,Ns}]   )
+];
+
+\[CapitalLambda]B[initialR_?NumericQ,d_,VL_,\[Phi]L_,a4_,Ns_,backward_,\[Phi]m_]:=
+Module[{R4,v4,b4},
+	{R4,v4,b4} = BottomlessParameterRvb[initialR,\[Phi]L,a4,d,Ns,backward,\[Phi]m]; 
+
+	(2-d)*\[ScriptCapitalT]B[R4,Ns,a4,b4]/(d*\[ScriptCapitalV]B[R4,v4,VL,\[Phi]L,Ns,a4,b4,\[Phi]m]) 
+];
+
+
+(* ::Subsubsection::Closed:: *)
+(*BottomlessPotentialBounce*)
+
+
+BottomlessPotentialBounce::extrema = "Wrong position of the minima.";
+BottomlessPotentialBounce::pathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
+BottomlessPotentialBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
+BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 4.";
+
+BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
+ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
+Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
+
+	cList = CoefficientList[Expand@Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
+	If[Length[cList]===5,
+		\[Lambda] = Abs@cList[[5]];
+		v0 = cList[[4]]/(4*\[Lambda]);
+		,
+		Message[BottomlessPotentialBounce::nrm];
+		Return[$Failed,Module]
+	];
+	
+	VL = If[potentialPoints===None,Table[V/.rule[[s]],{s,Ns+1}],potentialPoints];	
+	
+	If[VL[[-1]]>=VL[[-2]],
+		If[iter === 0,
+			Message[BottomlessPotentialBounce::extrema];
+			Return[$Failed,Module],
+			Message[BottomlessPotentialBounce::pathDeformation];
+			Return[$Failed,Module]
+		]
+	];
+	
+	a  = Table[ ( (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) )/8,{s,Ns}]; 
+	a[[1]] = \[Lambda];
+	\[Phi]m = v0 + \[Phi]L[[-1]];
+	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m]//Re;
+	
+	If[initialR<10^(-5.),
+		Message[BottomlessPotentialBounce::Rinitial0];
+		Return[$Failed,Module]
+	];
+	
+	{R,v,b} = BottomlessParameterRvb[initialR,\[Phi]L,a,dim,Ns,True,\[Phi]m]//Re;
+			
+	a = Join[a,{0.}];	
+	T1 = \[ScriptCapitalT]B[R,Ns,a,b]; 
+	V1 = \[ScriptCapitalV]B[R,v,VL,\[Phi]L,Ns,a,b,\[Phi]m];
+	VL[[1]] = VL[[2]]+\[Lambda]*\[Phi]m^4;
+
+	{V1+T1,VL,v,a,b,2,R,initialR}
+];
+
+
+(* ::Subsection::Closed:: *)
 (*FindBounce*)
 
 
@@ -1361,274 +1629,6 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 		LabelStyle->Directive[Black, FontSize->17,FontFamily->"Times New Roman"],
 		GridLines->Automatic
 	]
-];
-
-
-(* ::Subsection::Closed:: *)
-(*BottomlessPotential*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*BottomlessPotential*)
-
-
-BottomlessPotential[initialR_?NumericQ,a_,\[Phi]L_,\[Phi]m_] :=
-BottomlessPotential[initialR,a,\[Phi]L,\[Phi]m] = 
-Module[{\[Phi]0,b1,v1,bB,vB,p = 2},
-	vB = \[Phi]m + \[Phi]L[[p]];
-	\[Phi]0 = \[Phi]m - (1 + Sqrt[1 - 2 a[[p-1]] initialR^2 (vB-\[Phi]L[[p]])^2])/(a[[p-1]]*initialR^2 (vB-\[Phi]L[[p]]));
-	bB = (\[Phi]0 - \[Phi]m);
-	v1 = vB - 2 a[[p]] initialR^2+4 bB/(2+bB^2 a[[p-1]] initialR^2)^2;
-	b1 = initialR^4 (2*bB^3 a[[p-1]]+a[[p]] (2+bB^2*a[[p-1]]*initialR^2)^2)/(2+bB^2*a[[p-1]]*initialR^2)^2;		
-	
-	{v1,b1,bB,vB}
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*BottomlessParameterRvb*)
-
-
-Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
-
-BottomlessParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,\[Phi]m_]:=
-BottomlessParameterRvb[initialR,\[Phi]L,a,d,Ns,backward,\[Phi]m] =
-Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
-    (*-------Backward--------------------*)
-	If[backward,
-		\[Alpha] = Join[a,{0.}]; 
-		R = RInitial[d,initialR,\[Alpha],\[Phi]L,None,backward]; 
-		b = 0.; 
-		v=\[Phi]L[[-1]];
-		Rvb = Reap[
-			Sow[b,x];Sow[v,y];Sow[R,z];
-			Do[ b +=-(4/d)(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^(d);Sow[b,x];
-				v +=( 4/(d-2))(\[Alpha][[-i]]-\[Alpha][[-i-1]]) R^2 ;Sow[v,y]; 
-				R  = Rs[d,(\[Phi]L[[-i-1]]-v) ,\[Alpha][[-i-1]],b];Sow[R,z];
-				,{i,1,Ns-1}
-			];
-			{v,b,b4,v4} = BottomlessPotential[R,a,\[Phi]L,\[Phi]m];
-			Sow[b4,x]; Sow[v4,y]; Sow[0,z];	 
-		][[2]];
-			
-		Return[Reverse[Rvb,{1,2}]]
-	,     
-	\[Alpha] = Join[{0.},a];
-	Rvb = Reap[
-		{v,b,b4,v4} = BottomlessPotential[initialR,a,\[Phi]L,\[Phi]m];
-		Sow[0,x]; Sow[v4,y]; Sow[b4,z];
-		Sow[initialR,x]; Sow[v,y]; Sow[b,z];
-		R = Rs[d, (\[Phi]L[[p+1]]-v) ,\[Alpha][[p+1]],b];Sow[R,x];
-		
-		Do[ v+= -( 4/(d-2)) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^2 ; Sow[v,y];
-			b+= (4/d) (\[Alpha][[i+1]]-\[Alpha][[i]]) R^(d); Sow[b,z];
-			R = Rs[d, (\[Phi]L[[i+1]]-v) ,\[Alpha][[i+1]],b]; Sow[R,x];
-		,{i,p+1,Ns}];
-		v += -( 4/(d-2))(-\[Alpha][[Ns+1]]) R^2 ;Sow[v,y];
-		b += (4/d) (-\[Alpha][[Ns+1]]) R^(d);Sow[b,z]; 
-		][[2]];
-		
-		Chop@Return[Rvb]        
-	];	         
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*FindInitialRadiusB*)
-
-
-(*Find the solution of eq. 25 or 26.*)
-FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
-Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
-	(*Defines \[Lambda] of the bottomless potential*)
-	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
-	(*Looks for the initial radius*)
-	findInitialR[initialR_?NumericQ]:= findInitialR[initialR] = 
-		Module[{rw}, 
-			rw =rw/.Quiet[FindRoot[Abs[\[Lambda][rw]-1],{rw,initialR}, 
-				MaxIterations->1,
-				PrecisionGoal->0,
-				AccuracyGoal->0],
-				{FindRoot::lstol,FindRoot::cvmit}]; 
-				  
-			Abs[rw]
-	]; 
-	
-	(*Picks up the best estimate*)
-	If[NumericQ[aRinitial],
-		initialR = aRinitial
-		,
-		R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,1][[1]]//Chop;
-		If[ Abs[ Im[R[[-1]]]]<10^(-12),
-			initialR = Abs[R[[-2]]],
-			initialR = Abs[ansatzInitialR] 
-		];   
-	];
-	initialR0 = initialR;
-	
-	(*Finds the interval of the solution Sol \[Element] [realR, complexR] or reduces the interval*)
-	ite = 0; switch = True; k = 1;
-	While[ ite <= maxIteR && switch &&k<10,    
-		complexR = Infinity; 
-		realR=10^(-1); 
-		switch = False;
-		If[ Abs[Im[\[Lambda][initialR]]]>10^(-12),
-			(*-Overshooting*)
-			While[(Abs[Im[\[Lambda][initialR]]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1))&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance,
-				If[initialR < complexR,
-					complexR = initialR;
-					initialR = findInitialR[initialR], 
-					initialR = 0.9*complexR]; 
-			ite++]; 
-			,
-			(*-Undershooting*)
-			(*----else----------*)
-			While[ Abs@\[Lambda][initialR]< 1 &&Abs@Im[\[Lambda][initialR]]<= 10^(-12)&&ite <= maxIteR&&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop@Re[\[Lambda][initialR]]!=0,
-				If[initialR > realR,
-					realR = initialR;
-					initialR= findInitialR[initialR], 
-					initialR = 1.1*realR;
-					k++
-				];
-			ite++]; 
-			complexR = initialR;    
-		];   
-		
-		(*One the interval is found, reduces the interval and use bisection method*)	
-		While[ite <= maxIteR &&Abs[\[Lambda][initialR]-1]>actionTolerance&&Chop[Re[\[Lambda][initialR]]]!=0, 
-		
-			If[Abs@Im[\[Lambda][initialR]]>10^(-12)||(Abs@Im[\[Lambda][initialR]]<=  10^(-12)&&\[Lambda][initialR]>1),
-				If[ initialR <  complexR,
-					complexR = initialR;
-					initialR = findInitialR[initialR],
-					(*-Overshooting*)
-					initialR = Abs[complexR+realR]/2];,
-				(*-----else-------------*)
-				If[ initialR > realR, 
-					realR = initialR; 
-					initialR = findInitialR[initialR],
-					(*-Undershooting*)
-					initialR = Abs[complexR +realR]/2  
-				]
-			];
-			ite++;     	
-		];
-		    
-		If[ Re[Chop[\[Lambda][initialR]]] ==0, 
-			k++;
-			switch=True;
-			initialR = (1+k)*Abs[initialR0] 
-		];     
-	];     
-	
-	If[ ite > maxIteR, 
-		Message[FindInitialRadii::cvmit,maxIteR] 
-	];
-	
-	 If[ Re[\[Lambda][initialR]-1] >0.5, 
-		Message[FindInitialRadius::noSolution];
-		Return[$Failed,Module]
-	];  
-	Clear[findInitialR,\[Lambda]];
-	
-	Re@initialR  
-]; 
-
-
-(* ::Subsubsection::Closed:: *)
-(*\[ScriptCapitalT]B,\[ScriptCapitalV]B,\[CapitalLambda]B*)
-
-
-(*Kinetic term from Int[\[Rho]^(D-1)(1/2 d\[CurlyPhi]4^2)]*)
-\[ScriptCapitalT]Bs[a4_,\[Rho]_?NumericQ,b4_] := 
-	-((4 (4+3 b4^2 a4 \[Rho]^2 (2+b4^2 a4 \[Rho]^2)))/(3 a4 (2+b4^2 a4 \[Rho]^2)^3));
-
-\[ScriptCapitalT]B[R_,Ns_,a_,b_] := 
-Module[{\[ScriptCapitalT],VT,p=2,d=4},
-	\[ScriptCapitalT] = 2\[Pi]^(d/2)/Gamma[d/2] (
-		\[ScriptCapitalT]Bs[a[[p-1]],R[[p]],b[[p-1]]] - 
-		\[ScriptCapitalT]Bs[a[[p-1]],0.,b[[p-1]]]);
-	
-	\[ScriptCapitalT] += 2\[Pi]^(d/2)/Gamma[d/2] Sum[32 a[[i]]^2/(d^2(d+2)) (R[[i+1]]^(2+d)- 
-		 R[[i]]^(2+d)) -8 a[[i]]*b[[i]]/d  (R[[i+1]]^2 -R[[i]]^2) -
-		(2/(d-2))b[[i]]^2 (R[[i+1]]^(2-d)-R[[i]]^(2-d)),{i,p,Ns}] 
-];
-
-(*Potential term from Int[\[Rho]^3(VL[[2]] + \[Lambda] \[Phi]m^4- \[Lambda](\[CurlyPhi]\[Rho]-\[Phi]L[[2]]-\[Phi]m)^4)] &&\[Lambda]= a[[p-1]]*)
-\[ScriptCapitalV]Bs[a4_,\[Rho]_?NumericQ,b4_,\[Phi]T_,v4_,\[Phi]m_,VT_] := 
-	(VT \[Rho]^4)/4+(4 (2+3 b4^2 a4 \[Rho]^2))/(3 a4 (2+b4^2 a4 \[Rho]^2)^3)+1/4 a4 \[Rho]^4 \[Phi]m^4;
-
-\[ScriptCapitalV]B[R_,v_,VL_,\[Phi]L_,Ns_,a_,b_,\[Phi]m_] := 
-Module[{\[ScriptCapitalV],p=2,d=4},
-	\[ScriptCapitalV] = 2\[Pi]^(d/2)/Gamma[d/2](
-		\[ScriptCapitalV]Bs[a[[p-1]],R[[p]],b[[p-1]],\[Phi]L[[p]],v[[p-1]],\[Phi]m,VL[[p]]]-
-		\[ScriptCapitalV]Bs[a[[p-1]],0.,b[[p-1]],\[Phi]L[[p]],v[[p-1]],\[Phi]m,VL[[p]]]);
-
-	\[ScriptCapitalV] += 2\[Pi]^(d/2)/Gamma[d/2](Sum[
-		32 a[[i]]^2/(d(d+2))  (R[[i+1]]^(2+d) - R[[i]]^(2+d))  + 
-		8 a[[i]]*b[[i]]/(d-2) (R[[i+1]]^2 -R[[i]]^2)  +
-		( VL[[i]]-VL[[Ns+1]]+ 8 a[[i]]( v[[i]] - \[Phi]L[[i]]))(R[[i+1]]^d-R[[i]]^d)/d  ,{i,p,Ns}]   )
-];
-
-\[CapitalLambda]B[initialR_?NumericQ,d_,VL_,\[Phi]L_,a4_,Ns_,backward_,\[Phi]m_]:=
-Module[{R4,v4,b4},
-	{R4,v4,b4} = BottomlessParameterRvb[initialR,\[Phi]L,a4,d,Ns,backward,\[Phi]m]; 
-
-	(2-d)*\[ScriptCapitalT]B[R4,Ns,a4,b4]/(d*\[ScriptCapitalV]B[R4,v4,VL,\[Phi]L,Ns,a4,b4,\[Phi]m]) 
-];
-
-
-(* ::Subsubsection::Closed:: *)
-(*BottomlessPotentialBounce*)
-
-
-BottomlessPotentialBounce::extrema = "Wrong position of the minima.";
-BottomlessPotentialBounce::pathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
-BottomlessPotentialBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
-BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 4.";
-
-BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
-ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
-Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
-
-	cList = CoefficientList[Expand@Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
-	If[Length[cList]===5,
-		\[Lambda] = Abs@cList[[5]];
-		v0 = cList[[4]]/(4*\[Lambda]);
-		,
-		Message[BottomlessPotentialBounce::nrm];
-		Return[$Failed,Module]
-	];
-	
-	VL = If[potentialPoints===None,Table[V/.rule[[s]],{s,Ns+1}],potentialPoints];	
-	
-	If[VL[[-1]]>=VL[[-2]],
-		If[iter === 0,
-			Message[BottomlessPotentialBounce::extrema];
-			Return[$Failed,Module],
-			Message[BottomlessPotentialBounce::pathDeformation];
-			Return[$Failed,Module]
-		]
-	];
-	
-	a  = Table[ ( (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) )/8,{s,Ns}]; 
-	a[[1]] = \[Lambda];
-	\[Phi]m = v0 + \[Phi]L[[-1]];
-	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m]//Re;
-	
-	If[initialR<10^(-5.),
-		Message[BottomlessPotentialBounce::Rinitial0];
-		Return[$Failed,Module]
-	];
-	
-	{R,v,b} = BottomlessParameterRvb[initialR,\[Phi]L,a,dim,Ns,True,\[Phi]m]//Re;
-			
-	a = Join[a,{0.}];	
-	T1 = \[ScriptCapitalT]B[R,Ns,a,b]; 
-	V1 = \[ScriptCapitalV]B[R,v,VL,\[Phi]L,Ns,a,b,\[Phi]m];
-	VL[[1]] = VL[[2]]+\[Lambda]*\[Phi]m^4;
-
-	{V1+T1,VL,v,a,b,2,R,initialR}
 ];
 
 
