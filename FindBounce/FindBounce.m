@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Chapter::Closed:: *)
+(* ::Section::Closed:: *)
 (*Header*)
 
 
@@ -28,14 +28,14 @@
 *)
 
 
-(* ::Chapter::Closed:: *)
+(* ::Section::Closed:: *)
 (*Begin Package*)
 
 
 BeginPackage["FindBounce`"];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*Available public functions*)
 
 
@@ -51,22 +51,22 @@ BouncePlot;
 ClearAll["`*","`*`*"];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*Begin Private*)
 
 
 Begin["`Private`"];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Section::Closed:: *)
 (*Code*)
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*Utilities*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Autocomplete arguments*)
 
 
@@ -89,7 +89,7 @@ addCodeCompletion[function_String][args___]:=Module[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Version compatibility*)
 
 
@@ -113,11 +113,11 @@ If[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*InitialValue*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Segmentation*)
 
 
@@ -157,7 +157,7 @@ Module[{fieldPoints,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[Capi
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*NewAnsatz*)
 
 
@@ -171,7 +171,7 @@ Module[{l,\[Phi]L,eL},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*DerivativePotential*)
 
 
@@ -206,7 +206,7 @@ Module[{dV,d2V=None},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*InitialValue*)
 
 
@@ -320,11 +320,11 @@ dV=None,d2V=None,improvePB=False,point=points},
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*SingleFieldBounce*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindSegment*)
 
 
@@ -341,7 +341,7 @@ Module[{pos = 1,R,estimateRmin,estimateRmax,ps},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*RInitial*)
 
 
@@ -356,7 +356,7 @@ RInitial[4,initialR_?NumericQ,a_,\[Phi]L_,pos_,backward_]:=
 RInitial[3,initialR_?NumericQ,a_,\[Phi]L_,pos_,backward_]:= initialR;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*BounceParameterRvb*)
 
 
@@ -411,7 +411,7 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindInitialRadius*)
 
 
@@ -549,7 +549,7 @@ whenever FindRoot fails.*)
 ]; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalT]*)
 
 
@@ -571,7 +571,7 @@ Module[{p,T},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalV]*)
 
 
@@ -584,7 +584,7 @@ Module[{p,T},
 		1/d R[[1]]^d (VL[[1]] - VL[[-1]]) );
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*SingleFieldBounce*)
 
 
@@ -634,11 +634,11 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*SingleFieldBounceImprovement*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*Find\[ScriptCapitalI]*)
 
 
@@ -669,7 +669,7 @@ Module[{\[ScriptCapitalI],d\[ScriptCapitalI],v0,\[Phi]L0,a0,b0,ddVL0},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*BounceParameterr\[Beta]\[Nu]*)
 
 
@@ -719,7 +719,7 @@ Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindInitialRadiiImprovement*)
 
 
@@ -732,7 +732,7 @@ Module[{r,\[Beta],\[Nu]},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalT]\[Xi]*)
 
 
@@ -763,7 +763,7 @@ Module[{\[ScriptCapitalT],VN,\[ScriptCapitalT]\[Xi]D,p},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalV]\[Xi]*)
 
 
@@ -794,7 +794,7 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*SingleFieldBounceImprovement*)
 
 
@@ -827,7 +827,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*ParameterInFieldSpace*)
 
 
@@ -849,7 +849,7 @@ Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*MultiFieldBounce*)
 
 
@@ -989,12 +989,12 @@ Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[Curl
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*FindBounce*)
 
 
-(* ::Subsection::Closed:: *)
-(*BounceFunction: Summary Box*)
+(* ::Subsubsection::Closed:: *)
+(*BounceFunction*)
 
 
 summaryBoxGraphics[bf_BounceFunction]:= BouncePlot[
@@ -1059,8 +1059,8 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 ];
 
 
-(* ::Subsection::Closed:: *)
-(*Process results: piecewiseBounce*)
+(* ::Subsubsection::Closed:: *)
+(*piecewiseBounce*)
 
 
 piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottomless_}]:=
@@ -1100,7 +1100,7 @@ Module[{\[CurlyPhi]0},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindBounce*)
 
 
@@ -1299,8 +1299,8 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,d\[Phi]L,midPoint
 ];
 
 
-(* ::Section::Closed:: *)
-(*Visualization: BouncePlot*)
+(* ::Subsection::Closed:: *)
+(*BouncePlot*)
 
 
 BouncePlot::usage="BouncePlot[bf] plots the content of BounceFunction bf.\n"<>
@@ -1364,11 +1364,11 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Subsection::Closed:: *)
 (*BottomlessPotential*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*BottomlessPotential*)
 
 
@@ -1385,7 +1385,7 @@ Module[{\[Phi]0,b1,v1,bB,vB,p = 2},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*BottomlessParameterRvb*)
 
 
@@ -1433,7 +1433,7 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*FindInitialRadiusB*)
 
 
@@ -1535,7 +1535,7 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 ]; 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*\[ScriptCapitalT]B,\[ScriptCapitalV]B,\[CapitalLambda]B*)
 
 
@@ -1578,7 +1578,7 @@ Module[{R4,v4,b4},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsubsection::Closed:: *)
 (*BottomlessPotentialBounce*)
 
 
@@ -1632,7 +1632,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Section::Closed:: *)
 (*End Package*)
 
 
