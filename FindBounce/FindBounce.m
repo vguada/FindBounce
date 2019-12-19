@@ -107,9 +107,14 @@ minMax[list_List,Scaled[s_]]:=With[
 minMax[list_List,{dMin_,dMax_}]:={Min[list]-dMin,Max[list]+dMax};
 
 
+subdivide[x1_,x2_,n_Integer]:=Table[x1+(x2-x1)*k/n,{k,0,n}];
+
+
+(* Use user-defined function only in earlier versions. *)
 If[
 	$VersionNumber<10.1,
-	MinMax=minMax
+	MinMax=minMax;
+	Subdivide=subdivide
 ];
 
 
@@ -119,6 +124,21 @@ If[
 
 (* ::Subsubsection::Closed:: *)
 (*Segmentation*)
+
+
+(* Homogeneous and bi-homogeneous segmentation between 2 or 3 points for any dimension. *)
+homogeneousSegmentation[{p1_,p2_},n_Integer/;n>=2]:=Subdivide[p1,p2,n];
+
+homogeneousSegmentation[{p1_,p2_,p3_},n_Integer/;n>=2]:=Module[
+	{lengths,n1,n2},
+	lengths=Norm/@Differences[{p1,p2,p3}];
+	n1=Clip[
+		Round[First[lengths]/Total[lengths]*n],
+		{1,n-1}
+	];
+	n2=n-n1;
+	Join[Subdivide[p1,p2,n1],Rest@Subdivide[p2,p3,n2]]
+];
 
 
 Options[Segmentation] = {"FieldPoints" -> 31,"Method" -> "H"};
