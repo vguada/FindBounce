@@ -67,6 +67,29 @@ Begin["`Private`"];
 
 
 (* ::Subsection::Closed:: *)
+(*Autocomplete arguments*)
+
+
+(* 
+https://resources.wolframcloud.com/FunctionRepository/resources/AddCodeCompletion
+https://mathematica.stackexchange.com/questions/56984
+*)
+addCodeCompletion[function_String][args___]:=Module[
+	{processed},
+	processed={args}/.{
+		None -> 0,
+		"AbsoluteFileName" -> 2,
+		"RelativeFileName" -> 3,
+		"Color" -> 4,
+		"PackageName" -> 7,
+		"DirectoryName" -> 8,
+		"InterpreterType" -> 9
+	};
+	(FE`Evaluate[FEPrivate`AddSpecialArgCompletion[#1]]&)[function -> processed]
+];
+
+
+(* ::Subsection::Closed:: *)
 (*Version compatibility*)
 
 
@@ -1107,6 +1130,12 @@ Options[FindBounce] = {
 	"MaxRadiusIterations" -> 100,
 	"MidFieldPoint" -> None
 };
+
+(* Autocomplete option names *)
+With[
+	{keys=ToString/@Sort@Keys@Options@FindBounce},
+	addCodeCompletion["FindBounce"][Sequence@@Join[{0},ConstantArray[keys,Length@keys]]]
+];
 
 FindBounce//SyntaxInformation={
 	"ArgumentsPattern"->{_,_.,_.,OptionsPattern[]},
