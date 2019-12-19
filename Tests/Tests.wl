@@ -161,19 +161,20 @@ VerificationTest[
 ];
 
 
+(* We are using Range instead of Subdivide because the latter is introduced in Mma 10.1 . *)
 VerificationTest[
   FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11]["Action"],
-  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Subdivide[{0}, {1}, 10]]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Range[0.,1.,0.1]]["Action"],
   SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
-  TestID -> "1F FieldPoint -> Path vs Fieldpoints"
+  TestID -> "FindBounce - integer vs. list of \"FieldPoints\""
 ];
 
 
 VerificationTest[
   FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11,Gradient->None]["Action"],
-  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Subdivide[{0}, {1}, 10],Gradient->None]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Range[0.,1.,0.1],Gradient->None]["Action"],
   SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
-  TestID -> "1F FieldPoint -> Path vs Fieldpoints, Gradient None"
+  TestID -> "FindBounce - integer vs. list of \"FieldPoints\", Gradient->None"
 ];
 
 
