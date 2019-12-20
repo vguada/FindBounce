@@ -128,7 +128,7 @@ Segmentation//SyntaxInformation={
 };
 
 Segmentation[\[Phi]3_,OptionsPattern[]]:=
-Module[{fieldPoints,\[Phi],\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[CapitalPhi],np,n1,n2}, 
+Module[{fieldPoints,\[Delta]\[Phi],\[Delta]\[Phi]1,\[Delta]\[Phi]2,\[CapitalPhi],n1,n2},
 	fieldPoints = OptionValue["FieldPoints"];
 	If[ fieldPoints <= 3, 
 		
@@ -329,7 +329,7 @@ dV=None,d2V=None,improvePB=False,point=points},
 
 
 FindSegment[a_,\[Phi]L_,d_,Ns_]:=
-Module[{pos = 1,R,estimateRmin,estimateRmax,ps},
+Module[{pos = 1,R},
 	R = BounceParameterRvb[0,\[Phi]L,a,d,Ns,False,pos][[1]];
 	
 	While[Im[R[[-1]]] == 0 && pos< Ns,
@@ -373,7 +373,7 @@ Rs[3,c1_?NumericQ,a_,b_] := Module[{\[Xi]},
  
 (*See eqs. 15-16*)
 BounceParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,pos_]:=
-Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,position=pos},
+Module[{R,b,v,\[Alpha],x,y,z,Rvb},
 	(*-------Backward--------------------*)
 	If[backward,
 		\[Alpha] = Join[a,{0.}];
@@ -419,7 +419,7 @@ FindInitialRadius::noSolution = "Large error solving the boundaries conditions. 
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,pos_,switchMessage_]:= 
-Module[{R,v,b,radii,initialR,ite,complexR,realR,switch,k,initialR0,complexityR,rw,findInitialR,
+Module[{radii,initialR,ite,complexR,realR,switch,k,initialR0,complexityR,rw,findInitialR,
 	\[Lambda],lambda,Rvb,kinetic,potential,errorAction,action,actionPrev = 0,actionToleranceB,minimum\[Lambda] =.01},
 (*The initial Radius can be also found simply with FindRoot[R[x],{x,x0}]. However, this approach fails 
 if it hits a singularity in R[x] while looking for x0. Thereby, in order to have a robust mechanism, 
@@ -555,7 +555,7 @@ whenever FindRoot fails.*)
 
 (*See eqs. 10*)
 \[ScriptCapitalT][R_,v_,b_,a_,d_,Ns_,pos_]:= 
-Module[{p,T},
+Module[{T},
 	If[pos>1,
 		T = 2\[Pi]^(d/2)/Gamma[d/2](
 			32 a[[pos-1]]^2/(d^2(d+2)) (R[[pos]]^(2+d)) -
@@ -675,7 +675,7 @@ Module[{\[ScriptCapitalI],d\[ScriptCapitalI],v0,\[Phi]L0,a0,b0,ddVL0},
 
 (*See eqs. 50-52*)
 BounceParameterr\[Beta]\[Nu][rw_?NumericQ,a_,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_] := 
-Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0,c},
+Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0},
 	a0 = Join[{0},a]; 
 	\[Alpha]0 = Join[{0},\[Alpha]];
 	b0 = Join[{0},b];
@@ -854,8 +854,8 @@ Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 
 
 MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=
-Module[{\[Nu],\[Beta],rI,a,\[Zeta]t,R,\[Zeta]ts,\[Phi]M,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,rN,DV,D2V,
-	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,rulesQuartic, 
+Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
+	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,
 	\[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
 		
 	If[pos>1,
@@ -1018,7 +1018,7 @@ Rs[4,c1_?NumericQ,a_,b_] := Sqrt[ 1/2 (Sqrt[ c1^2 - 4 a b ] + c1)/a  ];
 
 BottomlessParameterRvb[initialR_?NumericQ,\[Phi]L_,a_,d_,Ns_,backward_,\[Phi]m_]:=
 BottomlessParameterRvb[initialR,\[Phi]L,a,d,Ns,backward,\[Phi]m] =
-Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
+Module[{R,b,v,\[Alpha],x,y,z,Rvb,p=2,b4,v4},
     (*-------Backward--------------------*)
 	If[backward,
 		\[Alpha] = Join[a,{0.}]; 
@@ -1064,7 +1064,7 @@ Module[{R,b,v,\[Alpha],v1,b1,x,y,z,Rvb,p=2,\[Phi]0,b4,v4},
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
-Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
+Module[{R,initialR,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
 	(*Defines \[Lambda] of the bottomless potential*)
 	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
 	(*Looks for the initial radius*)
@@ -1169,7 +1169,7 @@ Module[{R,initialR,timeRinitial,ite,findInitialR,\[Lambda],complexR,realR,switch
 	-((4 (4+3 b4^2 a4 \[Rho]^2 (2+b4^2 a4 \[Rho]^2)))/(3 a4 (2+b4^2 a4 \[Rho]^2)^3));
 
 \[ScriptCapitalT]B[R_,Ns_,a_,b_] := 
-Module[{\[ScriptCapitalT],VT,p=2,d=4},
+Module[{\[ScriptCapitalT],p=2,d=4},
 	\[ScriptCapitalT] = 2\[Pi]^(d/2)/Gamma[d/2] (
 		\[ScriptCapitalT]Bs[a[[p-1]],R[[p]],b[[p-1]]] - 
 		\[ScriptCapitalT]Bs[a[[p-1]],0.,b[[p-1]]]);
@@ -1214,7 +1214,7 @@ BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 
 
 BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
 ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
-Module[{a,VL,pos,initialR,R,v,b,T1,V1,\[CurlyPhi],\[Phi]m,cList,\[Lambda],v0},
+Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 
 	cList = CoefficientList[Expand@Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
 	If[Length[cList]===5,
@@ -1428,8 +1428,8 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,d\[Phi]L,midPoint,fieldPoints,
-	maxItePath,maxIteR,R,improvePB,rule,improvementPB,pos,l,eL,dV,d2V,\[Phi]l,RM,
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoints,
+	maxItePath,maxIteR,R,improvePB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi],action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
 	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
 	
