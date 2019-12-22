@@ -123,6 +123,39 @@ If[
 
 
 (* ::Subsubsection::Closed:: *)
+(*Process options*)
+
+
+(* Returns $Failed if option value is not in expected format. *)
+processFieldPointsOption[optionValue_,noFields_]:=Module[
+	{fieldPoints},
+	fieldPoints=optionValue;
+	Which[
+		IntegerQ[fieldPoints],
+		If[fieldPoints<3,Return[$Failed,Module]]
+		,
+		ListQ[fieldPoints],
+		fieldPoints=N@fieldPoints;
+		If[
+			Depth[fieldPoints]==2&&noFields==1,
+			fieldPoints=Partition[fieldPoints,1]
+		];
+		If[
+			Not@And[
+				ArrayQ[fieldPoints,2,(MatchQ[#,_Real]&)],
+				MatchQ[Dimensions@fieldPoints,{x_/;x>=3,noFields}]
+			],
+			Return[$Failed,Module]
+		]
+		,
+		True,
+		Return[$Failed,Module]
+	];
+	fieldPoints
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*Segmentation*)
 
 
@@ -1464,9 +1497,13 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoi
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	midPoint = N@OptionValue["MidFieldPoint"];
-	fieldPoints = OptionValue["FieldPoints"];
 	noFields = Length[fields];
-	
+
+	fieldPoints=ReplaceAll[
+		processFieldPointsOption[OptionValue["FieldPoints"],noFields],
+		$Failed:>(Message[FindBounce::fieldpts];Return[$Failed,Module])
+	];
+
 	(*In case the potential is given as a list of points.*)
 	If[fields[[1]]===True,
 		{fieldPoints,potentialPoints} = Transpose@V;
@@ -1485,28 +1522,6 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoi
 	];
 
 	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
-
-	Which[
-		IntegerQ[fieldPoints],
-		If[fieldPoints<3,Message[FindBounce::fieldpts];Return[$Failed,Module]];
-		,
-		ListQ[fieldPoints],
-		fieldPoints=N@fieldPoints;
-		If[
-			Depth[fieldPoints]==2&&noFields==1,
-			fieldPoints=Partition[fieldPoints,1]
-		];
-		If[
-			Not@And[
-				ArrayQ[fieldPoints,2,(MatchQ[#,_Real]&)],
-				MatchQ[Dimensions@fieldPoints,{x_/;x>=3,noFields}]
-			],
-			Message[FindBounce::fieldpts];Return[$Failed,Module]
-		]
-		,
-		True,
-		Message[FindBounce::fieldpts];Return[$Failed,Module]
-	];
 
 	(*InitialValue.*)
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = 
