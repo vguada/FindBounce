@@ -178,6 +178,46 @@ VerificationTest[
 ];
 
 
+VerificationTest[
+	FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.882782}]["CoefficientsExtension"][[1,1,1]],
+	0.0152544,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F 3 CofficientsExtension (Case A,D=4)"
+];
+
+
+VerificationTest[
+	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.882782},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
+	0.00254445,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F CofficientsExtension (Case A,D=3)"
+];
+
+
+VerificationTest[
+	FindBounce[0.5x^2-0.5x^3+0.12x^4,x,{0.,2.160892}]["CoefficientsExtension"][[1,1,1]],
+	1610.0432764,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F CofficientsExtension (Case B,D=4)"
+];
+
+
+VerificationTest[
+	FindBounce[0.5x^2-0.5x^3+0.12x^4,x,{0.,2.160892},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
+	131.40002,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F CofficientsExtension (Case B,D=3)"
+];
+
+
+VerificationTest[
+	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.882782}]["CoefficientsExtension"][[1,1,1]],
+	-FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.882782}]["CoefficientsExtension"][[1,1,1]],
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
+	TestID->"FindBounce - 1F CofficientsExtension Symmetry"
+];
+
+
 (* ::Subsubsection::Closed:: *)
 (*1 field - thin vs. thick wall regime*)
 
@@ -239,7 +279,7 @@ Precision is chosen to satisfy the test. *)
 VerificationTest[
 	FindBounce[biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10}]["Action"],
 	biQuarticAction[{-5,10},{5,-20},2],
-	{FindBounce`Private`SingleFieldBounceImprovement::dVFailed},
+	{FindBounce`Private`SingleFieldBounceExtension::dVFailed},
 	SameTest->(Abs[(#1-#2)/#2]<10^(-1)&),
 	TestID->"FindBounce - 1F biquartic (default)"
 ];
