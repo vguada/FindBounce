@@ -270,7 +270,7 @@ InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to th
 InitialValue[V_,fields_,noFields_,min1_,points_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,bottomless_,fieldpoints_]:=
 Module[{VL,Ns,\[Phi],\[Phi]L,eL,l,rule,\[Phi]3,VL3,L3,\[Phi]L3,eL3,a3,initialR,fieldPoints,methodSeg,path,c,\[CurlyPhi]0,
-dV=None,d2V=None,improvePB=False,point=points},
+dV=None,d2V=None,extensionPB=False,point=points},
 	
 	If[point === None,
 		point = (min1+min2)/2;
@@ -361,15 +361,15 @@ dV=None,d2V=None,improvePB=False,point=points},
 
 	If[potentialPoints===None&&Not[bottomless],
 		If[Ns>3&&Not[gradient===None],
-			improvePB = True
+			extensionPB = True
 		];
-		If[improvePB||noFields>1,
+		If[extensionPB||noFields>1,
 			{dV,d2V} = DerivativePotential[V,fields,noFields,gradient,hessian];
 		]
 	];
 	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
 	
-	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB}
+	{initialR,Length[\[Phi]L]-1,\[Phi],\[Phi]L,eL,l,dV,d2V,extensionPB}
 ];
 
 
@@ -688,7 +688,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 
 
 (* ::Subsection::Closed:: *)
-(*SingleFieldBounceImprovement*)
+(*SingleFieldBounceExtension*)
 
 
 (* ::Subsubsection::Closed:: *)
@@ -773,11 +773,11 @@ Module[{r\[Beta]\[Nu]M,r,\[Beta],\[Nu],x,y,z,\[Beta]prev,\[Alpha]0,a0,c0,b0},
 
 
 (* ::Subsubsection::Closed:: *)
-(*FindInitialRadiiImprovement*)
+(*FindInitialRadiusExtension*)
 
 
 (*Solves Boundary Conditions \[Xi][N-1] = 0*)
-FindInitialRadiiImprovement[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_]:=
+FindInitialRadiusExtension[rw_?NumericQ,a_ ,b_,d_,Ns_,\[Alpha]_,R_,\[ScriptCapitalI]_,d\[ScriptCapitalI]_,pos_]:=
 Module[{r,\[Beta],\[Nu]},
 	{r,\[Beta],\[Nu]} = BounceParameterr\[Beta]\[Nu][rw,a,b,d,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos] ;
 		
@@ -848,35 +848,34 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 
 
 (* ::Subsubsection::Closed:: *)
-(*SingleFieldBounceImprovement*)
+(*SingleFieldBounceExtension*)
 
 
-SingleFieldBounceImprovement::dVFailed = "The first derivative of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
+SingleFieldBounceExtension::dVFailed = "The first derivative of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
 
-SingleFieldBounceImprovement[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_,improvePB_]:=
-Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,T\[Xi]=0,V\[Xi]=0,ddVL = Missing["NotAvailable"]},
-	eL0 = Join[eL,{eL[[-1]]}];
-	If[improvePB,	
-		dVL= Table[(dV/.rule[[s]]).eL0[[s]],{s,Ns+1}];
-		If[And@@(NumericQ[#]&/@dVL),
-			\[Alpha]  = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
-			ddVL = Table[ (dVL[[s+1]]-8(a[[s]]+\[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,Ns}];
-			{\[ScriptCapitalI],d\[ScriptCapitalI]} = Find\[ScriptCapitalI][v,\[Phi]L,a,b,Ns,pos,R,ddVL,dim];
-			r1 = rInitial/.FindRoot[FindInitialRadiiImprovement[rInitial,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos],{rInitial,-1}]//Quiet;
-			{r,\[Beta],\[Nu]} = If[
-				pos>1,
-				Join[ConstantArray[0,{pos-2,3}],
-				BounceParameterr\[Beta]\[Nu][r1,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos]//Transpose]//Transpose,
-				BounceParameterr\[Beta]\[Nu][r1,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos][[All,2;;-1]]
-			];
-			T\[Xi] = \[ScriptCapitalT]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
-			V\[Xi] = \[ScriptCapitalV]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
-			,
-			Message[SingleFieldBounceImprovement::dVFailed]
-		]
+SingleFieldBounceExtension[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_]:=
+Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,extensionPB=True,T\[Xi]=0.,V\[Xi]=0.},
+	eL0 = Join[eL,{eL[[-1]]}];	
+	dVL = Table[(dV/.rule[[s]]).eL0[[s]],{s,Ns+1}];
+	If[And@@(NumericQ[#]&/@dVL),
+		\[Alpha] = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
+		ddVL = Table[ (dVL[[s+1]]-8(a[[s]]+\[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,Ns}];
+		{\[ScriptCapitalI],d\[ScriptCapitalI]} = Find\[ScriptCapitalI][v,\[Phi]L,a,b,Ns,pos,R,ddVL,dim];
+		r1 = rInitial/.FindRoot[FindInitialRadiusExtension[rInitial,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos],{rInitial,-1}]//Quiet;
+		{r,\[Beta],\[Nu]} = If[
+			pos>1,
+			Join[ConstantArray[0,{pos-2,3}],
+			BounceParameterr\[Beta]\[Nu][r1,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos]//Transpose]//Transpose,
+			BounceParameterr\[Beta]\[Nu][r1,a,b,dim,Ns,\[Alpha],R,\[ScriptCapitalI],d\[ScriptCapitalI],pos][[All,2;;-1]]
+		];
+		T\[Xi] = \[ScriptCapitalT]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
+		V\[Xi] = \[ScriptCapitalV]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
+		,
+		Message[SingleFieldBounceExtension::dVFailed];
+		extensionPB=False
 	];
 		
-	{Re[V\[Xi]+T\[Xi]],ddVL}
+	{Re[V\[Xi]+T\[Xi]],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB}
 ];
 
 
@@ -884,11 +883,17 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,R_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,actionTolerance_,switchPathOld_]:=
-Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
+ParameterInFieldSpace[vs_,as_,bs_,\[Alpha]s_,\[Beta]s_,\[Nu]s_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,actionTolerance_,switchPathOld_,extensionPB_]:=
+Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
-	b = Table[eL[[s]]*bs[[s]],{s,Ns}]; 
+	b = Table[eL[[s]]*bs[[s]],{s,Ns}];
+	
+	If[extensionPB,
+		\[Alpha] = Table[eL[[s]]*\[Alpha]s[[s]],{s,Ns}];
+		\[Beta] = Table[eL[[s]]*\[Beta]s[[s]],{s,Ns}];
+		\[Nu] = Table[eL[[s]]*\[Nu]s[[s]],{s,Ns}];
+	];
 	
 	If[bottomless,
 		path[[1]] = v[[1]]+b[[1]]
@@ -898,7 +903,7 @@ Module[{v,a,b,path=\[Phi],switchPath = switchPathOld},
 		switchPath = True
 	];
 	
-	{v,a,b,path,actionNew,switchPath}
+	{v,a,b,\[Alpha],\[Beta],\[Nu],path,actionNew,switchPath}
 ];
 
 
@@ -1384,24 +1389,61 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 (*piecewiseBounce*)
 
 
-piecewiseBounce[{v_,a_,b_,R_},{min1_,min2_},{dim_,pos_,noSegs_,noFields_,bottomless_}]:=
-Module[{\[CurlyPhi]0},
-
+piecewiseBounce[{v_,a_,b_,R_,\[Nu]_,\[Alpha]_,\[Beta]_,ddVL_},{\[Phi]_,dim_,pos_,noSegs_,noFields_,bottomless_,extensionPB_}]:=
+Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapitalI],\[ScriptCapitalI]0,\[Xi],\[Xi]0},
+	(*Polygonal bounce, as in eq. 4*)
+	\[CurlyPhi][s_,i_,\[Rho]_]:= v[[s,i]]+4/dim*a[[s,i]]*\[Rho]^2+2/(dim-2)*b[[s,i]]/\[Rho]^(dim-2);
+		
+	(*If the extension the polygonal is considered or not*)
+	If[extensionPB,				
+		(*see equations 41 for the definition of \[Xi][\[Rho]]*)
+		\[Xi][s_,i_,\[Rho]_]:= \[Nu][[s,i]]+4/dim*\[Alpha][[s,i]]*\[FormalR]^2+2/(dim-2)*\[Beta][[s,i]]/\[FormalR]^(dim-2);
+		(*See eq 47,48 for \[ScriptCapitalI][\[Rho]] in D=3,4 repectively.*)
+		If[
+			dim==3,
+			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-\[Phi][[s,i]])/6 \[Rho]^2 + a[[s,i]]/15 \[Rho]^4 + b[[s,i]]\[Rho]),
+			(*dim\[Equal]4*)
+			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-\[Phi][[s,i]])/8 \[Rho]^2 + a[[s,i]]/24 \[Rho]^4 + b[[s,i]]/2*Log[\[Rho]])
+		];
+		(*Note that consistently b is zero when \[Rho]=0, so the bounce is smooth. However, if b is computed numerical one should get rid of b by hand as:*)
+		If[
+			pos>1,
+			(*Case A*)
+			\[Xi]0[\[Rho]_]:=\[Nu][[pos-1]]+4/dim*\[Alpha][[pos-1]]*\[Rho]^2;
+			If[
+				dim==3,
+				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-\[Phi][[pos-1]])/6 \[Rho]^2 + a[[pos-1]]/15 \[Rho]^4),
+				(*dim\[Equal]4*)
+				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-\[Phi][[pos-1]])/8 \[Rho]^2 + a[[pos-1]]/24 \[Rho]^4)
+			];
+			,
+			(*Case B*)
+			\[Xi]0[\[Rho]_]:=0;
+			\[ScriptCapitalI]0[\[Rho]_]:=0;
+		];
+		,
+		\[Xi]0[\[Rho]_]:=0;
+		\[ScriptCapitalI]0[\[Rho]_]:=0;
+		\[Xi][s_,i_,\[Rho]_]:=0.;
+		\[ScriptCapitalI][s_,i_,\[Rho]_]:=0.
+	];
+	(*If the bottomless polygonal potential is considered or not*)
 	If[bottomless,
 		\[CurlyPhi]0[\[Rho]_] := v[[1]] + b[[1]]/(1 + 1/2 Norm[a[[1]]]*Norm[b[[1]]]^2\[Rho]^2)
 		,
 		If[
 			pos>1,
 			(*Case A*)
-			\[CurlyPhi]0[\[Rho]_] := v[[pos-1]]+ 4/dim*a[[pos-1]]*\[Rho]^2,
+			\[CurlyPhi]0[\[Rho]_] := v[[pos-1]]+ 4/dim*a[[pos-1]]*\[Rho]^2+\[Xi]0[\[Rho]]+\[ScriptCapitalI]0[\[Rho]],
 			(*Case B*)
-			\[CurlyPhi]0[\[Rho]_] := min1 
+			\[CurlyPhi]0[\[Rho]_] := min1 +\[Xi]0[\[Rho]]+\[ScriptCapitalI]0[\[Rho]]
 		];
 	];
 	
 	(* System symbol FormalR (\[FormalR]) is used as Function argument, because it has attribute
 	Protected and cannot be assigned any value. Syntax with explicit Function is clearer than
 	using pure functions. *)
+	
 	Table[
 		Function[
 			Evaluate@\[FormalR],
@@ -1409,7 +1451,7 @@ Module[{\[CurlyPhi]0},
 				Join[
 					{{\[CurlyPhi]0[\[FormalR]][[i]],\[FormalR]<R[[pos]]}},
 					Table[{
-						v[[s,i]]+4/dim*a[[s,i]]*\[FormalR]^2+2/(dim-2)*b[[s,i]]/\[FormalR]^(dim-2),R[[s]]<=\[FormalR]<R[[s+1]]},
+						\[CurlyPhi][s,i,\[FormalR]]+\[Xi][s,i,\[FormalR]]+\[ScriptCapitalI][s,i,\[FormalR]],R[[s]]<=\[FormalR]<R[[s+1]]},
 						{s,pos,noSegs}
 					]
 				],
@@ -1481,9 +1523,9 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoints,
-	maxItePath,maxIteR,R,improvePB,rule,pos,l,eL,dV,d2V,RM,
-	actionP,action\[Xi],action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFields,VL,midPoint,fieldPoints,
+	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
+	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
 	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
 	
 	(*Checks if field variables do not have any values.*)
@@ -1524,7 +1566,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoi
 	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
 
 	(*InitialValue.*)
-	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,improvePB} = 
+	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,extensionPB} = 
 		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
 		OptionValue[Gradient],OptionValue[Hessian],dim,
 		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
@@ -1567,17 +1609,16 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoi
 					iter,fields
 					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 			];
-
-		{action\[Xi],ddVL} = SingleFieldBounceImprovement[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,
-			improvePB];
+		If[extensionPB,
+			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL];
+		];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
-		{v,a,b,\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,R,\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
-			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath];
-	
+		{v,a,b,\[Alpha],\[Beta],\[Nu],\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
+			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB];
+
 		(*Breaks the interations of path deformation.*)
 		If[switchPath||iter == maxItePath||bottomless, 
-			If[noFields>1&&maxItePath>0, {pos,v,a,b,R} = {posM,vM,aM,bM,RM}];
 			p = If[pos>1,pos-1,pos]; 
 			Break[]
 		];
@@ -1588,12 +1629,13 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Phi],dim,noFields,VL,midPoint,fieldPoi
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		iter++
 	];
-
+	
 	Composition[BounceFunction]@Association[
 		"Action"->action,
-		"Bounce"->piecewiseBounce[{v,a,b,R},{\[Phi][[1]],\[Phi][[-1]]},{dim,pos,Ns,noFields,bottomless}],
+		"Bounce"->piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{\[Phi],dim,pos,Ns,noFields,bottomless,extensionPB}],
 		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
 		"Coefficients"->{v,a,b}[[All,p;;-1]],
+		"CoefficientsExtension"->If[extensionPB,{\[Nu],\[Alpha],\[Beta],ddVL}[[All,p;;-1]],Missing["NotAvailable"]],
 		"Dimension"->dim,
 		"PathIterations"->iter,
 		"Path"->\[Phi],
@@ -1616,7 +1658,7 @@ BouncePlot//SyntaxInformation={"ArgumentsPattern"->{_,OptionsPattern[]}};
 BouncePlot[bf_BounceFunction,opts:OptionsPattern[]]:= BouncePlot[{bf},opts];
 	
 BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
-	{bounce,radii,defaultPlotRange,plotRange,rangeMin,rangeMax},
+	{bounce,radii,defaultPlotRange,plotRange,rangeMin,rangeMax,bounceExtension},
 	(* In case of degenerated vacua, "Action" is Infinity and empty plot is returned. 
 	This is suitable form for FindBounce summary box plot.*)
 	If[
@@ -1631,6 +1673,7 @@ BouncePlot[{bf__BounceFunction},opts:OptionsPattern[]]:= Module[
 			Module
 		]
 	];
+	
 	(* Piecewise bounces of consecutive BounceFunction(s) are effectively flattened. *)
 	bounce = Flatten@Through[{bf}["Bounce"]];
 	(* This helps to draw discrete radii. *)
