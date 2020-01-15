@@ -171,10 +171,10 @@ VerificationTest[
 
 
 VerificationTest[
-  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11,Gradient->None]["Action"],
-  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Range[0.,1.,0.1],Gradient->None]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> 11,"Gradient"->None]["Action"],
+  FindBounce[1/4 x^4 - 4/10 x^3 + 1/10 x^2, x, {0, 1}, "FieldPoints" -> Range[0.,1.,0.1],"Gradient"->None]["Action"],
   SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
-  TestID -> "FindBounce - integer vs. list of \"FieldPoints\", Gradient->None"
+  TestID -> "FindBounce - integer vs. list of \"FieldPoints\", \"Gradient\"->None"
 ];
 
 

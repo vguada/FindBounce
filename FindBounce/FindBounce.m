@@ -1481,17 +1481,18 @@ FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of n
 FindBounce::syms = "Field symbols should not have any value.";
 FindBounce::mins = "Dimensions of minima should be consistent to the number of fields, different and not complex.";
 
+(* Option names are written in canonical (alphabetical) order. *)
 Options[FindBounce] = {
+	"ActionTolerance" -> 10.^(-6),
 	"BottomlessPotential" -> False,
-	"PathTolerance" -> 0.01,
-	"ActionTolerance" -> 10^(-6),
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
-	Gradient -> Automatic,
-	Hessian -> Automatic,
+	"Gradient" -> Automatic,
+	"Hessian" -> Automatic,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
-	"MidFieldPoint" -> None
+	"MidFieldPoint" -> None,
+	"PathTolerance" -> 0.01
 };
 
 (* Autocomplete option names *)
@@ -1568,7 +1569,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 	(*InitialValue.*)
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,extensionPB} = 
 		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
-		OptionValue[Gradient],OptionValue[Hessian],dim,
+		OptionValue["Gradient"],OptionValue["Hessian"],dim,
 		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*If the vacua are degenerated.*)
