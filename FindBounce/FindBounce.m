@@ -248,7 +248,7 @@ Module[{dV,d2V=None},
 			ArrayQ[hessian,2],
 			d2V = hessian
 			,
-			If[hessian =!= None,
+			If[hessian=!=Automatic,
 				Message[DerivativePotential::hessian]
 			];
 			d2V = D[V,{fields},{fields}]
@@ -1488,7 +1488,7 @@ Options[FindBounce] = {
 	"Dimension" -> 4,
 	"FieldPoints" -> 31,
 	Gradient -> Automatic,
-	Hessian -> None,
+	Hessian -> Automatic,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
 	"MidFieldPoint" -> None
