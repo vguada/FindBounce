@@ -395,6 +395,43 @@ getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Estimate initial radius*)
+
+
+(* Estimates the initial radius with the N=2 closed form solution. *)
+initialRadiusClosedForm[{{x1_,y1_},{x2_,y2_},{x3_,y3_}},dim_]:=Module[
+	{a1,a2,c,f0},
+	If[y1==y3,Return[Infinity,Module]];
+	{a1,a2}={(y2-y1)/(x2-x1),(y3-y2)/(x3-x2)}/8;
+	c = dim/(dim-2)*(a2-a1)/a1*(1 -(a2/(a2-a1))^(1-2/dim));
+	f0 =(x3+c*x2)/(1+c);
+	If[
+		Re[f0]>=0&&Im[f0]==0,
+		Sqrt[dim/4(x2-f0)/a1],	
+		1/2(x3-x1)/(Sqrt[a1*(x2-x1)]-Sqrt[-a2*(x3-x2)])
+	]
+];
+
+
+(* Estimate initial radius with closed form solution (for 3 points) of projection to single field. *)
+initialRadiusEstimate[fieldPoints_,potentialValues_,dim_]:=Module[
+	{projection,maxPos,x3,y3,pts,list},
+	projection=longitudinalProjection[fieldPoints];
+	maxPos=Position[potentialValues,Max@potentialValues[[2;;-2]]][[1,1]];
+	x3=projection[[{1,maxPos,-1}]];
+	y3=potentialValues[[{1,maxPos,-1}]];
+	(*We want to have the local minimum always on the right hand side.*) 
+	pts=If[
+		y3[[3]]>y3[[1]],
+		Transpose[{x3,y3}],
+		Transpose[{x3,Reverse@y3}]
+	];
+
+	initialRadiusClosedForm[pts,dim]
+];
+
+
 (* ::Subsection::Closed:: *)
 (*InitialValue*)
 
