@@ -1342,13 +1342,15 @@ BounceFunction::noprop="Property `1` of BounceFunction is not available. It shou
 (* In Mma 10. AssociationQ already works, even though it is undocumented. *)
 BounceFunction[asc_?AssociationQ]["Properties"]:=Sort@Keys[asc];
 
-BounceFunction[asc_?AssociationQ][property_]:=With[{
-	value=Lookup[asc,property],
+BounceFunction[asc_?AssociationQ][key_]:=With[{
+	value=Lookup[asc,key],
 	supported=Sort@Keys[asc]
 	},
+	(* Check for explicit Missing["KeyAbsent",_] because other reasons like
+	Missing["NotAvailable"] could be valid results. *)
 	If[
-		MatchQ[value,_Missing],
-		Message[BounceFunction::noprop,property,supported]
+		MatchQ[value,Missing["KeyAbsent",_]],
+		Message[BounceFunction::noprop,Style[key,ShowStringCharacters->True],supported]
 	];
 	value
 ];

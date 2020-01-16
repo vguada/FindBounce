@@ -614,15 +614,28 @@ VerificationTest[
 (*BounceFunction*)
 
 
+(* We can use the same BounceFunction for mutiple tests of properties/keys. *)
 With[{
 	bf=FindBounce[x^4-x^2+x/4,x,{-0.762,0.633}]
 	},
+	VerificationTest[
+		bf["Properties"],
+		{"Action","BottomlessPotential","Bounce","Coefficients","CoefficientsExtension","Dimension","Path","PathIterations","Radii"},
+		TestID->"BounceFunction - all available properties"
+	];
+	
 	VerificationTest[
 		bf["BadValue"],
 		_Missing,
 		{BounceFunction::noprop},
 		SameTest->MatchQ,
 		TestID->"BounceFunction - non-existent property"
+	];
+
+	VerificationTest[
+		bf["BottomlessPotential"],
+		Missing["NotAvailable"],
+		TestID->"BounceFunction - valid Missing value"
 	]
 ];
 
