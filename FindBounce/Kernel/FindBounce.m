@@ -217,6 +217,38 @@ fieldSegmentation[{min1_,min2_},opts:OptionsPattern[]]:=Module[
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Potential values*)
+
+
+(* Elegant implementation of helper function for replacement rules, which can be used 
+throughout the whole package. *)
+replaceValues[fields_,fieldPoints_]:=Transpose@MapThread[
+	Thread@*Rule,
+	{fields,Transpose[fieldPoints]}
+];
+
+
+FindBounce::potvals="Potential values should be real numbers for all field points.";
+FindBounce::extrema="Wrong position of the extrema.
+Check the minima or use \"MidFieldPoint\" option to include the maximum/saddle point of the potential.";
+
+(* We assume that we already get consistent dimensions of fields and fieldPoints. *)
+getPotentialValues[V_,fields_,fieldPoints_]:=Module[
+	{values},
+	values=V/.replaceValues[fields,fieldPoints];
+	If[
+		Not@VectorQ[values,(MatchQ[#,_Real]&)],
+		Message[FindBounce::potvals];Return[$Failed,Module]
+	];
+	If[
+		Or[values[[1]]>=values[[2]],values[[-1]]>=values[[-2]]],
+		Message[FindBounce::extrema];Return[$Failed,Module]
+	];
+	Developer`ToPackedArray@values
+];
+
+
 (* ::Subsection::Closed:: *)
 (*InitialValue*)
 
