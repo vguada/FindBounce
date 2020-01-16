@@ -117,6 +117,26 @@ If[
 
 
 (* ::Subsection::Closed:: *)
+(*Initial calculations*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Utilites for working with field points*)
+
+
+(* This efficient implementation keeps a PackedArray packed. *)
+segmentsLength[fieldPoints_]:=Sqrt@Total[Differences[fieldPoints]^2,{2}];
+
+
+(* Project field points from multi field to single field, called "longitudinal bounce" and return a vector. *)
+longitudinalProjection[fieldPoints_]:=Join[{0.},Accumulate@segmentsLength[fieldPoints]];
+
+
+(* This is used to project coefficents from longitudinal bounce back to true field space. *)
+unitVectors[fieldPoints_]:=Differences[fieldPoints]/segmentsLength[fieldPoints];
+
+
+(* ::Subsection::Closed:: *)
 (*InitialValue*)
 
 
