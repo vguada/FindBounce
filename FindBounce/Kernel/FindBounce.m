@@ -249,6 +249,74 @@ getPotentialValues[V_,fields_,fieldPoints_]:=Module[
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Potenital gradient*)
+
+
+symbolicGradient[V_,fields_,fieldPoints_]:=Module[
+	{},
+	Grad[V,fields]/.replaceValues[fields,fieldPoints]
+];
+
+
+numericGradient//Options={"Scale"->10^-4};
+
+numericGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
+	{pathLength,gradients,noFields,noPts,eps,n,Vt},
+	pathLength=Total@segmentsLength[fieldPoints];
+	eps = OptionValue["Scale"]*pathLength;
+	noFields =Length[fields];
+	noPts = Length[fieldPoints];
+	n = IdentityMatrix[noFields];
+
+	Vt = V/.replaceValues[fields,fieldPoints];
+	gradients = ConstantArray[0.,{noPts,noFields}];
+	Do[
+		gradients[[s,i]]=((V/.Thread[fields->fieldPoints[[s]]+eps*n[[i]]])-Vt[[s]])/eps,
+		{s,noPts},{i,noFields}
+	];
+	gradients
+];
+
+
+(* This processes Gradient option and should work similarly to Gradient option in FindMinimum
+and related functions, see
+http://reference.wolfram.com/language/tutorial/UnconstrainedOptimizationSpecifyingDerivatives.html.
+User can choose between symbolic gradient calculation, finite differences or custom function.
+Hessian calculation is part of another independent function, because the FindBounce options
+are independent. *)
+
+(* TODO: There is a problem with potentials given as functions with ?NumericQ argument
+check. Function D or Grad can actually calculate numerical derivatives
+(probably some FDM in the background) but this can be quite slow. It would be better
+if "FiniteDifference" option value would be automatically chosen in such cases. *)
+
+FindBounce::gradmtd="Option value for Gradient should be \"Symbolic\", \"FiniteDifference\" of custom function.";
+FindBounce::gradval="Potential gradient is not a list of numerical lists.";
+
+getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
+	{optValue,method,gradient},
+	optValue=OptionValue[FindBounce,{opts},"Gradient"]/.Automatic->"Symbolic";
+	method=Which[
+		optValue==="Symbolic","Symbolic",
+		optValue==="FiniteDifference","Numeric",
+		MatchQ[Head@optValue,_Symbol],"Custom",
+		True,Message[FindBounce::gradmtd];Return[$Failed,Module]
+	];
+	gradient=Switch[method,
+		"Symbolic",symbolicGradient[V,fields,fieldPoints],
+		"Numeric",numericGradient[V,fields,fieldPoints],
+		"Custom",optValue/.replaceValues[fields,fieldPoints]
+	];
+
+	If[
+		Not@ArrayQ[gradient,2,NumericQ],
+		Message[FindBounce::gradval];Return[$Failed,Module]
+	];
+	gradient
+];
+
+
 (* ::Subsection::Closed:: *)
 (*InitialValue*)
 
