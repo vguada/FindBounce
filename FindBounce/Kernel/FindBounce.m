@@ -317,6 +317,84 @@ getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Potenital hessian*)
+
+
+symbolicHessian[V_,fields_,fieldPoints_]:=Module[
+	{},
+	D[V,{fields,2}]/.replaceValues[fields,fieldPoints]
+];
+
+
+numericHessian//Options={"Scale"->10^-4};
+
+numericHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
+	{pathLength,hessian,hessianM,noFields,noPts,eps,n,Vt},
+	pathLength=Total@segmentsLength[fieldPoints];
+	eps = OptionValue["Scale"]*pathLength;
+	noFields =Length[fields];
+	noPts = Length[fieldPoints];
+	n = IdentityMatrix[noFields];
+
+	Vt = V/.replaceValues[fields,fieldPoints];
+	hessianM = ConstantArray[0.,{noPts,noFields,noFields}];
+
+	(* diagonal elements *)
+	Do[
+		hessianM[[s,i,i]] = 
+			((V/.Thread[fields->fieldPoints[[s]]+eps(2n[[i]])])- 
+			2 Vt[[s]]+ 
+			(V/.Thread[fields->fieldPoints[[s]]+eps(-2n[[i]])]))/(8 eps^2),
+		{s,noPts},{i,noFields}
+	];
+
+	(* upper-triangle elements *)
+	Do[
+		hessianM[[s,i,j]] = (
+			(V/.Thread[fields->fieldPoints[[s]]+eps(n[[i]]+n[[j]])])- 
+			(V/.Thread[fields->fieldPoints[[s]]+eps(-n[[i]]+n[[j]])])- 
+			(V/.Thread[fields->fieldPoints[[s]]+eps(n[[i]]-n[[j]])])+  
+			(V/.Thread[fields->fieldPoints[[s]]+eps(-n[[i]]-n[[j]])]) )/(4 eps^2),
+		{s,noPts},{i,noFields},{j,i+1,noFields}
+	];
+	(* full matrix assembly *)
+	hessian = Table[(hessianM[[s]]+Transpose[hessianM[[s]]]),{s,noPts}];
+	hessian
+];
+
+
+(* See comments for function calculate gradients of the potential. *)
+
+FindBounce::hessmtd="Option value for Hessian should be \"Symbolic\", \"FiniteDifference\" of custom function.";
+FindBounce::hessval="Potential hessian is not a list of numerical matrices.";
+
+getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
+	{optValue,method,hessians},
+	(* Inclusion of None is a quick fix for default options of FindBounce
+	 and should be eventually removed. *)
+	optValue=OptionValue[FindBounce,{opts},"Hessian"]/.(Automatic|None)->"Symbolic";
+	method=Which[
+		optValue==="Symbolic","Symbolic",
+		optValue==="FiniteDifference","Numeric",
+		MatchQ[Head@optValue,_Symbol],"Custom",
+		True,Message[FindBounce::hessmtd];Return[$Failed,Module]
+	];
+	Echo[method];
+	hessians=Switch[method,
+		"Symbolic",symbolicHessian[V,fields,fieldPoints],
+		"Numeric",numericHessian[V,fields,fieldPoints],
+		"Custom",optValue/.replaceValues[fields,fieldPoints]
+	];
+
+	If[
+		Not@ArrayQ[hessians,3,NumericQ],
+		Message[FindBounce::hessval];Return[$Failed,Module]
+	];
+	hessians
+];
+
+
 (* ::Subsection::Closed:: *)
 (*InitialValue*)
 
