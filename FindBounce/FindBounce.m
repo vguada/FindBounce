@@ -39,7 +39,9 @@ BeginPackage["FindBounce`"];
 (*Available public functions*)
 
 
-(* The main function of the package. *)
+(* The main function of the package. 
+Messages from all private functions it contains are attached to this symbol, 
+so that the user is not confused by the names of internal functions appearing. *)
 FindBounce;
 (* Symbol which acts as a container for results of FindBounce. *)
 BounceFunction;
@@ -51,15 +53,11 @@ BouncePlot;
 ClearAll["`*","`*`*"];
 
 
-(* ::Subsection::Closed:: *)
-(*Begin Private*)
+(* ::Section::Closed:: *)
+(*Code*)
 
 
 Begin["`Private`"];
-
-
-(* ::Section::Closed:: *)
-(*Code*)
 
 
 (* ::Subsection::Closed:: *)
@@ -228,8 +226,8 @@ Module[{l,\[Phi]L,eL},
 (*DerivativePotential*)
 
 
-DerivativePotential::gradient = "\"Gradient\" is not a vector, default value was taken.";
-DerivativePotential::hessian = "\"Hessian\" is not a matrix, default value was taken."; 
+FindBounce::gradient = "\"Gradient\" is not a vector, default value was taken.";
+FindBounce::hessian = "\"Hessian\" is not a matrix, default value was taken."; 
 
 DerivativePotential[V_,fields_,noFields_,gradient_,hessian_]:=
 Module[{dV,d2V=None},
@@ -238,7 +236,7 @@ Module[{dV,d2V=None},
 		dV = gradient
 		,
 		If[Not[gradient === None ||gradient === Automatic],
-			Message[DerivativePotential::gradient]
+			Message[FindBounce::gradient]
 		];
 		dV = D[V,{fields}]
 	];
@@ -249,7 +247,7 @@ Module[{dV,d2V=None},
 			d2V = hessian
 			,
 			If[hessian=!=Automatic,
-				Message[DerivativePotential::hessian]
+				Message[FindBounce::hessian]
 			];
 			d2V = D[V,{fields},{fields}]
 		]
@@ -263,9 +261,9 @@ Module[{dV,d2V=None},
 (*InitialValue*)
 
 
-InitialValue::wrongInput = "Wrong \"`1`\".";
-InitialValue::dimArray = "The array dimention of min1, min2 and fields are inconsistent.";
-InitialValue::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
+FindBounce::potdef = "Wrong form of potential definition.";
+FindBounce::dimarr = "The array dimension of min1, min2 and number of fields are inconsistent.";
+FindBounce::mpts = "\"MidFieldPoint\" should be a vector of lenght equal to the number of fields.";
 
 InitialValue[V_,fields_,noFields_,min1_,points_,min2_,potentialPoints_,
 gradient_,hessian_,dim_,bottomless_,fieldpoints_]:=
@@ -277,7 +275,7 @@ dV=None,d2V=None,extensionPB=False,point=points},
 		methodSeg = "H"
 		,
 		If[Not[Length[N@point]===noFields],
-			Message[InitialValue::mpts];
+			Message[FindBounce::mpts];
 			Return[$Failed,Module]
 		];
 		methodSeg = "2H"
@@ -304,13 +302,13 @@ dV=None,d2V=None,extensionPB=False,point=points},
 
 	(*Checks the dimension of the field values*)
 	If[Length[\[Phi][[1]]] =!= Length[\[Phi][[2]]] || Length[\[Phi][[2]]] =!= Length[\[Phi][[-1]]],
-	Message[InitialValue::dimArray];
+	Message[FindBounce::dimarr];
 	Return[$Failed,Module]   
 	];
 
 	(*Checks if the values of the potential are well definited*)
 	If[!NumericQ[VL[[1]]] || !NumericQ[VL[[2]]] || !NumericQ[VL[[-1]]],
-		Message[InitialValue::wrongInput,"Potential"];
+		Message[FindBounce::potdef];
 		Return[$Failed,Module]
 	];
 
@@ -468,7 +466,7 @@ Module[{R,b,v,\[Alpha],x,y,z,Rvb},
 (*FindInitialRadius*)
 
 
-FindInitialRadius::noSolution = "Large error solving the boundaries conditions. This potential may not have a bounce solution.";
+FindBounce::errbc = "Large error in solving the boundary conditions. This potential may not have a bounce solution.";
 
 (*Find the solution of eq. 25 or 26.*)
 FindInitialRadius[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,pos_,switchMessage_]:= 
@@ -588,11 +586,11 @@ whenever FindRoot fails.*)
 		];    
 
 		If[ ite > maxIteR&&switchMessage&&errorAction>actionTolerance*1.1,
-			Message[FindInitialRadius::cvmit,maxIteR] 
+			Message[FindBounce::cvmit,maxIteR] 
 		];
 
 		If[ Abs[\[Lambda]-1]>minimum\[Lambda]&&switchMessage, 
-			Message[FindInitialRadius::noSolution];
+			Message[FindBounce::errbc];
 			Return[$Failed,Module]
 		];	
 	];	
@@ -641,9 +639,9 @@ Module[{T},
 (*SingleFieldBounce*)
 
 
-SingleFieldBounce::extrema = "Wrong position of the extrema, check the minima or use \"MidFieldPoint\" to include the maximum/saddle point of the potential.";
-MultiFieldBounce::pathDeformation = "The path is deformed irregularly on the potential. Verifies that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
-SingleFieldBounce::noSolution = "Solution not found, increase the number of segments or accuracy.";
+FindBounce::extrema = "Wrong position of the extrema, check the minima or use \"MidFieldPoint\" to include the maximum/saddle point of the potential.";
+FindBounce::pathdef = "The path is deformed irregularly on the potential. Verify that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
+FindBounce::nosol = "Solution not found, increase the number of segments or accuracy.";
 
 SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
 	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_]:= 
@@ -661,10 +659,10 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 	
 	If[VL[[1]]>=VL[[2]]||VL[[-1]]>=VL[[-2]],
 		If[iter === 0,
-			Message[SingleFieldBounce::extrema];
+			Message[FindBounce::extrema];
 			Return[$Failed,Module]
 			,
-			Message[MultiFieldBounce::pathDeformation];
+			Message[FindBounce::pathdef];
 			Return[$Failed,Module]
 		]
 	];
@@ -676,7 +674,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 		
 	(*Checks if we got a consistent answer.*)
 	If[V1+T1<0&&switchMessage,
-		Message[SingleFieldBounce::noSolution];
+		Message[FindBounce::nosol];
 		Return[$Failed,Module]
 	];
 	
@@ -851,7 +849,7 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 (*SingleFieldBounceExtension*)
 
 
-SingleFieldBounceExtension::dVFailed = "The first derivative of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
+FindBounce::gradfail = "The gradient of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
 
 SingleFieldBounceExtension[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_]:=
 Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,extensionPB=True,T\[Xi]=0.,V\[Xi]=0.},
@@ -871,7 +869,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 		T\[Xi] = \[ScriptCapitalT]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
 		V\[Xi] = \[ScriptCapitalV]\[Xi][dim,a,R,b,v,\[Alpha],\[Beta],\[Nu],ddVL,VL,\[Phi]L,Ns,pos,r];
 		,
-		Message[SingleFieldBounceExtension::dVFailed];
+		Message[FindBounce::gradfail];
 		extensionPB=False
 	];
 		
@@ -1209,7 +1207,7 @@ Module[{R,initialR,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0}
 	];
 	
 	 If[ Re[\[Lambda][initialR]-1] >0.5, 
-		Message[FindInitialRadius::noSolution];
+		Message[FindBounce::errbc];
 		Return[$Failed,Module]
 	];  
 	Clear[findInitialR,\[Lambda]];
@@ -1265,10 +1263,10 @@ Module[{R4,v4,b4},
 (*BottomlessPotentialBounce*)
 
 
-BottomlessPotentialBounce::extrema = "Wrong position of the minima.";
-BottomlessPotentialBounce::pathDeformation = "The path is deformed irregularly on the potential, try changing number of segments.";
-BottomlessPotentialBounce::Rinitial0 = "Trivial solution founded, increase the number of segments or accuracy.";
-BottomlessPotentialBounce::nrm = "The potential should be a polynomial of order 4.";
+FindBounce::blminpos = "Wrong position of the minima in bottomless potential.";
+FindBounce::blpathdef = "The path is deformed irregularly on the potential, try changing number of segments.";
+FindBounce::blinitr = "Trivial solution founded, increase the number of segments or accuracy.";
+FindBounce::blnrm = "The potential should be a polynomial of order 4.";
 
 BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
 ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
@@ -1279,7 +1277,7 @@ Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 		\[Lambda] = Abs@cList[[5]];
 		v0 = cList[[4]]/(4*\[Lambda]);
 		,
-		Message[BottomlessPotentialBounce::nrm];
+		Message[FindBounce::blnrm];
 		Return[$Failed,Module]
 	];
 	
@@ -1287,9 +1285,9 @@ Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 	
 	If[VL[[-1]]>=VL[[-2]],
 		If[iter === 0,
-			Message[BottomlessPotentialBounce::extrema];
+			Message[FindBounce::blminpos];
 			Return[$Failed,Module],
-			Message[BottomlessPotentialBounce::pathDeformation];
+			Message[FindBounce::blpathdef];
 			Return[$Failed,Module]
 		]
 	];
@@ -1300,7 +1298,7 @@ Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m]//Re;
 	
 	If[initialR<10^(-5.),
-		Message[BottomlessPotentialBounce::Rinitial0];
+		Message[FindBounce::blinitr];
 		Return[$Failed,Module]
 	];
 	

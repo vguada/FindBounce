@@ -279,13 +279,13 @@ Precision is chosen to satisfy the test. *)
 VerificationTest[
 	FindBounce[biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10}]["Action"],
 	biQuarticAction[{-5,10},{5,-20},2],
-	{FindBounce`Private`SingleFieldBounceExtension::dVFailed},
+	{FindBounce::gradfail},
 	SameTest->(Abs[(#1-#2)/#2]<10^(-1)&),
 	TestID->"FindBounce - 1F biquartic (default)"
 ];
 
 
-(* TODO: Why does the message SingleFieldBounceImprovement::dVFailed not appear in this case?*)
+(* TODO: Why does the message FindBounce::gradfail not appear in this case?*)
 VerificationTest[
 	FindBounce[
 		biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10},
@@ -469,7 +469,7 @@ VerificationTest[
 VerificationTest[
 	FindBounce[x^4-x^2+x/4,{x},{-0.762844,0.633518}+0.1],
 	$Failed,
-	{FindBounce`Private`SingleFieldBounce::extrema},
+	{FindBounce::extrema},
 	TestID->"FindBounce - Error: wrong position of minima"
 ];
 
