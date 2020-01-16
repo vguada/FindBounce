@@ -136,6 +136,87 @@ longitudinalProjection[fieldPoints_]:=Join[{0.},Accumulate@segmentsLength[fieldP
 unitVectors[fieldPoints_]:=Differences[fieldPoints]/segmentsLength[fieldPoints];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Segmentation*)
+
+
+(* Homogeneous and bi-homogeneous segmentation between 2 or 3 points for any dimension. *)
+homogeneousSegmentation[{p1_,p2_},n_Integer/;n>=2]:=Subdivide[p1,p2,n];
+
+homogeneousSegmentation[{p1_,p2_,p3_},n_Integer/;n>=2]:=Module[
+	{lengths,n1,n2},
+	lengths=Norm/@Differences[{p1,p2,p3}];
+	n1=Clip[
+		Round[First[lengths]/Total[lengths]*n],
+		{1,n-1}
+	];
+	n2=n-n1;
+	Join[Subdivide[p1,p2,n1],Rest@Subdivide[p2,p3,n2]]
+];
+
+
+FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of non-complex numbers longer than 2.";
+FindBounce::midpt="\"MidFieldPoint\" should be a vector of length equal to the number of fields or symbol None.";
+FindBounce::minpos="The first and the last point in given list of field points have to match the minima.";
+
+(* Returns either a matrix representing field segmentation or $Failed. *)
+fieldSegmentation[{min1_,min2_},opts:OptionsPattern[]]:=Module[
+	{noFields,fieldPoints,midPoint},
+	(* We assume that dimension of minima is already processed before. *)
+	noFields=Length[min1];
+
+	midPoint=OptionValue[FindBounce,{opts},"MidFieldPoint"];
+	If[midPoint=!=None&&Length[midPoint]==0,midPoint={midPoint}];
+	(* "MidFieldPoint" value has to be either None or numeric vector. *)
+	If[
+		midPoint=!=None,
+		If[
+			Not@And[
+				ArrayQ[N@midPoint,1,(MatchQ[#,_Real]&)],
+				Length[midPoint]===noFields
+			],
+			Message[FindBounce::midpt];Return[$Failed,Module]
+		]
+	];
+	fieldPoints=OptionValue[FindBounce,{opts},"FieldPoints"];
+
+	Which[
+		IntegerQ[fieldPoints],
+		If[fieldPoints<3,Message[FindBounce::fieldpts];Return[$Failed,Module]];
+		fieldPoints=If[
+			midPoint===None,
+			homogeneousSegmentation[N@{min1,min2},fieldPoints-1],
+			homogeneousSegmentation[N@{min1,midPoint,min2},fieldPoints-1]
+		]
+		,
+		ListQ[fieldPoints],
+		fieldPoints=N@fieldPoints;
+		If[
+			Depth[fieldPoints]==2&&noFields==1,
+			fieldPoints=Partition[fieldPoints,1]
+		];
+		If[
+			Not@And[
+				ArrayQ[fieldPoints,2,(MatchQ[#,_Real]&)],
+				MatchQ[Dimensions@fieldPoints,{x_/;x>=3,noFields}]
+			],
+			Message[FindBounce::fieldpts];Return[$Failed,Module]
+		];
+		(* The first and last point in given list of field points have to be the same as
+		minimum 1 and 2 respectively. *)
+		If[
+			fieldPoints[[{1,-1}]]!={min1,min2},
+			Message[FindBounce::minpos];Return[$Failed,Module]
+		]
+		,
+		True,
+		Message[FindBounce::fieldpts];Return[$Failed,Module]
+	];
+
+	Developer`ToPackedArray@fieldPoints
+];
+
+
 (* ::Subsection::Closed:: *)
 (*InitialValue*)
 
