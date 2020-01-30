@@ -8,21 +8,17 @@ The physics background is described in the paper by [Guada, Maiezza and Nemevše
 
 ## Installation
 
-To use the _FindBounce_ package you need Mathematica version 10 or later.
+To use the _FindBounce_ package you need Mathematica version 10.0 or later.
 The package is released in the `.paclet` file format that contains the code, documentation and other necessary resources.
 Download the latest `.paclet` file from the repository ["releases"](https://github.com/vguada/FindBounce/releases) page
 to your computer and install it by evaluating the following command in the Mathematica:
 
 ```mathematica
-(* This built-in package is usually loaded automatically at kernel startup. *)
-Needs["PacletManager`"]
-
 (* Path to .paclet file downloaded from repository "releases" page. *)
 PacletInstall["full/path/to/FindBounce-X.Y.Z.paclet"]
 ```
 
 This will permanently install the _FindBounce_ package to `$UserBasePacletsDirectory`.
-To update the documentation it may be necessary to restart Mathematica.
 Mathematica will always use the latest installed version of the package and all installed versions
 can be enumerated by evaluating `PacletFind["FindBounce"]`.
 You can get more detailed information about the package with `PacletInformation["FindBounce"]`.
@@ -36,6 +32,8 @@ PacletUninstall["FindBounce"]
 
 After installing the paclet, load it in the Mathematica session with `Needs`.
 To access the documentation, open the notebook interface help viewer and search for "FindBounce".
+The first time after package installation, sometimes Mathematica needs to
+be restarted to update the documentation search index.
 
 ```mathematica
 Needs["FindBounce`"]
@@ -72,12 +70,9 @@ bf["Action"]
 
 bf["Dimension"]
 (* 4 *)
-
-bf["Properties"]
-(* {"Action", "Coefficients", "Dimension", "Domain", "InitialSegment",  "Path", "Potential", "Radii",...} *)
  ```
 
-The field configuration can also be easily plotted.
+The field configuration can also be easily plotted with `BouncePlot` function.
 
  ```mathematica
 BouncePlot[bf]
@@ -96,4 +91,4 @@ Instructions on building the `.paclet` file from source code can be found in [CO
 
 ## License
 
-[GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
+[GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
