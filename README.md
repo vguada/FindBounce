@@ -39,6 +39,8 @@ be restarted to update the documentation search index.
 Needs["FindBounce`"]
 ```
 
+### Example 1: Single field potential
+
 To begin, let us define a single field potential, find its extrema and plot it.
 
 ```mathematica
@@ -79,6 +81,49 @@ BouncePlot[bf]
 ```
 
 ![usage1.2](Images/UsageExample_1-2.png )
+
+### Example 2: Two fields potential
+
+We define a two field potential `V` with known minima locations and
+calculate its bounce configuration. Option `"MidFieldPoint"` defines
+the point which is included in the initial path.
+
+```mathematica
+V[h_,s_]:= -100 h^2 + 0.1 h^4 - 60 s^2 + 0.3 s^4 + 3 h^2 s^2;
+minima = {{0.,10.},{22.4,0.}};
+
+bf = FindBounce[V[h,s],{h,s}, minima, "MidFieldPoint"-> {6.,6.}]
+ ```
+
+Then we plot potential with contours, locations of minima (red points) and
+the final trajectory of the bounce field.
+
+```mathematica
+{rInit,rFin} = MinMax@bf["Radii"];
+Show[
+    ContourPlot[
+        V[h,s],{h,-1,25},{s,-1,11},
+        Contours->40,
+        ContourShading->None,
+        ContourStyle->Gray,
+        Epilog->{PointSize[Large],Red,Point[minima]}
+    ],
+    ParametricPlot[Through@bf["Bounce"][r],{r,rInit,rFin}]
+]
+```
+
+![usage2.1](Images/UsageExample_2-1.png )
+
+We can also plot the final bounce field configuration for both fields.
+
+ ```mathematica
+BouncePlot[bf,
+    PlotLabel-> Row[{"Action = ",bf["Action"]}],
+    PlotStyle-> {Purple, Orange},
+]
+ ```
+
+![usage2.2](Images/UsageExample_2-2.png )
 
 ## Contributing and feedback
 
