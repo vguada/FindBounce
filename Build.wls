@@ -1,7 +1,7 @@
 #!/usr/bin/env wolframscript
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Git functions*)
 
 
@@ -32,11 +32,11 @@ getGitCommitCount[dir_]:=Module[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Build procedure*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Initialization*)
 
 
@@ -88,7 +88,7 @@ If[
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Copy files*)
 
 
@@ -165,7 +165,7 @@ Module[
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Create .paclet file*)
 
 
@@ -200,3 +200,6 @@ Module[
 
 	If[successQ,Quit[0],Quit[1]]
 ]
+
+
+
