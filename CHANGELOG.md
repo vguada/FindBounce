@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2019-12-19
+---
+
+## 1.0.0 - 2020-02-03
+
+### Added
+
+- Additional `"CoefficientsExtension"` property of `BounceFunction`.
+- Option names autocomplete functionality (in notebooks).
+- New and improved documentation examples.
+
+### Changed
+
+- Accurate representation of extended bounce method with `"Bounce"` property of `BounceFunction`.
+- All option names are strings.
+
+---
+
+## 0.2.0 - 2019-12-19
 
 ### Added
 
@@ -22,7 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BounceFunction` property `"FieldPoints"` is removed.
 The same information is obtained as length of `"Path"` list.
 
-## [0.1.0] - 2019-11-15
+---
+
+## 0.1.0 - 2019-11-15
 
 ### Added
 
