@@ -894,7 +894,8 @@ Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 	];
 	
 	If[bottomless,
-		path[[1]] = v[[1]]+b[[1]]
+		path[[1]] = v[[1]]+b[[1]];
+		a[[1]] = Abs@a[[1]]
 	];
 	
 	If[Abs[(actionOld-actionNew)/actionNew] < actionTolerance,
