@@ -5,7 +5,7 @@ that computes the bounce configuration needed to compute the false vacuum decay 
 
 We kindly ask the users of the package to cite the two papers that describe the working of the _FindBounce_ package:
 the paper with the original proposal by [Guada, Maiezza and Nemevšek (2019)](https://arxiv.org/abs/1803.02227)
-and the software release manual by [Guada, Nemevšek and Pintar (2020)](https://arxiv.org/abs/2002.xxxxx).
+and the software release manual by [Guada, Nemevšek and Pintar (2020)](https://arxiv.org/abs/2002.00881).
 
 ![example1](Images/ExamplesBounces.png)
 
