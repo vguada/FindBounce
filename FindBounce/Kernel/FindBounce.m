@@ -1781,6 +1781,24 @@ Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapi
 
 
 (* ::Subsubsection::Closed:: *)
+(*createGenericResults*)
+
+
+(* Utility function to create generic data structure for results, before calculation is
+even started. Values of certain fileds are updated in the end. *)
+createGenericResults[fieldPoints_,dim_]:=Association[
+	"Action"->Infinity,
+	"Bounce"->Function[Evaluate@First@fieldPoints],
+	"BottomlessPotential"->Missing["NotAvailable"],
+	"Coefficients"->Missing["NotAvailable"],
+	"Dimension"->dim,
+	"PathIterations"->0,
+	"Path"->fieldPoints,
+	"Radii"->{0,Infinity}
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*FindBounce*)
 
 
@@ -1844,7 +1862,7 @@ FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
 Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFields,VL,midPoint,fieldPoints,
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
-	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None},
+	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results},
 	
 	(*Checks if field variables do not have any values.*)
 	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
@@ -1888,24 +1906,14 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
 		OptionValue["Gradient"],OptionValue["Hessian"],dim,
 		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
-		
-	(*If the vacua are degenerated.*)
+
+	results=createGenericResults[\[Phi],dim];
+	(*If the vacua are degenerated, return generic/initial results. *)
 	If[
 		Head[ansatzInitialR]===DirectedInfinity&&Not[bottomless],
-		Message[FindBounce::degeneracy];
-		Return[
-			Composition[BounceFunction]@Association[
-				"Action"->Infinity,
-				"Bounce"->Function[Evaluate[\[Phi][[1]]]],
-				"BottomlessPotential"->Missing["NotAvailable"],
-				"Coefficients"->Missing["NotAvailable"],
-				"Dimension"->dim,
-				"PathIterations"->0,
-				"Path"->\[Phi],
-				"Radii"->{0,Infinity}
-			]
-		]
+		Message[FindBounce::degeneracy];Return[BounceFunction@results]
 	];
+
 	(* For single field there is no path deformation calculation. *)
 	If[noFields==1,maxItePath = 0];
 	(*Bounce and path deformation.*)
@@ -1947,18 +1955,17 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		iter++
 	];
-	
-	Composition[BounceFunction]@Association[
-		"Action"->action,
-		"Bounce"->piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{\[Phi],dim,pos,Ns,noFields,bottomless,extensionPB}],
-		"BottomlessPotential"->If[bottomless,VL[[1]],Missing["NotAvailable"]],
-		"Coefficients"->{v,a,b}[[All,p;;-1]],
-		"CoefficientsExtension"->If[extensionPB,{\[Nu],\[Alpha],\[Beta],ddVL}[[All,p;;-1]],Missing["NotAvailable"]],
-		"Dimension"->dim,
-		"PathIterations"->iter,
-		"Path"->\[Phi],
-		"Radii"->R[[p;;-1]]
-	]
+
+	results["Action"]=action;
+	results["Bounce"]=piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{\[Phi],dim,pos,Ns,noFields,bottomless,extensionPB}];
+	results["BottomlessPotential"]=If[bottomless,VL[[1]],Missing["NotAvailable"]];
+	results["Coefficients"]={v,a,b}[[All,p;;-1]];
+	results["CoefficientsExtension"]=If[extensionPB,{\[Nu],\[Alpha],\[Beta],ddVL}[[All,p;;-1]],Missing["NotAvailable"]];
+	results["PathIterations"]=iter;
+	results["Path"]=\[Phi];
+	results["Radii"]=R[[p;;-1]];
+
+	BounceFunction@results
 ];
 
 
