@@ -291,10 +291,10 @@ check. Function D or Grad can actually calculate numerical derivatives
 (probably some FDM in the background) but this can be quite slow. It would be better
 if "FiniteDifference" option value would be automatically chosen in such cases. *)
 
-FindBounce::gradmtd="Option value for Gradient should be \"Symbolic\", \"FiniteDifference\" of custom function.";
+FindBounce::gradmtd="Option value for Gradient should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
 FindBounce::gradval=(
 	"The gradient of the potential is not well defined at some field point."<> 
-	"Redefine the potential or choose option \"Gradient\"->None.");
+	"Redefine the potential, choose option \"Gradient\"->None or \"Gradient\"->\"FiniteDifference\".");
 
 getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,gradient},
@@ -302,7 +302,7 @@ getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	method=Which[
 		optValue==="Symbolic","Symbolic",
 		optValue==="FiniteDifference","Numeric",
-		MatchQ[Head@optValue,_Symbol],"Custom",
+		MatchQ[Head@optValue,_Symbol]&&Not@StringQ[optValue],"Custom",
 		True,Message[FindBounce::gradmtd];Return[$Failed,Module]
 	];
 	gradient=Switch[method,
@@ -368,8 +368,10 @@ numericHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 
 (* See comments for function calculate gradients of the potential. *)
 
-FindBounce::hessmtd="Option value for Hessian should be \"Symbolic\", \"FiniteDifference\" of custom function.";
-FindBounce::hessval="Potential hessian is not a list of numerical matrices.";
+FindBounce::hessmtd="Option value for Hessian should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
+FindBounce::hessval=(
+	"The hessian of the potential is not well defined at some field point."<> 
+	"Redefine the potential or choose option \"Hessian\"->\"FiniteDifference\".");
 
 getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,hessians},
@@ -379,7 +381,7 @@ getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	method=Which[
 		optValue==="Symbolic","Symbolic",
 		optValue==="FiniteDifference","Numeric",
-		MatchQ[Head@optValue,_Symbol],"Custom",
+		MatchQ[Head@optValue,_Symbol]&&Not@StringQ[optValue],"Custom",
 		True,Message[FindBounce::hessmtd];Return[$Failed,Module]
 	];
 

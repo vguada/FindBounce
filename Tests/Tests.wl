@@ -617,6 +617,22 @@ VerificationTest[
 ];
 
 
+VerificationTest[
+	FindBounce[singleField[x,0.2],x,{0.,1.},"Gradient"->"badValue"],
+	$Failed,
+	{FindBounce::gradmtd},
+	TestID->"FindBounce - wrong \"Gradient\" option value"
+];
+
+
+VerificationTest[
+	FindBounce[twoField[x,y,80.],{x,y},{{0.,0.},{1.,1.}},"Hessian"->"badValue"],
+	$Failed,
+	{FindBounce::hessmtd},
+	TestID->"FindBounce - wrong \"Hessian\" option value"
+];
+
+
 (* ::Subsection::Closed:: *)
 (*BounceFunction*)
 
