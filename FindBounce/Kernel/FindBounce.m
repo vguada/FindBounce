@@ -434,20 +434,6 @@ initialRadiusEstimate[fieldPoints_,potentialValues_,dim_]:=Module[
 ];
 
 
-(* ::Subsubsection::Closed:: *)
-(*NewAnsatz*)
-
-
-NewAnsatz[\[Phi]_,Ns_]:= Module[
-	{l,\[Phi]L,eL},
-	l  = Table[Norm[{\[Phi][[s+1]]-\[Phi][[s]]}],{s,1,Ns}];
-	\[Phi]L = Table[Sum[l[[s1]],{s1,1,s-1}],{s,1,Ns+1}];
-	eL = (\[Phi][[2;;-1]]-\[Phi][[1;;-2]])/l;
-	
-	{Length[\[Phi]L]-1,\[Phi]L,eL,l} 
-];
-
-
 (* ::Subsection::Closed:: *)
 (*SingleFieldBounce*)
 
@@ -1620,7 +1606,7 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFields,VL,midPoint,fieldPoints,
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,midPoint,fieldPoints,
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
 	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues,
@@ -1675,12 +1661,8 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 
 	ansatzInitialR=initialRadiusEstimate[fieldPoints,potentialValues,dim];
 	Ns=Length[fieldPoints]-1;
-	\[Phi]=fieldPoints;
-	\[Phi]L=longitudinalProjection[fieldPoints];
-	eL=unitVectors[fieldPoints];
-	l=segmentsLength[fieldPoints];
 
-	results=createGenericResults[\[Phi],dim];
+	results=createGenericResults[fieldPoints,dim];
 	(*If the vacua are degenerated, return generic/initial results. *)
 	If[
 		Head[ansatzInitialR]===DirectedInfinity&&Not[bottomless],
@@ -1693,7 +1675,11 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 	While[iter <= maxItePath||switchPath,
 		
 		(*Rule.*)
-		rule = Table[fields[[i]]->\[Phi][[s,i]],{s,Ns+1},{i,noFields}];
+		rule = Table[fields[[i]]->fieldPoints[[s,i]],{s,Ns+1},{i,noFields}];
+		(* TODO: Eventually move this intermediate calculation inside each major function below. *)
+		\[Phi]L=longitudinalProjection[fieldPoints];
+		eL=unitVectors[fieldPoints];
+		l=segmentsLength[fieldPoints];
 		
 		(*Single Field Bounce.*)
 		{actionP,VL,v,a,b,pos,R,initialR} = If[
@@ -1715,7 +1701,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
-		{v,a,b,\[Alpha],\[Beta],\[Nu],\[Phi],action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],\[Phi],eL,l,\[Phi]L,Ns,noFields,pos,dim,
+		{v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,eL,l,\[Phi]L,Ns,noFields,pos,dim,
 			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB];
 
 		(*Breaks the interations of path deformation.*)
@@ -1727,21 +1713,19 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		(*Multi Field Bounce.*)
 		gradientAtPoints=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
 		hessianAtPoints=getPotentialHessian[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[gradientAtPoints,hessianAtPoints,Ns,noFields,pos,
-			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],pathTolerance];
-		
-		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
-		fieldPoints=\[Phi];
+		{fieldPoints,vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[gradientAtPoints,hessianAtPoints,Ns,noFields,pos,
+			dim,R,fieldPoints,v,a,b,\[Phi]L[[-1]],pathTolerance];
+
 		iter++
 	];
 
 	results["Action"]=action;
-	results["Bounce"]=piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{\[Phi],dim,pos,Ns,noFields,bottomless,extensionPB}];
+	results["Bounce"]=piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{fieldPoints,dim,pos,Ns,noFields,bottomless,extensionPB}];
 	results["BottomlessPotential"]=If[bottomless,VL[[1]],Missing["NotAvailable"]];
 	results["Coefficients"]={v,a,b}[[All,p;;-1]];
 	results["CoefficientsExtension"]=If[extensionPB,{\[Nu],\[Alpha],\[Beta],ddVL}[[All,p;;-1]],Missing["NotAvailable"]];
 	results["PathIterations"]=iter;
-	results["Path"]=\[Phi];
+	results["Path"]=fieldPoints;
 	results["Radii"]=R[[p;;-1]];
 
 	BounceFunction@results
