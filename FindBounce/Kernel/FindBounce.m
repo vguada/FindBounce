@@ -292,7 +292,7 @@ check. Function D or Grad can actually calculate numerical derivatives
 if "FiniteDifference" option value would be automatically chosen in such cases. *)
 
 FindBounce::gradmtd="Option value for Gradient should be \"Symbolic\", \"FiniteDifference\" of custom function.";
-FindBounce::gradval="Potential gradient is not a list of numerical lists.";
+FindBounce::gradval="The gradient of the potential is not well defined at some field point. Redefine the potential or choose option \"Gradient\"->None.";
 
 getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,gradient},
@@ -380,7 +380,7 @@ getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 		MatchQ[Head@optValue,_Symbol],"Custom",
 		True,Message[FindBounce::hessmtd];Return[$Failed,Module]
 	];
-	Echo[method];
+
 	hessians=Switch[method,
 		"Symbolic",symbolicHessian[V,fields,fieldPoints],
 		"Numeric",numericHessian[V,fields,fieldPoints],
@@ -1167,10 +1167,11 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 
 FindBounce::gradfail = "The gradient of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
 
-SingleFieldBounceExtension[VL_,dV_,noFields_,rule_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_]:=
+SingleFieldBounceExtension[VL_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_,gradientAtPoints_]:=
 Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,extensionPB=True,T\[Xi]=0.,V\[Xi]=0.},
-	eL0 = Join[eL,{eL[[-1]]}];	
-	dVL = Table[(dV/.rule[[s]]).eL0[[s]],{s,Ns+1}];
+
+	dVL=MapThread[Dot[#1,#2]&,{gradientAtPoints,Join[eL,{Last@eL}]}];
+
 	If[And@@(NumericQ[#]&/@dVL),
 		\[Alpha] = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
 		ddVL = Table[ (dVL[[s+1]]-8(a[[s]]+\[Alpha][[s]]))/(\[Phi]L[[s+1]]-\[Phi]L[[s]]),{s,Ns}];
@@ -1188,7 +1189,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 		Message[FindBounce::gradfail];
 		extensionPB=False
 	];
-		
+	
 	{Re[V\[Xi]+T\[Xi]],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB}
 ];
 
@@ -1244,10 +1245,10 @@ Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 	(*Derivative of Poential and PB*)
 	DV = Chop@Join[ConstantArray[0,{p-1,noFields}],Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]];
 	D2V = Chop@Join[Table[ConstantArray[0,{noFields,noFields}],{s,1,p-1}], 
-		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];	
+		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];
 	d\[CurlyPhi] = Chop@Join[Table[ConstantArray[0,{2,noFields}],{s,1,p-1}],
 		Table[8/d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]];
-		
+
 	(*c*)
 	If[pos>1, 
 		\[Nu]0[p] = ConstantArray[0,noFields]; 
@@ -1862,7 +1863,8 @@ FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
 Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFields,VL,midPoint,fieldPoints,
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
-	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues},
+	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues,
+	gradientAtPoints,hessianAtPoints},
 	
 	(* First we check correctness of arguments and options, then we start to process them. *)
 	(* Checks if field variables do not have any values.*)
@@ -1936,25 +1938,27 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 	If[noFields==1,maxItePath = 0];
 	(*Bounce and path deformation.*)
 	While[iter <= maxItePath||switchPath,
-	
+		
 		(*Rule.*)
 		rule = Table[fields[[i]]->\[Phi][[s,i]],{s,Ns+1},{i,noFields}];
 		
 		(*Single Field Bounce.*)
-		{actionP,VL,v,a,b,pos,R,initialR} = 
-			If[Not[bottomless],
-				SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
-					actionTolerance,ansatzInitialR,initialR,rule,iter,
-					switchPath||iter==maxItePath
-					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
-				,
-				BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
-					dim,maxIteR,actionTolerance,ansatzInitialR,initialR,rule,
-					iter,fields
-					]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
-			];
-		If[extensionPB,
-			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,dV,noFields,rule,Ns,v,a,b,R,\[Phi]L,pos,dim,eL];
+		{actionP,VL,v,a,b,pos,R,initialR} = If[
+			Not[bottomless],
+			SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
+				actionTolerance,ansatzInitialR,initialR,rule,iter,
+				switchPath||iter==maxItePath
+			]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
+			,
+			BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
+				dim,maxIteR,actionTolerance,ansatzInitialR,initialR,rule,iter,fields
+			]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
+		];
+		
+		If[
+			extensionPB,
+			gradientAtPoints=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradientAtPoints];
 		];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
@@ -1971,6 +1975,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,
 			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],pathTolerance];
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
+		fieldPoints=\[Phi];
 		iter++
 	];
 

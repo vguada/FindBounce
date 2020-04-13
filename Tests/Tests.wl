@@ -18,7 +18,7 @@ If[
 BeginTestSection["Tests"];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FindBounce*)
 
 
@@ -242,7 +242,7 @@ With[{a=0.99},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*1 field - bi-quartic potential*)
 
 
@@ -274,12 +274,19 @@ biQuarticAction[{\[Phi]p_,\[Phi]m_},{Vt_,Vm_},\[Epsilon]_]:=Module[
 ];
 
 
+VerificationTest[
+	FindBounce[biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10}],
+	$Failed,
+	{FindBounce::gradval},
+	TestID->"FindBounce - 1F biquartic (nonexistent gradient)"
+];
+
+
 (* Actual output (action value) is compared to exact analytical value of expected output.
 Precision is chosen to satisfy the test. *)
 VerificationTest[
-	FindBounce[biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10}]["Action"],
+	FindBounce[biQuarticPotential[{-5,10},{5,-20},2][x],x,{-5,10},"Gradient"->None]["Action"],
 	biQuarticAction[{-5,10},{5,-20},2],
-	{FindBounce::gradfail},
 	SameTest->(Abs[(#1-#2)/#2]<10^(-1)&),
 	TestID->"FindBounce - 1F biquartic (default)"
 ];
