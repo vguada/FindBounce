@@ -165,7 +165,7 @@ fieldSegmentation[{min1_,min2_},opts:OptionsPattern[]]:=Module[
 	(* We assume that dimension of minima is already processed before. *)
 	noFields=Length[min1];
 
-	midPoint=OptionValue[FindBounce,{opts},"MidFieldPoint"];
+	midPoint=N@OptionValue[FindBounce,{opts},"MidFieldPoint"];
 	If[midPoint=!=None&&Length[midPoint]==0,midPoint={midPoint}];
 	(* "MidFieldPoint" value has to be either None or numeric vector. *)
 	If[
@@ -1862,33 +1862,14 @@ FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
 Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFields,VL,midPoint,fieldPoints,
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
-	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results},
+	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues},
 	
-	(*Checks if field variables do not have any values.*)
+	(* First we check correctness of arguments and options, then we start to process them. *)
+	(* Checks if field variables do not have any values.*)
 	If[Not@ArrayQ[fields,1,(Head[#]===Symbol&)],Message[FindBounce::syms];Return[$Failed,Module]];
 	
-	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed.*)
-	bottomless = TrueQ@OptionValue["BottomlessPotential"];
-	pathTolerance = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
-	actionTolerance = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
-	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
-	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
-	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
-	midPoint = N@OptionValue["MidFieldPoint"];
-	noFields = Length[fields];
-
-	fieldPoints=ReplaceAll[
-		processFieldPointsOption[OptionValue["FieldPoints"],noFields],
-		$Failed:>(Message[FindBounce::fieldpts];Return[$Failed,Module])
-	];
-
-	(*In case the potential is given as a list of points.*)
-	If[fields[[1]]===True,
-		{fieldPoints,potentialPoints} = Transpose@V;
-		fieldPoints=Partition[fieldPoints,1]
-	];
-
 	(* Minima are transformed to a matrix of Dimensions {2,noFields}. *)
+	noFields = Length[fields];
 	{min1,min2}=N[Flatten/@{{minimum1},{minimum2}}];
 	If[
 		Not@And[
@@ -1898,10 +1879,47 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		],
 		Message[FindBounce::mins];Return[$Failed,Module]
 	];
+	
+	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed.*)
+	bottomless = TrueQ@OptionValue["BottomlessPotential"];
+	pathTolerance = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	actionTolerance = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
+	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
+	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
+	midPoint = N@OptionValue["MidFieldPoint"];
+	
+	fieldPoints=fieldSegmentation[{min1,min2},opts]/.($Failed:>Return[$Failed]);
+	(* TODO: Decision if extension method is used should be taken in one place only.
+	Review the following check if it catches all cases. *)
+	extensionPB=And[noFields==1, OptionValue["Gradient"]=!=None, Not@bottomless];
+	
+	(* Special case  if the potential is given as a list of points.*)
+	If[fields[[1]]===True,
+		{fieldPoints,potentialPoints} = Transpose@V;
+		fieldPoints=Partition[fieldPoints,1];
+		potentialValues=potentialPoints;
+		extensionPB=False,
+		(* Otherwise we ask for value of potential at field points. *)
+		potentialValues=getPotentialValues[V,fields,fieldPoints]/.($Failed:>Return[$Failed]);
+	];
+	
+	(* Segmentation should always go from lower to higher minimum. *)
+	If[
+		First[potentialValues]>Last[potentialValues],
+		fieldPoints=Reverse[fieldPoints];
+		potentialValues=Reverse[potentialValues]
+	];
 
-	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
-
+	ansatzInitialR=initialRadiusEstimate[fieldPoints,potentialValues,dim];
+	Ns=Length[fieldPoints]-1;
+	\[Phi]=fieldPoints;
+	\[Phi]L=longitudinalProjection[fieldPoints];
+	eL=unitVectors[fieldPoints];
+	l=segmentsLength[fieldPoints];
+	
 	(*InitialValue.*)
+	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
 	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,extensionPB} = 
 		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
 		OptionValue["Gradient"],OptionValue["Hessian"],dim,
