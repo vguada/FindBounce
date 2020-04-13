@@ -292,7 +292,9 @@ check. Function D or Grad can actually calculate numerical derivatives
 if "FiniteDifference" option value would be automatically chosen in such cases. *)
 
 FindBounce::gradmtd="Option value for Gradient should be \"Symbolic\", \"FiniteDifference\" of custom function.";
-FindBounce::gradval="The gradient of the potential is not well defined at some field point. Redefine the potential or choose option \"Gradient\"->None.";
+FindBounce::gradval=(
+	"The gradient of the potential is not well defined at some field point."<> 
+	"Redefine the potential or choose option \"Gradient\"->None.");
 
 getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,gradient},
@@ -1227,9 +1229,9 @@ Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 (*MultiFieldBounce*)
 
 
-MultiFieldBounce[fields_,dV_,d2V_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=
+MultiFieldBounce[gradientAtPoints_,hessianAtPoints_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=
 Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
-	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,rules,p,
+	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,p,
 	\[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
 		
 	If[pos>1,
@@ -1240,14 +1242,13 @@ Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 	];
 
 	R = Transpose@Table[R0,{i,noFields}];
-	rules = Table[fields[[i]]->\[Phi]0[[s,i]],{s,p,Ns+1},{i,noFields}];
 
-	(*Derivative of Poential and PB*)
-	DV = Chop@Join[ConstantArray[0,{p-1,noFields}],Table[dV/.rules[[s-p+1]],{s,p,Ns+1}]];
-	D2V = Chop@Join[Table[ConstantArray[0,{noFields,noFields}],{s,1,p-1}], 
-		Table[d2V/.rules[[s-p+1]],{s,p,Ns+1}]];
-	d\[CurlyPhi] = Chop@Join[Table[ConstantArray[0,{2,noFields}],{s,1,p-1}],
-		Table[8/d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]];
+	DV = gradientAtPoints;
+	D2V = hessianAtPoints;
+	d\[CurlyPhi] = Threshold@Join[
+		Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
+		Table[8./d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]
+	];
 
 	(*c*)
 	If[pos>1, 
@@ -1890,12 +1891,12 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
 	midPoint = N@OptionValue["MidFieldPoint"];
-	
+
 	fieldPoints=fieldSegmentation[{min1,min2},opts]/.($Failed:>Return[$Failed]);
 	(* TODO: Decision if extension method is used should be taken in one place only.
 	Review the following check if it catches all cases. *)
 	extensionPB=And[noFields==1, OptionValue["Gradient"]=!=None, Not@bottomless];
-	
+
 	(* Special case  if the potential is given as a list of points.*)
 	If[fields[[1]]===True,
 		{fieldPoints,potentialPoints} = Transpose@V;
@@ -1905,7 +1906,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		(* Otherwise we ask for value of potential at field points. *)
 		potentialValues=getPotentialValues[V,fields,fieldPoints]/.($Failed:>Return[$Failed]);
 	];
-	
+
 	(* Segmentation should always go from lower to higher minimum. *)
 	If[
 		First[potentialValues]>Last[potentialValues],
@@ -1919,13 +1920,6 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 	\[Phi]L=longitudinalProjection[fieldPoints];
 	eL=unitVectors[fieldPoints];
 	l=segmentsLength[fieldPoints];
-	
-	(*InitialValue.*)
-	If[midPoint=!=None&&Length[midPoint]==0,midPoint = {midPoint}];
-	{ansatzInitialR,Ns,\[Phi],\[Phi]L,eL,l,dV,d2V,extensionPB} = 
-		InitialValue[V,fields,noFields,min1,midPoint,min2,potentialPoints,
-		OptionValue["Gradient"],OptionValue["Hessian"],dim,
-		bottomless,fieldPoints]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 
 	results=createGenericResults[\[Phi],dim];
 	(*If the vacua are degenerated, return generic/initial results. *)
@@ -1972,8 +1966,11 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],\[Phi],dim,noFiel
 		];
 
 		(*Multi Field Bounce.*)
-		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fields,dV,d2V,Ns,noFields,pos,
+		gradientAtPoints=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+		hessianAtPoints=getPotentialHessian[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+		{\[Phi],vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[gradientAtPoints,hessianAtPoints,Ns,noFields,pos,
 			dim,R,\[Phi],v,a,b,\[Phi]L[[-1]],pathTolerance];
+		
 		{Ns,\[Phi]L,eL,l} = NewAnsatz[\[Phi],Ns];
 		fieldPoints=\[Phi];
 		iter++
