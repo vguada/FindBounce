@@ -914,10 +914,10 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 
 FindBounce::gradfail = "The gradient of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
 
-SingleFieldBounceExtension[VL_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_,gradientAtPoints_]:=
+SingleFieldBounceExtension[VL_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_,gradient_]:=
 Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,extensionPB=True,T\[Xi]=0.,V\[Xi]=0.},
 
-	dVL=MapThread[Dot[#1,#2]&,{gradientAtPoints,Join[eL,{Last@eL}]}];
+	dVL=MapThread[Dot[#1,#2]&,{gradient,Join[eL,{Last@eL}]}];
 
 	If[And@@(NumericQ[#]&/@dVL),
 		\[Alpha] = Join[a[[1;;Ns]] - dVL[[2;;Ns+1]]/8 ,{0}];
@@ -974,11 +974,12 @@ Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 (*MultiFieldBounce*)
 
 
-MultiFieldBounce[gradientAtPoints_,hessianAtPoints_,Ns_,noFields_,pos_,d_,R0_,\[CapitalPhi]0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=
-Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
+MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=Module[
+	{Ns,\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,p,
-	\[Phi]0 = \[CapitalPhi]0, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
-		
+	\[Phi]0 = fieldPoints, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
+
+	Ns=Length[fieldPoints]-1;	
 	If[pos>1,
 		p = pos-1;
 		\[Phi]0[[p]] = v0[[p]]
@@ -988,8 +989,8 @@ Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 
 	R = Transpose@Table[R0,{i,noFields}];
 
-	DV = gradientAtPoints;
-	D2V = hessianAtPoints;
+	DV = gradient;
+	D2V = hessian;
 	d\[CurlyPhi] = Threshold@Join[
 		Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
 		Table[8./d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]
@@ -1098,7 +1099,7 @@ Module[{\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 		,{s,p,Ns-1} ];  
 	][[2]];
 	 
-	{\[Phi]0[[1]],\[Zeta]ts[[1]]} = {\[CapitalPhi]0[[1]],ConstantArray[0,noFields]};
+	{\[Phi]0[[1]],\[Zeta]ts[[1]]} = {fieldPoints[[1]],ConstantArray[0,noFields]};
 
 	If[Max[Abs@\[Zeta]ts]/lengthPath < pathTolerance,
 		switchPath = True
@@ -1610,7 +1611,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
 	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues,
-	gradientAtPoints,hessianAtPoints},
+	gradient,hessian},
 	
 	(* First we check correctness of arguments and options, then we start to process them. *)
 	(* Checks if field variables do not have any values.*)
@@ -1696,8 +1697,8 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 		
 		If[
 			extensionPB,
-			gradientAtPoints=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradientAtPoints];
+			gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradient];
 		];
 				
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
@@ -1711,10 +1712,10 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 		];
 
 		(*Multi Field Bounce.*)
-		gradientAtPoints=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-		hessianAtPoints=getPotentialHessian[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-		{fieldPoints,vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[gradientAtPoints,hessianAtPoints,Ns,noFields,pos,
-			dim,R,fieldPoints,v,a,b,\[Phi]L[[-1]],pathTolerance];
+		gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+		hessian=getPotentialHessian[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
+		{fieldPoints,vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fieldPoints,gradient,hessian,noFields,pos,
+			dim,R,v,a,b,\[Phi]L[[-1]],pathTolerance];
 
 		iter++
 	];
