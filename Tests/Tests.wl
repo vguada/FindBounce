@@ -18,7 +18,7 @@ If[
 BeginTestSection["Tests"];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*FindBounce*)
 
 
@@ -179,16 +179,16 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.882782}]["CoefficientsExtension"][[1,1,1]],
-	0.0152544,
+	FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.883}]["CoefficientsExtension"][[1,1,1]],
+	-0.05486,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 3 CofficientsExtension (Case A,D=4)"
 ];
 
 
 VerificationTest[
-	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.882782},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
-	0.00254445,
+	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.883},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
+	0.0025433,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F CofficientsExtension (Case A,D=3)"
 ];
@@ -242,7 +242,7 @@ With[{a=0.99},
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*1 field - bi-quartic potential*)
 
 
