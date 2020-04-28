@@ -298,6 +298,7 @@ numericGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 		gradients[[s,i]]=((V/.Thread[fields->fieldPoints[[s]]+eps*n[[i]]])-Vt[[s]])/eps,
 		{s,noPts},{i,noFields}
 	];
+	
 	gradients
 ];
 
@@ -309,19 +310,14 @@ User can choose between symbolic gradient calculation, finite differences or cus
 Hessian calculation is part of another independent function, because the FindBounce options
 are independent. *)
 
-(* TODO: There is a problem with potentials given as functions with ?NumericQ argument
-check. Function D or Grad can actually calculate numerical derivatives
-(probably some FDM in the background) but this can be quite slow. It would be better
-if "FiniteDifference" option value would be automatically chosen in such cases. *)
-
 FindBounce::gradmtd="Option value for Gradient should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
 FindBounce::gradval=(
-	"The gradient of the potential is not well defined at some field point. "<> 
-	"Redefine the potential, choose option \"Gradient\"->\"FiniteDifference\".");
+	"The gradient of the potential is not well defined at some field points. "<> 
+	"Redefine the potential, choose option \"Gradient\"->\"FiniteDifference\" or \"MaxPathIterations\"->0.");
 
 getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,gradient},
-	optValue=OptionValue[FindBounce,{opts},"Gradient"]/.{Automatic->"Symbolic",None->"Symbolic"};
+	optValue=OptionValue[FindBounce,{opts},"Gradient"]/.(Automatic|None)->"Symbolic";
 	method=Which[
 		optValue==="Symbolic","Symbolic",
 		optValue==="FiniteDifference","Numeric",
@@ -338,6 +334,7 @@ getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 		Not@ArrayQ[gradient,2,NumericQ],
 		Message[FindBounce::gradval];Return[$Failed,Module]
 	];
+	
 	gradient
 ];
 
@@ -385,6 +382,7 @@ numericHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	];
 	(* full matrix assembly *)
 	hessian = Table[(hessianM[[s]]+Transpose[hessianM[[s]]]),{s,noPts}];
+	
 	hessian
 ];
 
@@ -393,8 +391,8 @@ numericHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 
 FindBounce::hessmtd="Option value for Hessian should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
 FindBounce::hessval=(
-	"The hessian of the potential is not well defined at some field point."<> 
-	"Redefine the potential or choose option \"Hessian\"->\"FiniteDifference\".");
+	"The hessian of the potential is not well defined at some field points."<> 
+	"Redefine the potential, choose option \"Hessian\"->\"FiniteDifference\" or \"MaxPathIterations\"->0.");
 
 getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,hessians},
@@ -418,6 +416,7 @@ getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 		Not@ArrayQ[hessians,3,NumericQ],
 		Message[FindBounce::hessval];Return[$Failed,Module]
 	];
+	
 	hessians
 ];
 
