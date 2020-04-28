@@ -426,8 +426,9 @@ getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 
 
 (* Estimates the initial radius with the N=2 closed form solution. *)
-initialRadiusClosedForm[{{x1_,y1_},{x2_,y2_},{x3_,y3_}},dim_]:=Module[
-	{a1,a2,c,f0},
+initialRadiusClosedForm[{{x1_,y1_},{x2_,y2_},{x3_,y3_}},opts:OptionsPattern[]]:=Module[
+	{a1,a2,c,f0,dim},
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
 	If[y1==y3,Return[Infinity,Module]];
 	{a1,a2}={(y2-y1)/(x2-x1),(y3-y2)/(x3-x2)}/8;
 	c = dim/(dim-2)*(a2-a1)/a1*(1 -(a2/(a2-a1))^(1-2/dim));
@@ -441,7 +442,7 @@ initialRadiusClosedForm[{{x1_,y1_},{x2_,y2_},{x3_,y3_}},dim_]:=Module[
 
 
 (* Estimate initial radius with closed form solution (for 3 points) of projection to single field. *)
-initialRadiusEstimate[fieldPoints_,potentialValues_,dim_]:=Module[
+initialRadiusEstimate[fieldPoints_,potentialValues_,opts:OptionsPattern[]]:=Module[
 	{projection,maxPos,x3,y3,pts,list},
 	projection=longitudinalProjection[fieldPoints];
 	maxPos=Position[potentialValues,Max@potentialValues[[2;;-2]]][[1,1]];
@@ -454,7 +455,7 @@ initialRadiusEstimate[fieldPoints_,potentialValues_,dim_]:=Module[
 		Transpose[{x3,Reverse@y3}]
 	];
 
-	initialRadiusClosedForm[pts,dim]
+	initialRadiusClosedForm[pts,opts]
 ];
 
 
@@ -730,34 +731,23 @@ FindBounce::extrema = "Wrong position of the extrema, check the minima or use \"
 FindBounce::pathdef = "The path is deformed irregularly on the potential. Verify that the vacuum is a minimum of the potential (not a saddle point) or changes the number of segements.";
 FindBounce::nosol = "Solution not found, increase the number of segments or accuracy.";
 
-SingleFieldBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
-	ansatzInitialR_,aRinitial_,rule_,iter_,switchMessage_]:= 
-Module[{a,VL,pos,initialR,R,v,b,T1,V1},
+SingleFieldBounce[potentialValues_,fieldPoints_
+	,{ansatzInitialR_,aRinitial_},switchMessage_,opts:OptionsPattern[]]:= 
+Module[
+	{a,pos,initialR,R,v,b,T1,V1,
+	Ns,noFields,\[Phi]L,dim,actionTolerance,maxIteR
+	},
+	Ns=Length[fieldPoints]-1;
+	noFields = Length[fieldPoints[[1]]];
+	\[Phi]L=longitudinalProjection[fieldPoints];
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	actionTolerance = OptionValue[FindBounce,{opts},"ActionTolerance"];
+	maxIteR = OptionValue[FindBounce,{opts},"MaxRadiusIterations"];
 	
-	If[
-		potentialPoints===None,
-		VL = Table[V/.rule[[s]],{s,Ns+1}]
-		,
-		If[potentialPoints[[1]]<potentialPoints[[-1]],
-			VL = potentialPoints,
-			VL = Reverse[potentialPoints]
-		];
-	];
-	
-	If[VL[[1]]>=VL[[2]]||VL[[-1]]>=VL[[-2]],
-		If[iter === 0,
-			Message[FindBounce::extrema];
-			Return[$Failed,Module]
-			,
-			Message[FindBounce::pathdef];
-			Return[$Failed,Module]
-		]
-	];
-	
-	a  = Table[ ((VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
+	a  = Table[ ((potentialValues[[s+1]]-potentialValues[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]))/8 ,{s,Ns} ]; 
 	pos = FindSegment[a,\[Phi]L,dim,Ns];
-	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,
-		aRinitial,pos,switchMessage]/.x_/;FailureQ[x]:>Return[$Failed,Module];
+	{initialR,R,v,b,V1,T1} = FindInitialRadius[dim,potentialValues,\[Phi]L,a,Ns,maxIteR,
+		actionTolerance,ansatzInitialR,aRinitial,pos,switchMessage]/.x_/;FailureQ[x]:>Return[$Failed,Module];
 		
 	(*Checks if we got a consistent answer.*)
 	If[V1+T1<0&&switchMessage,
@@ -768,7 +758,7 @@ Module[{a,VL,pos,initialR,R,v,b,T1,V1},
 	If[pos>1, R[[pos-1]]=0 ];
 	a = Join[a,{0}];	
 
-	{V1+T1,VL,v,a,b,pos,R,initialR}
+	{V1+T1,potentialValues,{v,a,b,R,pos},initialR}
 ];
 
 
@@ -938,9 +928,15 @@ Module[{\[ScriptCapitalV],\[ScriptCapitalV]\[Xi]D,p},
 
 FindBounce::gradfail = "The gradient of the potential is not well defined at some field value. \"Gradient\"->None was taken.";
 
-SingleFieldBounceExtension[VL_,Ns_,v_,a_,b_,R_,\[Phi]L_,pos_,dim_,eL_,gradient_]:=
-Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,extensionPB=True,T\[Xi]=0.,V\[Xi]=0.},
-
+SingleFieldBounceExtension[VL_,fieldPoints_,{v_,a_,b_,R_,pos_},gradient_,opts:OptionsPattern[]]:=Module[
+	{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],\[Nu],eL0,ddVL,
+	extensionPB=True,T\[Xi]=0.,V\[Xi]=0.,
+	\[Phi]L,eL,Ns,dim
+	},
+	Ns=Length[fieldPoints]-1;
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	\[Phi]L=longitudinalProjection[fieldPoints];
+	eL=unitVectors[fieldPoints];
 	dVL=MapThread[Dot[#1,#2]&,{gradient,Join[eL,{Last@eL}]}];
 
 	If[And@@(NumericQ[#]&/@dVL),
@@ -961,7 +957,7 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 		extensionPB=False
 	];
 	
-	{Re[V\[Xi]+T\[Xi]],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB}
+	{Re[V\[Xi]+T\[Xi]],{\[Nu],\[Alpha],\[Beta],ddVL},extensionPB}
 ];
 
 
@@ -969,9 +965,24 @@ Module[{dVL,\[Alpha],\[ScriptCapitalI],d\[ScriptCapitalI],r1,rInitial,r,\[Beta],
 (*ParameterInFieldSpace*)
 
 
-ParameterInFieldSpace[vs_,as_,bs_,\[Alpha]s_,\[Beta]s_,\[Nu]s_,\[Phi]_,eL_,l_,\[Phi]L_,Ns_,noFields_,pos_,dim_,bottomless_,actionOld_,actionNew_,actionTolerance_,switchPathOld_,extensionPB_]:=
-Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
-	v = Table[\[Phi][[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
+ParameterInFieldSpace[fieldPoints_,{vs_,as_,bs_,R_,pos_},bounceExtension_,
+{actionOld_,actionNew_},{switchPathOld_,extensionPB_},opts:OptionsPattern[]]:=Module[
+	{v,a,b,\[Alpha],\[Beta],\[Nu],\[Nu]s,\[Alpha]s,\[Beta]s,ddVL,path=fieldPoints,switchPath = switchPathOld,
+	eL,l,\[Phi]L,Ns,noFields,dim,actionTolerance,bottomless
+	},
+	If[extensionPB,
+		{\[Nu]s,\[Alpha]s,\[Beta]s,ddVL} = bounceExtension;
+	];
+	eL=unitVectors[fieldPoints];
+	l=segmentsLength[fieldPoints];
+	\[Phi]L=longitudinalProjection[fieldPoints];
+	Ns=Length[fieldPoints]-1;
+	noFields = Length[fieldPoints[[1]]];
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	actionTolerance = OptionValue[FindBounce,{opts},"ActionTolerance"];
+	bottomless = OptionValue[FindBounce,{opts},"BottomlessPotential"];
+
+	v = Table[fieldPoints[[s+1]]+eL[[s]]*(vs[[s]]-(l[[s]]+\[Phi]L[[s]])),{s,Ns}];
 	a = Table[eL[[s]]*as[[s]],{s,Ns}];
 	b = Table[eL[[s]]*bs[[s]],{s,Ns}];
 	
@@ -990,7 +1001,7 @@ Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 		switchPath = True
 	];
 	
-	{v,a,b,\[Alpha],\[Beta],\[Nu],path,actionNew,switchPath}
+	{{v,a,b,R,pos},{\[Nu],\[Alpha],\[Beta],ddVL},path,actionNew,switchPath}
 ];
 
 
@@ -998,10 +1009,16 @@ Module[{v,a,b,\[Alpha],\[Beta],\[Nu],path=\[Phi],switchPath = switchPathOld},
 (*MultiFieldBounce*)
 
 
-MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,lengthPath_,pathTolerance_]:=Module[
+MultiFieldBounce[fieldPoints_,gradient_,hessian_,{\[ScriptV]0_,\[ScriptA]0_,\[ScriptB]0_,R0_,pos_},opts:OptionsPattern[]]:=Module[
 	{Ns,\[Nu],\[Beta],rI,a,R,\[Zeta]ts,\[Nu]\[Beta],x,y,d\[CurlyPhi],rF,DV,D2V,
 	\[Xi]Mc,M,c,\[Nu]0,\[Beta]0,\[Nu]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]p,\[Beta]\[Xi]m,fLowT,fD,fD1,frI,n1,p,
-	\[Phi]0 = fieldPoints, v0 = \[ScriptV]0, a0 = \[ScriptA]0, b0 = \[ScriptB]0,switchPath = False,n,m},
+	\[Phi]0 = fieldPoints,v0=\[ScriptV]0,a0=\[ScriptA]0,b0=\[ScriptB]0,switchPath=False,n,m,
+	noFields,dim,pathTolerance,lengthPath
+	},
+	lengthPath=longitudinalProjection[fieldPoints][[-1]];
+	noFields = Length[fieldPoints[[1]]];
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	pathTolerance = OptionValue[FindBounce,{opts},"PathTolerance"];
 
 	Ns=Length[fieldPoints]-1;	
 	If[pos>1,
@@ -1017,7 +1034,7 @@ MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV
 	D2V = hessian;
 	d\[CurlyPhi] = Threshold@Join[
 		Table[ConstantArray[0.,{2,noFields}],{s,1,p-1}],
-		Table[8./d a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(d-1),{s,p,Ns-1},{m,0,1}]
+		Table[8./dim a0[[s+m]]*R[[s+1]]- 2 b0[[s+m]]/R[[s+1]]^(dim-1),{s,p,Ns-1},{m,0,1}]
 	];
 
 	(*c*)
@@ -1025,37 +1042,37 @@ MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV
 		\[Nu]0[p] = ConstantArray[0,noFields]; 
 		\[Beta]0[p] = ConstantArray[0,noFields];
 		, 
-		\[Nu]0[p] = ((16 a0[[1]]-DV[[1]]-DV[[2]]) R[[1]]^2)/(4 (-2+d));  
-		\[Beta]0[p] = ((-16 a0[[1]]+DV[[1]]+DV[[2]]) R[[1]]^d)/(4 d);  
+		\[Nu]0[p] = ((16 a0[[1]]-DV[[1]]-DV[[2]]) R[[1]]^2)/(4 (-2+dim));  
+		\[Beta]0[p] = ((-16 a0[[1]]+DV[[1]]+DV[[2]]) R[[1]]^dim)/(4 dim);  
 	];
 	
-	Do[ \[Nu]0[s] = \[Nu]0[s-1]+ 1/(4 (-2+d)) R[[s]] (4 d\[CurlyPhi][[-1+s,1]]-4 d\[CurlyPhi][[-1+s,2]]+
+	Do[ \[Nu]0[s] = \[Nu]0[s-1]+ 1/(4 (-2+dim)) R[[s]] (4 d\[CurlyPhi][[-1+s,1]]-4 d\[CurlyPhi][[-1+s,2]]+
 			(-16 a0[[-1+s]]+16 a0[[s]]+DV[[-1+s]]-DV[[1+s]]) R[[s]]);
-		\[Beta]0[s] = \[Beta]0[s-1]+ 1/(4 d) R[[s]]^(-1+d) (-2 d d\[CurlyPhi][[-1+s,1]]+2 d d\[CurlyPhi][[-1+s,2]]+
+		\[Beta]0[s] = \[Beta]0[s-1]+ 1/(4 dim) R[[s]]^(-1+dim) (-2 dim d\[CurlyPhi][[-1+s,1]]+2 dim d\[CurlyPhi][[-1+s,2]]+
 			(16 a0[[-1+s]]-16 a0[[s]]-DV[[-1+s]]+DV[[1+s]]) R[[s]]);
 	,{s,p+1,Ns}];
 	
 	c  = -Flatten[ {If[pos>1,{},ConstantArray[0,noFields]],
-		Table[ ((-16 a0[[s]]+DV[[s]]+DV[[1+s]]) R[[1+s]]^2)/(4 d)+
-			(2 (R[[1+s]]^(2-d)) )/(-2+d) \[Beta]0[s]+\[Nu]0[s],{s,p,Ns}]
+		Table[ ((-16 a0[[s]]+DV[[s]]+DV[[1+s]]) R[[1+s]]^2)/(4 dim)+
+			(2 (R[[1+s]]^(2-dim)) )/(-2+dim) \[Beta]0[s]+\[Nu]0[s],{s,p,Ns}]
 		,ConstantArray[0,noFields]}    
 	];
 	
 	(*M*)
-	\[Nu]\[Xi]p[s_]:= \[Nu]\[Xi]p[s]= -( (R[[s]]^2) /(4 (-2+d)))D2V[[1+s]];(*\[Zeta]ts[1+s]*)
-	\[Beta]\[Xi]p[s_]:= \[Beta]\[Xi]p[s]= (D2V[[1+s]] (R[[s]]^d) )/(4 d);(*\[Zeta]ts[1+s]*)
-	\[Nu]\[Xi]m[s_]:= \[Nu]\[Xi]m[s]= (D2V[[s-1]] (R[[s]]^2) )/(4 (-2+d));(*\[Zeta]ts[-1+s]*)
-	\[Beta]\[Xi]m[s_]:= \[Beta]\[Xi]m[s]= -((D2V[[s-1]] (R[[s]]^d) )/(4 d));(*\[Zeta]ts[-1+s]*)
-	fLowT[s_,j_]:= (2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]m[j]+\[Beta]\[Xi]p[j-2])+\[Nu]\[Xi]m[j]+\[Nu]\[Xi]p[j-2];(*[Eq[s],\[Xi][j-1]]*) (* 2 \[LessEqual] j \[LessEqual] s*)
+	\[Nu]\[Xi]p[s_]:= \[Nu]\[Xi]p[s]= -( (R[[s]]^2) /(4 (-2+dim)))D2V[[1+s]];(*\[Zeta]ts[1+s]*)
+	\[Beta]\[Xi]p[s_]:= \[Beta]\[Xi]p[s]= (D2V[[1+s]] (R[[s]]^dim) )/(4 dim);(*\[Zeta]ts[1+s]*)
+	\[Nu]\[Xi]m[s_]:= \[Nu]\[Xi]m[s]= (D2V[[s-1]] (R[[s]]^2) )/(4 (-2+dim));(*\[Zeta]ts[-1+s]*)
+	\[Beta]\[Xi]m[s_]:= \[Beta]\[Xi]m[s]= -((D2V[[s-1]] (R[[s]]^dim) )/(4 dim));(*\[Zeta]ts[-1+s]*)
+	fLowT[s_,j_]:= (2 (R[[1+s]]^(2-dim)) )/(-2+dim) (\[Beta]\[Xi]m[j]+\[Beta]\[Xi]p[j-2])+\[Nu]\[Xi]m[j]+\[Nu]\[Xi]p[j-2];(*[Eq[s],\[Xi][j-1]]*) (* 2 \[LessEqual] j \[LessEqual] s*)
 
-	\[Nu]\[Xi]p[p-1]= If[pos>1,IdentityMatrix[noFields],-((D2V[[p]]*(R[[p]]^2) )/(4 (-2+d))) ];
-	\[Beta]\[Xi]p[p-1]= If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[p]]*R[[p]]^d)/(4 d)];
-	fD[s_]:= (D2V[[s]]*(R[[1+s]]^2) )/(4 d) +(2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]p[s-1])+\[Nu]\[Xi]p[s-1];(*[Eq[s],\[Xi][s]]*)
+	\[Nu]\[Xi]p[p-1]= If[pos>1,IdentityMatrix[noFields],-((D2V[[p]]*(R[[p]]^2) )/(4 (-2+dim))) ];
+	\[Beta]\[Xi]p[p-1]= If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[p]]*R[[p]]^dim)/(4 dim)];
+	fD[s_]:= (D2V[[s]]*(R[[1+s]]^2) )/(4 dim) +(2 (R[[1+s]]^(2-dim)) )/(-2+dim) (\[Beta]\[Xi]p[s-1])+\[Nu]\[Xi]p[s-1];(*[Eq[s],\[Xi][s]]*)
 
-	\[Nu]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],-((D2V[[1+p]]*R[[p]]^2)/(4 (-2+d)))];
-	\[Beta]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[1+p]] (R[[p]]^d) )/(4 d)];
-	fD1[s_]:= (-IdentityMatrix[noFields]+(D2V[[1+s]]*R[[1+s]]^2)/(4 d))+(2 (R[[1+s]]^(2-d)) )/(-2+d) (\[Beta]\[Xi]p[s])+\[Nu]\[Xi]p[s] ;(*[Eq[s],\[Xi][s+1]]*)
-	frI[s_]:= ((2 (R[[1+s]]^(2-d)) )/(-2+d) (4 a0[[p]]*R[[p]]^d)-(8  a0[[p]]*R[[p]]^2)/(-2+d)  )IdentityMatrix[noFields]; 
+	\[Nu]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],-((D2V[[1+p]]*R[[p]]^2)/(4 (-2+dim)))];
+	\[Beta]\[Xi]p[p] = If[pos>1,ConstantArray[0,{noFields,noFields}],(D2V[[1+p]] (R[[p]]^dim) )/(4 dim)];
+	fD1[s_]:= (-IdentityMatrix[noFields]+(D2V[[1+s]]*R[[1+s]]^2)/(4 dim))+(2 (R[[1+s]]^(2-dim)) )/(-2+dim) (\[Beta]\[Xi]p[s])+\[Nu]\[Xi]p[s] ;(*[Eq[s],\[Xi][s+1]]*)
+	frI[s_]:= ((2 (R[[1+s]]^(2-dim)) )/(-2+dim) (4 a0[[p]]*R[[p]]^dim)-(8  a0[[p]]*R[[p]]^2)/(-2+dim)  )IdentityMatrix[noFields]; 
 	
 	n1 = If[pos>1,0,1];
 	
@@ -1103,8 +1120,8 @@ MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV
 		\[Nu] = \[Zeta]ts[[p]]; 
 		\[Beta] = ConstantArray[0.,noFields];
 		,
-		\[Nu] = -4/(d-2) (a[[1]]+2 a0[[1]] rI)R[[1]]^2;
-		\[Beta] = 4/d (a[[1]]+d a0[[1]] rI)R[[1]]^d;    
+		\[Nu] = -4/(dim-2) (a[[1]]+2 a0[[1]] rI)R[[1]]^2;
+		\[Beta] = 4/dim (a[[1]]+dim a0[[1]] rI)R[[1]]^dim;    
 	];
 	     
 	\[Nu]\[Beta]=Reap[
@@ -1116,8 +1133,8 @@ MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV
 		];
 		Sow[\[Nu],x];
 		Sow[\[Beta],y];
-		Do[ \[Nu]+= -4/(d-2)(a[[s+1]]-a[[s]])R[[s+1]]^2-1/(d-2) (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]] ;
-			\[Beta]+=  4/d(a[[s+1]]-a[[s]])R[[s+1]]^d+1/2 (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]]^(d-1);
+		Do[ \[Nu]+= -4/(dim-2)(a[[s+1]]-a[[s]])R[[s+1]]^2-1/(dim-2) (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]] ;
+			\[Beta]+=  4/dim(a[[s+1]]-a[[s]])R[[s+1]]^dim+1/2 (  d\[CurlyPhi][[s,2]]-d\[CurlyPhi][[s,1]] )R[[s+1]]^(dim-1);
 			Sow[\[Nu],x];
 			Sow[\[Beta],y]; 
 		,{s,p,Ns-1} ];  
@@ -1130,7 +1147,7 @@ MultiFieldBounce[fieldPoints_,gradient_,hessian_,noFields_,pos_,d_,R0_,\[ScriptV
 	];
 	Clear[\[Nu]\[Xi]p,\[Beta]\[Xi]p,\[Nu]\[Xi]m,\[Beta]\[Xi]m,\[Nu]0,\[Beta]0];
 	
-	{\[Phi]0+\[Zeta]ts,v0+\[Nu]\[Beta][[1]],a0+a,b0+\[Nu]\[Beta][[2]],R0,pos,switchPath}   	
+	{\[Phi]0+\[Zeta]ts(*,v0+\[Nu]\[Beta][[1]],a0+a,b0+\[Nu]\[Beta][[2]],R0,pos*),switchPath}   	
 ];
 
 
@@ -1208,8 +1225,9 @@ Module[{R,b,v,\[Alpha],x,y,z,Rvb,p=2,b4,v4},
 
 
 (*Find the solution of eq. 25 or 26.*)
-FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,maxIteR_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_]:= 
-Module[{R,initialR,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0},
+FindInitialRadiusB[d_,VL_,\[Phi]L_,a_,Ns_,actionTolerance_,ansatzInitialR_,aRinitial_,\[Phi]m_,opts:OptionsPattern[]]:= 
+Module[{R,initialR,ite,findInitialR,\[Lambda],complexR,realR,switch,k,initialR0,maxIteR},
+	maxIteR = OptionValue[FindBounce,{opts},"MaxRadiusIterations"];
 	(*Defines \[Lambda] of the bottomless potential*)
 	\[Lambda][initialR_?NumericQ] := \[Lambda][initialR] = Chop[ Sqrt[\[CapitalLambda]B[initialR,d,VL,\[Phi]L,a,Ns,True,\[Phi]m]] ];
 	(*Looks for the initial radius*)
@@ -1352,16 +1370,9 @@ Module[{R4,v4,b4},
 (*BottomlessPotentialBounce*)
 
 
-FindBounce::blminpos = "Wrong position of the minima in bottomless potential.";
-FindBounce::blpathdef = "The path is deformed irregularly on the potential, try changing number of segments.";
-FindBounce::blinitr = "Trivial solution founded, increase the number of segments or accuracy.";
-FindBounce::blnrm = "The potential should be a polynomial of order 4.";
-
-BottomlessPotentialBounce[V_,potentialPoints_,Ns_,noFields_,\[Phi]L_,dim_,maxIteR_,actionTolerance_,
-ansatzInitialR_,aRinitial_,rule_,iter_,fields_]:= 
-Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
-
-	cList = CoefficientList[Expand@Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
+getQuarticCoupling[V_,fields_]:=Module[
+	{\[Lambda],v0,cList},
+	cList = CoefficientList[Normal@Series[V,{fields[[1]],Infinity,4}],fields[[1]]];
 	If[Length[cList]===5,
 		\[Lambda] = Abs@cList[[5]];
 		v0 = cList[[4]]/(4*\[Lambda]);
@@ -1370,21 +1381,32 @@ Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 		Return[$Failed,Module]
 	];
 	
-	VL = If[potentialPoints===None,Table[V/.rule[[s]],{s,Ns+1}],potentialPoints];	
-	
-	If[VL[[-1]]>=VL[[-2]],
-		If[iter === 0,
-			Message[FindBounce::blminpos];
-			Return[$Failed,Module],
-			Message[FindBounce::blpathdef];
-			Return[$Failed,Module]
-		]
-	];
+	{\[Lambda],v0}
+];
+
+
+FindBounce::blminpos = "Wrong position of the minima in bottomless potential.";
+FindBounce::blpathdef = "The path is deformed irregularly on the potential, try changing number of segments.";
+FindBounce::blinitr = "Trivial solution founded, increase the number of segments or accuracy.";
+FindBounce::blnrm = "The potential should be a polynomial of order 4.";
+
+BottomlessPotentialBounce[potentialValues_,fieldPoints_,
+{ansatzInitialR_,aRinitial_},quarticCoupling_,opts:OptionsPattern[]]:= Module[
+	{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,\[Lambda],v0,
+	Ns,noFields,\[Phi]L,dim,actionTolerance,pos=2
+	},
+	Ns=Length[fieldPoints]-1;
+	noFields = Length[fieldPoints[[1]]];
+	\[Phi]L=longitudinalProjection[fieldPoints];
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	actionTolerance = OptionValue[FindBounce,{opts},"ActionTolerance"];
+	{\[Lambda],v0} = quarticCoupling;
+	VL = potentialValues;
 	
 	a  = Table[ ( (VL[[s+1]]-VL[[s]])/(\[Phi]L[[s+1]]-\[Phi]L[[s]]) )/8,{s,Ns}]; 
 	a[[1]] = \[Lambda];
 	\[Phi]m = v0 + \[Phi]L[[-1]];
-	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,maxIteR,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m]//Re;
+	initialR = FindInitialRadiusB[dim,VL,\[Phi]L,a,Ns,actionTolerance,ansatzInitialR,aRinitial,\[Phi]m,opts]//Re;
 	
 	If[initialR<10^(-5.),
 		Message[FindBounce::blinitr];
@@ -1397,8 +1419,8 @@ Module[{a,VL,initialR,R,v,b,T1,V1,\[Phi]m,cList,\[Lambda],v0},
 	T1 = \[ScriptCapitalT]B[R,Ns,a,b]; 
 	V1 = \[ScriptCapitalV]B[R,v,VL,\[Phi]L,Ns,a,b,\[Phi]m];
 	VL[[1]] = VL[[2]]+\[Lambda]*\[Phi]m^4;
-
-	{V1+T1,VL,v,a,b,2,R,initialR}
+	
+	{V1+T1,VL,{v,a,b,R,pos},initialR}
 ];
 
 
@@ -1478,8 +1500,16 @@ BounceFunction/:MakeBoxes[obj:BounceFunction[asc_?AssociationQ],form:(StandardFo
 (*piecewiseBounce*)
 
 
-piecewiseBounce[{v_,a_,b_,R_,\[Nu]_,\[Alpha]_,\[Beta]_,ddVL_},{\[Phi]_,dim_,pos_,noSegs_,noFields_,bottomless_,extensionPB_}]:=
-Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapitalI],\[ScriptCapitalI]0,\[Xi],\[Xi]0},
+piecewiseBounce[{v_,a_,b_,R_,pos_},{\[Nu]_,\[Alpha]_,\[Beta]_,ddVL_},{fieldPoints_,extensionPB_},opts:OptionsPattern[]]:=Module[
+	{\[CurlyPhi]0,\[CurlyPhi],\[ScriptCapitalI],\[ScriptCapitalI]0,\[Xi],\[Xi]0,
+	min1=fieldPoints[[1]],min2=fieldPoints[[-1]],
+	dim,noFields,Ns,bottomless
+	},
+	dim = OptionValue[FindBounce,{opts},"Dimension"];
+	bottomless = OptionValue[FindBounce,{opts},"BottomlessPotential"];
+	noFields = Length[fieldPoints[[1]]];
+	Ns=Length[fieldPoints]-1;
+
 	(*Polygonal bounce, as in eq. 4*)
 	\[CurlyPhi][s_,i_,\[Rho]_]:= v[[s,i]]+4/dim*a[[s,i]]*\[Rho]^2+2/(dim-2)*b[[s,i]]/\[Rho]^(dim-2);
 		
@@ -1490,9 +1520,9 @@ Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapi
 		(*See eq 47,48 for \[ScriptCapitalI][\[Rho]] in D=3,4 repectively.*)
 		If[
 			dim==3,
-			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-\[Phi][[s,i]])/6 \[Rho]^2 + a[[s,i]]/15 \[Rho]^4 + b[[s,i]]\[Rho]),
+			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-fieldPoints[[s,i]])/6 \[Rho]^2 + a[[s,i]]/15 \[Rho]^4 + b[[s,i]]\[Rho]),
 			(*dim\[Equal]4*)
-			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-\[Phi][[s,i]])/8 \[Rho]^2 + a[[s,i]]/24 \[Rho]^4 + b[[s,i]]/2*Log[\[Rho]])
+			\[ScriptCapitalI][s_,i_,\[Rho]_]:= ddVL[[s]]( (v[[s,i]]-fieldPoints[[s,i]])/8 \[Rho]^2 + a[[s,i]]/24 \[Rho]^4 + b[[s,i]]/2*Log[\[Rho]])
 		];
 		(*Note that consistently b is zero when \[Rho]=0, so the bounce is smooth. However, if b is computed numerical one should get rid of b by hand as:*)
 		If[
@@ -1501,9 +1531,9 @@ Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapi
 			\[Xi]0[\[Rho]_]:=\[Nu][[pos-1]]+4/dim*\[Alpha][[pos-1]]*\[Rho]^2;
 			If[
 				dim==3,
-				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-\[Phi][[pos-1]])/6 \[Rho]^2 + a[[pos-1]]/15 \[Rho]^4),
+				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-fieldPoints[[pos-1]])/6 \[Rho]^2 + a[[pos-1]]/15 \[Rho]^4),
 				(*dim\[Equal]4*)
-				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-\[Phi][[pos-1]])/8 \[Rho]^2 + a[[pos-1]]/24 \[Rho]^4)
+				\[ScriptCapitalI]0[\[Rho]_]:= ddVL[[pos-1]]( (v[[pos-1]]-fieldPoints[[pos-1]])/8 \[Rho]^2 + a[[pos-1]]/24 \[Rho]^4)
 			];
 			,
 			(*Case B*)
@@ -1541,7 +1571,7 @@ Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapi
 					{{\[CurlyPhi]0[\[FormalR]][[i]],\[FormalR]<R[[pos]]}},
 					Table[{
 						\[CurlyPhi][s,i,\[FormalR]]+\[Xi][s,i,\[FormalR]]+\[ScriptCapitalI][s,i,\[FormalR]],R[[s]]<=\[FormalR]<R[[s+1]]},
-						{s,pos,noSegs}
+						{s,pos,Ns}
 					]
 				],
 				min2[[i]] (* default value of Piecewise *)
@@ -1558,12 +1588,12 @@ Module[{\[CurlyPhi]0,\[CurlyPhi],min1=\[Phi][[1]],min2=\[Phi][[-1]],\[ScriptCapi
 
 (* Utility function to create generic data structure for results, before calculation is
 even started. Values of certain fileds are updated in the end. *)
-createGenericResults[fieldPoints_,dim_]:=Association[
+createGenericResults[fieldPoints_,opts:OptionsPattern[]]:=Association[
 	"Action"->Infinity,
 	"Bounce"->Function[Evaluate@First@fieldPoints],
 	"BottomlessPotential"->Missing["NotAvailable"],
 	"Coefficients"->Missing["NotAvailable"],
-	"Dimension"->dim,
+	"Dimension"->OptionValue[FindBounce,{opts},"Dimension"],
 	"PathIterations"->0,
 	"Path"->fieldPoints,
 	"Radii"->{0,Infinity}
@@ -1631,11 +1661,11 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,fieldPoints,
-	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
-	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
-	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues,
-	gradient,hessian,midPoint},
+Module[{fieldPoints,maxItePath,bottomless,
+	extensionPB,actionP,actionExtension=0.,action,p,pos,
+	min1,min2,ansatzInitialR,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,
+	potentialValues,gradient,hessian,midPoint,noFields,quarticCoupling,
+	bounce,bounceExtension},
 	
 	(* First we check correctness of arguments and options, then we start to process them. *)
 	(* Checks if field variables do not have any values.*)
@@ -1654,13 +1684,13 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 	];
 	
 	(* Checking of acceptable option values. If they are wrong function immediately returns $Failed.*)
-	bottomless = TrueQ@OptionValue["BottomlessPotential"];
-	pathTolerance = OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
-	actionTolerance = OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
-	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
-	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
+	OptionValue["PathTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"PathTolerance"];Return[$Failed,Module]);
+	OptionValue["ActionTolerance"]/.Except[_?NonNegative]:>(Message[FindBounce::posreal,"ActionTolerance"];Return[$Failed,Module]);
+	OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
+	OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
-
+	bottomless = TrueQ@OptionValue["BottomlessPotential"];
+	
 	(* Special case  if the potential is given as a list of points.*)
 	If[fields[[1]]===True,
 		{fieldPoints,potentialPoints} = Transpose@V;
@@ -1682,10 +1712,9 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 		potentialValues=Reverse[potentialValues]
 	];
 
-	ansatzInitialR=initialRadiusEstimate[fieldPoints,potentialValues,dim];
-	Ns=Length[fieldPoints]-1;
+	ansatzInitialR=initialRadiusEstimate[fieldPoints,potentialValues,opts];
 
-	results=createGenericResults[fieldPoints,dim];
+	results=createGenericResults[fieldPoints,opts];
 	(*If the vacua are degenerated, return generic/initial results. *)
 	If[
 		Head[ansatzInitialR]===DirectedInfinity&&Not[bottomless],
@@ -1696,39 +1725,33 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 	If[noFields==1,maxItePath = 0];
 	(*Bounce and path deformation.*)
 	While[iter <= maxItePath||switchPath,
-		
-		(*Rule.*)
-		rule = Table[fields[[i]]->fieldPoints[[s,i]],{s,Ns+1},{i,noFields}];
-		(* TODO: Eventually move this intermediate calculation inside each major function below. *)
-		\[Phi]L=longitudinalProjection[fieldPoints];
-		eL=unitVectors[fieldPoints];
-		l=segmentsLength[fieldPoints];
-		
+	
 		(*Single Field Bounce.*)
-		{actionP,VL,v,a,b,pos,R,initialR} = If[
+		{actionP,potentialValues,bounce,initialR} = If[
 			Not[bottomless],
-			SingleFieldBounce[V,potentialPoints,Ns,noFields,\[Phi]L,dim,maxIteR,
-				actionTolerance,ansatzInitialR,initialR,rule,iter,
-				switchPath||iter==maxItePath
+			SingleFieldBounce[potentialValues,fieldPoints,
+				{ansatzInitialR,initialR},switchPath||iter==maxItePath,opts
 			]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 			,
-			BottomlessPotentialBounce[V,potentialPoints,Ns,noFields,\[Phi]L,
-				dim,maxIteR,actionTolerance,ansatzInitialR,initialR,rule,iter,fields
+			quarticCoupling=getQuarticCoupling[V,fields]/.($Failed:>Return[$Failed]);
+			BottomlessPotentialBounce[potentialValues,fieldPoints,
+				{ansatzInitialR,initialR},quarticCoupling,opts
 			]/.(x_/;Not@FreeQ[x,$Failed]:>Return[$Failed,Module])
 		];
 		
 		If[
 			extensionPB&&iter==maxItePath,
 			gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradient];
+			{actionExtension,bounceExtension,extensionPB} = SingleFieldBounceExtension[potentialValues,fieldPoints,bounce,gradient,opts];
 		];
-			
-		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
-		{v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,eL,l,\[Phi]L,Ns,noFields,pos,dim,
-			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB&&iter==maxItePath];
 
+		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
+		{bounce,bounceExtension,fieldPoints,action,switchPath} = ParameterInFieldSpace[fieldPoints,bounce,bounceExtension,
+			{action,actionP+actionExtension},{switchPath,extensionPB&&iter==maxItePath},opts];
+		
 		(*Breaks the interations of path deformation.*)
-		If[switchPath||iter == maxItePath||bottomless, 
+		If[switchPath||iter == maxItePath||bottomless,
+			pos = bounce[[-1]]; 
 			p = If[pos>1,pos-1,pos]; 
 			Break[]
 		];
@@ -1736,20 +1759,20 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 		(*Multi Field Bounce.*)
 		gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
 		hessian=getPotentialHessian[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
-		{fieldPoints,vM,aM,bM,RM,posM,switchPath} = MultiFieldBounce[fieldPoints,gradient,hessian,noFields,pos,
-			dim,R,v,a,b,\[Phi]L[[-1]],pathTolerance];
+		{fieldPoints,switchPath}=MultiFieldBounce[fieldPoints,gradient,hessian,bounce,opts];
+		potentialValues=getPotentialValues[V,fields,fieldPoints]/.($Failed:>Return[$Failed]);
 
 		iter++
 	];
 
 	results["Action"]=action;
-	results["Bounce"]=piecewiseBounce[{v,a,b,R,\[Nu],\[Alpha],\[Beta],ddVL},{fieldPoints,dim,pos,Ns,noFields,bottomless,extensionPB}];
-	results["BottomlessPotential"]=If[bottomless,VL[[1]],Missing["NotAvailable"]];
-	results["Coefficients"]={v,a,b}[[All,p;;-1]];
-	results["CoefficientsExtension"]=If[extensionPB,{\[Nu],\[Alpha],\[Beta],ddVL}[[All,p;;-1]],Missing["NotAvailable"]];
+	results["Bounce"]=piecewiseBounce[bounce,bounceExtension,{fieldPoints,extensionPB},opts];
+	results["BottomlessPotential"]=If[bottomless,potentialValues[[1]],Missing["NotAvailable"]];
+	results["Coefficients"]=bounce[[1;;3]][[All,p;;-1]];
+	results["CoefficientsExtension"]=If[extensionPB,bounceExtension[[All,p;;-1]],Missing["NotAvailable"]];
 	results["PathIterations"]=iter;
 	results["Path"]=fieldPoints;
-	results["Radii"]=R[[p;;-1]];
+	results["Radii"]=bounce[[4]][[p;;-1]];
 
 	BounceFunction@results
 ];
