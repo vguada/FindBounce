@@ -170,7 +170,7 @@ findMidPoint[V_,fields_,{min1_,min2_},opts:OptionsPattern[]]:=Module[
 
 	If[midPoint===Automatic, 
 		vector[\[Lambda]_]:=min1+\[Lambda]*(min2-min1);
-		\[Lambda]max =\[Lambda]/.FindMaximum[Flatten@{V/.replaceValues[fields,{vector[\[Lambda]]}],\[Lambda]<=1&&\[Lambda]>= 0},\[Lambda]][[2,1]];
+		\[Lambda]max =\[Lambda]/.FindMaximum[Flatten@{V+10.^-10/.replaceValues[fields,{vector[\[Lambda]]}],\[Lambda]<=1&&\[Lambda]>= 0},\[Lambda]][[2,1]];
 		midPoint = vector[\[Lambda]max];
 		,
 		(* "MidFieldPoint" value has to be either None, Automatic or numeric vector. *)
@@ -1628,7 +1628,7 @@ Options[FindBounce] = {
 	"Hessian" -> Automatic,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
-	"MidFieldPoint" -> Automatic,
+	"MidFieldPoint" -> None,
 	"PathTolerance" -> 0.01
 };
 
@@ -1740,14 +1740,14 @@ Module[{fieldPoints,maxItePath,bottomless,
 		];
 		
 		If[
-			extensionPB&&iter==maxItePath,
+			extensionPB&&(iter==maxItePath||switchPath),
 			gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
 			{actionExtension,bounceExtension,extensionPB} = SingleFieldBounceExtension[potentialValues,fieldPoints,bounce,gradient,opts];
 		];
-
+		
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{bounce,bounceExtension,fieldPoints,action,switchPath} = ParameterInFieldSpace[fieldPoints,bounce,bounceExtension,
-			{action,actionP+actionExtension},{switchPath,extensionPB&&iter==maxItePath},opts];
+			{action,actionP+actionExtension},{switchPath,extensionPB&&(iter==maxItePath||switchPath)},opts];
 		
 		(*Breaks the interations of path deformation.*)
 		If[switchPath||iter == maxItePath||bottomless,
