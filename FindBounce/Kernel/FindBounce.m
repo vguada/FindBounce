@@ -1661,19 +1661,18 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
-	(* TODO: Decision if extension method is used should be taken in one place only.
-	Review the following check if it catches all cases. *)
-	extensionPB=And[noFields==1, OptionValue["Gradient"]=!=None, Not@bottomless];
 
 	(* Special case  if the potential is given as a list of points.*)
 	If[fields[[1]]===True,
 		{fieldPoints,potentialPoints} = Transpose@V;
 		fieldPoints=Partition[fieldPoints,1];
 		potentialValues=potentialPoints;
-		extensionPB=False,
+		extensionPB=False
+		,
 		(* Otherwise we ask for value of potential at field points. *)
 		midPoint=findMidPoint[V,fields,{min1,min2},opts]/.($Failed:>Return[$Failed]);
 		fieldPoints=fieldSegmentation[{min1,min2,midPoint},opts]/.($Failed:>Return[$Failed]);
+		extensionPB=And[OptionValue["Gradient"]=!=None, Not@bottomless, Length@fieldPoints>=5];
 		potentialValues=getPotentialValues[V,fields,fieldPoints]/.($Failed:>Return[$Failed]);
 	];
 
@@ -1720,14 +1719,14 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,f
 		];
 		
 		If[
-			extensionPB,
+			extensionPB&&iter==maxItePath,
 			gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
 			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradient];
 		];
 			
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,eL,l,\[Phi]L,Ns,noFields,pos,dim,
-			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB];
+			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB&&iter==maxItePath];
 
 		(*Breaks the interations of path deformation.*)
 		If[switchPath||iter == maxItePath||bottomless, 
