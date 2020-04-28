@@ -155,29 +155,51 @@ homogeneousSegmentation[{p1_,p2_,p3_},n_Integer/;n>=2]:=Module[
 ];
 
 
-FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of non-complex numbers longer than 2.";
 FindBounce::midpt="\"MidFieldPoint\" should be a vector of length equal to the number of fields or symbol None.";
-FindBounce::minpos="The first and the last point in given list of field points have to match the minima.";
 
-(* Returns either a matrix representing field segmentation or $Failed. *)
-fieldSegmentation[{min1_,min2_},opts:OptionsPattern[]]:=Module[
-	{noFields,fieldPoints,midPoint},
-	(* We assume that dimension of minima is already processed before. *)
+(* Returns either None, the field value provided by the user or the field value where the maximum value of the potential is. *)
+findMidPoint[V_,fields_,{min1_,min2_},opts:OptionsPattern[]]:=Module[
+	{\[Lambda],vector,\[Lambda]max,midPoint,noFields,fieldPoints},
 	noFields=Length[min1];
+	fieldPoints=OptionValue[FindBounce,{opts},"FieldPoints"];
+	
+	midPoint=If[ListQ[fieldPoints],
+		None,
+		N@OptionValue[FindBounce,{opts},"MidFieldPoint"]
+	];
 
-	midPoint=N@OptionValue[FindBounce,{opts},"MidFieldPoint"];
-	If[midPoint=!=None&&Length[midPoint]==0,midPoint={midPoint}];
-	(* "MidFieldPoint" value has to be either None or numeric vector. *)
+	If[midPoint===Automatic, 
+		vector[\[Lambda]_]:=min1+\[Lambda]*(min2-min1);
+		\[Lambda]max =\[Lambda]/.FindMaximum[Flatten@{V/.replaceValues[fields,{vector[\[Lambda]]}],\[Lambda]<=1&&\[Lambda]>= 0},\[Lambda]][[2,1]];
+		midPoint = vector[\[Lambda]max];
+		,
+		(* "MidFieldPoint" value has to be either None, Automatic or numeric vector. *)
+		If[midPoint=!=None&&Length[midPoint]==0,midPoint={midPoint}];
+	];	
+	
 	If[
 		midPoint=!=None,
 		If[
 			Not@And[
-				ArrayQ[N@midPoint,1,(MatchQ[#,_Real]&)],
+				ArrayQ[midPoint,1,(MatchQ[#,_Real]&)],
 				Length[midPoint]===noFields
 			],
 			Message[FindBounce::midpt];Return[$Failed,Module]
 		]
 	];
+	
+	midPoint	
+];
+
+
+FindBounce::fieldpts = "\"FieldPoints\" should be an integer (n>2) or array of non-complex numbers longer than 2.";
+FindBounce::minpos="The first and the last point in given list of field points have to match the minima.";
+
+(* Returns either a matrix representing field segmentation or $Failed. *)
+fieldSegmentation[{min1_,min2_,midPoint_},opts:OptionsPattern[]]:=Module[
+	{noFields,fieldPoints},
+	(* We assume that dimension of minima is already processed before. *)
+	noFields=Length[min1];
 	fieldPoints=OptionValue[FindBounce,{opts},"FieldPoints"];
 
 	Which[
@@ -185,8 +207,8 @@ fieldSegmentation[{min1_,min2_},opts:OptionsPattern[]]:=Module[
 		If[fieldPoints<3,Message[FindBounce::fieldpts];Return[$Failed,Module]];
 		fieldPoints=If[
 			midPoint===None,
-			homogeneousSegmentation[N@{min1,min2},fieldPoints-1],
-			homogeneousSegmentation[N@{min1,midPoint,min2},fieldPoints-1]
+			homogeneousSegmentation[{min1,min2},fieldPoints-1],
+			homogeneousSegmentation[{min1,midPoint,min2},fieldPoints-1]
 		]
 		,
 		ListQ[fieldPoints],
@@ -245,6 +267,7 @@ getPotentialValues[V_,fields_,fieldPoints_]:=Module[
 		Or[values[[1]]>=values[[2]],values[[-1]]>=values[[-2]]],
 		Message[FindBounce::extrema];Return[$Failed,Module]
 	];
+	
 	Developer`ToPackedArray@values
 ];
 
@@ -1576,7 +1599,7 @@ Options[FindBounce] = {
 	"Hessian" -> Automatic,
 	"MaxPathIterations" -> 3,
 	"MaxRadiusIterations" -> 100,
-	"MidFieldPoint" -> None,
+	"MidFieldPoint" -> Automatic,
 	"PathTolerance" -> 0.01
 };
 
@@ -1609,11 +1632,11 @@ FindBounce[points_List,opts:OptionsPattern[]]:=(
 );	
 
 FindBounce[V_,fields_List,{minimum1_,minimum2_},opts:OptionsPattern[]]:=
-Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,midPoint,fieldPoints,
+Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,fieldPoints,
 	maxItePath,maxIteR,R,extensionPB,rule,pos,l,eL,dV,d2V,RM,
 	actionP,action\[Xi]=0.,action,vM,aM,bM,posM,ddVL,bottomless,p,pathTolerance,actionTolerance,
 	min1,min2,iter=0,potentialPoints=None,switchPath=False,initialR=None,results,potentialValues,
-	gradient,hessian},
+	gradient,hessian,midPoint},
 	
 	(* First we check correctness of arguments and options, then we start to process them. *)
 	(* Checks if field variables do not have any values.*)
@@ -1638,9 +1661,6 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 	dim = OptionValue["Dimension"]/.Except[3|4]:>(Message[FindBounce::dim];Return[$Failed,Module]);
 	maxIteR = OptionValue["MaxRadiusIterations"]/.Except[_Integer?Positive]:>(Message[FindBounce::posint,"MaxRadiusIterations"];Return[$Failed,Module]);
 	maxItePath = OptionValue["MaxPathIterations"]/.Except[_Integer?NonNegative]:>(Message[FindBounce::nonnegint,"MaxPathIterations"];Return[$Failed,Module]);
-	midPoint = N@OptionValue["MidFieldPoint"];
-
-	fieldPoints=fieldSegmentation[{min1,min2},opts]/.($Failed:>Return[$Failed]);
 	(* TODO: Decision if extension method is used should be taken in one place only.
 	Review the following check if it catches all cases. *)
 	extensionPB=And[noFields==1, OptionValue["Gradient"]=!=None, Not@bottomless];
@@ -1652,6 +1672,8 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 		potentialValues=potentialPoints;
 		extensionPB=False,
 		(* Otherwise we ask for value of potential at field points. *)
+		midPoint=findMidPoint[V,fields,{min1,min2},opts]/.($Failed:>Return[$Failed]);
+		fieldPoints=fieldSegmentation[{min1,min2,midPoint},opts]/.($Failed:>Return[$Failed]);
 		potentialValues=getPotentialValues[V,fields,fieldPoints]/.($Failed:>Return[$Failed]);
 	];
 
