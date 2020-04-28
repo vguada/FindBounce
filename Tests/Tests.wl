@@ -18,7 +18,7 @@ If[
 BeginTestSection["Tests"];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*FindBounce*)
 
 
@@ -123,8 +123,8 @@ VerificationTest[
 
 VerificationTest[
 	FindBounce[x^4-x^2+x/2,x,{1/2,1/4 (-1-Sqrt[5])},"FieldPoints"->3,"MidFieldPoint"->1/4 (-1+Sqrt[5])]["Action"],
-	3.12,
-	SameTest->(Abs[(#1-#2)/#2]<10^(-3)&),
+	2.911,
+	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 2 segments"
 ];
 
@@ -179,16 +179,16 @@ VerificationTest[
 
 
 VerificationTest[
-	FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.883}]["CoefficientsExtension"][[1,1,1]],
-	-0.05486,
+	FindBounce[0.5x^2+0.5x^3+0.1x^4,x,{0.,-2.882782}]["CoefficientsExtension"][[1,1,1]],
+	0.0152544,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F 3 CofficientsExtension (Case A,D=4)"
 ];
 
 
 VerificationTest[
-	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.883},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
-	0.0025433,
+	FindBounce[0.5x^2-0.5x^3+0.1x^4,x,{0.,2.882782},"Dimension"->3]["CoefficientsExtension"][[1,1,1]],
+	0.00254445,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 1F CofficientsExtension (Case A,D=3)"
 ];
@@ -242,7 +242,7 @@ With[{a=0.99},
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*1 field - bi-quartic potential*)
 
 
@@ -402,10 +402,10 @@ VerificationTest[
 		{x,y},
 		{{0.,12.91},{20.,0.}}
 	]["Action"],
-	5041.83,
+	4959.39,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 2F default (Case B)"
-]
+];
 
 
 VerificationTest[
@@ -414,7 +414,7 @@ VerificationTest[
 		{x,y},
 		{{0.,10.},{19.917,-0.577}}
 	]["Action"],
-	102.078,
+	101.195,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 2F default (Case A)"
 ];
@@ -426,7 +426,7 @@ VerificationTest[
 		{x,y},
 		{{0.,12.91},{20.,0.}},"Dimension"->3
 	]["Action"],
-	2365.518,
+	2336.512,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 2F 3 dimensions (Case B)"
 ];
@@ -437,7 +437,7 @@ VerificationTest[
 		0.1x^4+0.3y^4+2.x^2*y^2-80.x^2-100.y^2+800.y,
 		{x,y},
 		{{0.,10.},{19.917,-0.577}},"Dimension"->3]["Action"],
-	128.297,
+	127.042,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 2F 3 dimensions (Case A)"
 ];
@@ -451,9 +451,9 @@ VerificationTest[
 	FindBounce[
 		100.x-40.x^2+0.1x^4+150.y-100.y^2+2.x^2*y^2+0.2y^4+100.z-120.z^2+2.1x^2*z^2+1.2y^2*z^2+0.3z^4,
 		{x,y,z},
-		{{-0.1035,-16.1661,-0.2581},{13.4220,-0.2880,-0.1934}}
+		{{-0.103556,-16.166160,-0.258163},{13.4220429,-0.2880399,-0.193469}}
 	]["Action"],
-	279.645,
+	275.521,
 	SameTest->(Abs[(#1-#2)/#2]<10^(-4)&),
 	TestID->"FindBounce - 3F default"
 ];
