@@ -121,7 +121,7 @@ If[
 
 
 (* ::Subsubsection::Closed:: *)
-(*Utilites for working with field points*)
+(*Utilities for working with field points*)
 
 
 (* This efficient implementation keeps a PackedArray packed. *)
@@ -250,7 +250,7 @@ getPotentialValues[V_,fields_,fieldPoints_]:=Module[
 
 
 (* ::Subsubsection::Closed:: *)
-(*Potenital gradient*)
+(*Potential gradient*)
 
 
 symbolicGradient[V_,fields_,fieldPoints_]:=Module[
@@ -293,12 +293,12 @@ if "FiniteDifference" option value would be automatically chosen in such cases. 
 
 FindBounce::gradmtd="Option value for Gradient should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
 FindBounce::gradval=(
-	"The gradient of the potential is not well defined at some field point."<> 
-	"Redefine the potential, choose option \"Gradient\"->None or \"Gradient\"->\"FiniteDifference\".");
+	"The gradient of the potential is not well defined at some field point. "<> 
+	"Redefine the potential, choose option \"Gradient\"->\"FiniteDifference\".");
 
 getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 	{optValue,method,gradient},
-	optValue=OptionValue[FindBounce,{opts},"Gradient"]/.Automatic->"Symbolic";
+	optValue=OptionValue[FindBounce,{opts},"Gradient"]/.{Automatic->"Symbolic",None->"Symbolic"};
 	method=Which[
 		optValue==="Symbolic","Symbolic",
 		optValue==="FiniteDifference","Numeric",
@@ -310,7 +310,7 @@ getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 		"Numeric",numericGradient[V,fields,fieldPoints],
 		"Custom",optValue/.replaceValues[fields,fieldPoints]
 	];
-
+	
 	If[
 		Not@ArrayQ[gradient,2,NumericQ],
 		Message[FindBounce::gradval];Return[$Failed,Module]
@@ -320,7 +320,7 @@ getPotentialGradient[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 
 
 (* ::Subsubsection::Closed:: *)
-(*Potenital hessian*)
+(*Potential hessian*)
 
 
 symbolicHessian[V_,fields_,fieldPoints_]:=Module[
@@ -1702,7 +1702,7 @@ Module[{Ns,a,\[Phi]L,ansatzInitialR,b,v,\[Alpha],\[Beta],\[Nu],dim,noFields,VL,m
 			gradient=getPotentialGradient[V,fields,fieldPoints,opts]/.($Failed:>Return[$Failed]);
 			{action\[Xi],\[Alpha],\[Beta],\[Nu],ddVL,extensionPB} = SingleFieldBounceExtension[VL,Ns,v,a,b,R,\[Phi]L,pos,dim,eL,gradient];
 		];
-				
+			
 		(*Transforms \[Phi]L,v,a,b (logitudinal) into \[Phi] (field space) and its bounce parameters.*)
 		{v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,action,switchPath} = ParameterInFieldSpace[v,a,b,\[Alpha],\[Beta],\[Nu],fieldPoints,eL,l,\[Phi]L,Ns,noFields,pos,dim,
 			bottomless,action,actionP+action\[Xi],actionTolerance,switchPath,extensionPB];
