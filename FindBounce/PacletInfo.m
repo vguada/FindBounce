@@ -2,7 +2,7 @@
 
 Paclet[
     Name -> "FindBounce",
-    Version -> "1.0.0",
+    Version -> "1.1.0",
     MathematicaVersion -> "10.0+",
     Description -> "Package for evaluation of the bounce action with multiple scalar fields.",
     Creator -> "Victor Guada, Miha Nemevsek and Matevz Pintar",
