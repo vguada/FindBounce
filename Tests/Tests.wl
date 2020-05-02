@@ -633,6 +633,37 @@ VerificationTest[
 ];
 
 
+(* ::Subsubsection::Closed:: *)
+(*Option "MidFieldPoint"*)
+
+
+VerificationTest[
+	FindBounce[singleField[x,0.2],x,{0.,1.},"FieldPoints"->5]["Path"]//Flatten,
+	{1.,0.75,0.5,0.25,0.},
+	TestID->"FindBounce - \"MidFieldPoint\" default"
+]
+
+
+VerificationTest[
+	FindBounce[
+		singleField[x,0.2],x,{0.,1.},"FieldPoints"->5,"MidFieldPoint"->Automatic
+		]["Path"]//Flatten//Round[#,10.^-4]&,
+	0.2,
+	SameTest->MemberQ,
+	TestID->"FindBounce - \"MidFieldPoint\"->Automatic"
+]
+
+
+VerificationTest[
+	FindBounce[
+		singleField[x,0.2],x,{0.,1.},"FieldPoints"->5,"MidFieldPoint"->0.15
+		]["Path"]//Flatten//Round[#,10.^-4]&,
+	0.15,
+	SameTest->MemberQ,
+	TestID->"FindBounce - \"MidFieldPoint\"->given value"
+]
+
+
 (* ::Subsection::Closed:: *)
 (*BounceFunction*)
 
