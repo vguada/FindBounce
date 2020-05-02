@@ -399,7 +399,7 @@ numericHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
 
 FindBounce::hessmtd="Option value for Hessian should be Automatic, None, \"Symbolic\", \"FiniteDifference\" of custom function.";
 FindBounce::hessval=(
-	"The hessian of the potential is not well defined at some field points."<> 
+	"The hessian of the potential is not well defined at some field points. "<> 
 	"Redefine the potential, choose option \"Hessian\"->\"FiniteDifference\" or \"MaxPathIterations\"->0.");
 
 getPotentialHessian[V_,fields_,fieldPoints_,opts:OptionsPattern[]]:=Module[
