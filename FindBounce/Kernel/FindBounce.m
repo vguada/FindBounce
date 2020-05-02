@@ -168,9 +168,17 @@ findMidPoint[V_,fields_,{min1_,min2_},opts:OptionsPattern[]]:=Module[
 		N@OptionValue[FindBounce,{opts},"MidFieldPoint"]
 	];
 
+	(* "SimulatedAnnealing" method is chosen by feeling, it ussualy works well.
+	NArgMax is used because we are interested only in the position of the maximum.  *)
 	If[midPoint===Automatic, 
-		vector[\[Lambda]_]:=min1+\[Lambda]*(min2-min1);
-		\[Lambda]max =\[Lambda]/.FindMaximum[Flatten@{V+10.^-10/.replaceValues[fields,{vector[\[Lambda]]}],\[Lambda]<=1&&\[Lambda]>= 0},\[Lambda]][[2,1]];
+		vector[lambda_]:=min1+lambda*(min2-min1);
+		\[Lambda]max=NArgMax[
+			Flatten@{V/.replaceValues[fields,{vector[\[Lambda]]}], 0.<=\[Lambda]<=1.},
+			\[Lambda],
+			Method->"SimulatedAnnealing",
+			PrecisionGoal->5,
+			AccuracyGoal->5
+		];
 		midPoint = vector[\[Lambda]max];
 		,
 		(* "MidFieldPoint" value has to be either None, Automatic or numeric vector. *)
