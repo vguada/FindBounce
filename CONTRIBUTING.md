@@ -101,14 +101,14 @@ Keep in mind that you have to process documentation with Workbench __before__
 running the build script.
 
 Script option `--install` will also install it locally to `$UserBasePacletsDirectory`.
-Option `--release` adds metadata to indicate a proper public releases.
 
 ### Release checklist
 
 The following tasks should be performed for successful release of a new public version of the package.
 
 * Check if all known bugs have been fixed.
-* Check if all changes in functionality since the previous release have been documented (use `git log --oneline` to refresh memory).
+* Check if all changes in functionality since the previous release have been documented
+(use `git log --oneline` to refresh memory).
 * Run a full suite of automated tests.
 * Build the package along with documentation and test if installed version works ok (e.g. documentation examples).
 You can send this version to other test users for additional feedback.
@@ -117,7 +117,7 @@ It should be determined according to [semantic versioning](https://semver.org/) 
 * Update [README.md]( README.md ) and [CHANGELOG.md]( CHANGELOG.md ) with relevant changes.
 * Make a new [`git tag`](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
 with corresponding version number and push it to remote repository.
-* Build a public version with `Build.wls --release` option.
+* Build the package again. This is the public version.
 * Create a new release on GitHub [releases](https://github.com/vguada/FindBounce/releases)
 page and attach there resulting `.paclet` file.
 * Inform users about a new version (email, website, etc).
