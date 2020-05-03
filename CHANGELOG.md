@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 1.1.0 - 2020-05-04
+
+### Added
+
+- New method (option value) `"FiniteDifference"` for numerical evaluation
+of derivatives used by options `"Gradient"` and `"Hessian"`.
+- New option value `"MidFieldPoint"->Automatic` for improved segmentation procedure.
+- Package compatibility with Mathematica 12.1 .
+
+---
+
 ## 1.0.0 - 2020-02-03
 
 ### Added
